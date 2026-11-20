@@ -209,6 +209,10 @@ body.nomemo .pad{justify-self:center}
 .lvb span{font-size:clamp(20px,2.4vw,28px)}
 .lvb small{font-size:clamp(14px,1.6vw,18px);color:var(--mute);text-align:center;line-height:1.5}
 .lvb em{font-style:normal;font-size:18px;min-height:1.3em;color:#e0a000}
+.kmode-seg{align-self:center;margin:4px 0 6px;background:rgba(0,0,0,.2);border-radius:999px;padding:4px}
+.kmode-seg button{color:#fff;font-size:clamp(18px,2.2vw,24px);padding:8px 26px;border-radius:999px}
+.kmode-seg button.on{background:#fff;color:var(--ink)}
+.lvb:disabled{opacity:.45}
 .lv-note{margin:0 24px 18px;text-align:center;color:#fff;font-size:clamp(14px,1.7vw,18px);text-shadow:0 2px 0 rgba(0,0,0,.25)}
 
 /* ---------- かんじ：もんだい ---------- */
@@ -245,6 +249,21 @@ body.nomemo .pad{justify-self:center}
 .kbtn.ok{background:linear-gradient(#5ee08c,#22b45a);color:#fff;box-shadow:0 6px 0 #15843f;font-size:clamp(24px,3vw,34px);text-shadow:0 2px 0 rgba(0,0,0,.2);padding:.7em .4em}
 .kbtn.ok.next{background:linear-gradient(#ffe066,#ffb300);color:var(--ink);text-shadow:none;box-shadow:0 6px 0 #c99a00}
 .kbtn.ok.busy{opacity:.6}
+.kbtn.give{background:#fff4c7;box-shadow:0 6px 0 #d9b94a;font-size:clamp(18px,2.1vw,24px)}
+.kbtn.give:active{box-shadow:0 2px 0 #d9b94a}
+.kyomi{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
+.kyans{min-width:5em;height:1.35em;font-size:clamp(30px,4vw,48px);background:#fff;border-radius:14px;padding:0 .4em;display:grid;place-items:center;box-shadow:0 5px 0 rgba(0,0,0,.2);letter-spacing:.05em}
+.kyans:empty::before{content:"？";color:#b6c0d4}
+.kyans.ok{background:#d6ffe4;color:#0c8a3e}
+.kyans.ng{animation:shake .4s;background:#ffe1e4;color:#e0283c}
+.kyans.reveal{background:#fff1b8;color:#c27c00}
+.kkb{display:grid;grid-template-rows:repeat(5,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;width:min(780px,100%)}
+.kk{height:clamp(40px,calc((var(--vh) - 400px) / 5.6),64px);min-width:0;border-radius:12px;background:#fff;font-size:clamp(20px,2.6vw,30px);color:var(--ink);box-shadow:0 4px 0 #b8c4d8}
+.kk:active{transform:translateY(3px);box-shadow:0 1px 0 #b8c4d8}
+.kk.blank{visibility:hidden}
+.kk.mod{background:#fff4c7;box-shadow:0 4px 0 #d9b94a}
+.kk.del{background:#ffe7e7;color:#d33;box-shadow:0 4px 0 #e9b4b4}
+.kk.sm{font-size:clamp(13px,1.5vw,17px);line-height:1.15}
 #kmodeTxt{font-size:14px;color:#fff;text-align:center;text-shadow:0 1px 0 rgba(0,0,0,.3)}
 
 /* ---------- ゴール！ ---------- */
@@ -407,7 +426,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   .kbody{flex-direction:column}
   .kboxes{--bx:min(42vw,calc(var(--vh) * .34),340px)}
   .kside{flex-direction:row;width:min(100%,620px)}
-  .kside .kbtn{flex:1}
+  .kside .kbtn{flex:1;padding-left:.2em;padding-right:.2em;font-size:clamp(17px,2.6vw,24px)}
+  .kk{height:clamp(44px,5.4vh,64px)}
 }
 
 /* ---------- うごき ---------- */
@@ -523,8 +543,12 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <h2>かんじ テスト<small style="display:block;font-size:.6em;color:var(--yellow)">どの レベルに する？</small></h2>
       <span class="sp"></span>
     </header>
+    <div class="seg kmode-seg" id="kmodeSeg">
+      <button data-act="kmodeSel" data-val="kaki">✏️ かきとり</button>
+      <button data-act="kmodeSel" data-val="yomi">📖 よみ</button>
+    </div>
     <div class="lv-grid" id="lvGrid"></div>
-    <p class="lv-note">―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。</p>
+    <p class="lv-note" id="lvNote"></p>
   </section>
 
   <!-- かんじ：もんだい -->
@@ -542,8 +566,13 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="kbody">
         <div class="kboxes" id="kboxes"></div>
         <div class="kchoices" id="kchoices" hidden></div>
+        <div class="kyomi" id="kyomi" hidden>
+          <div class="kyans" id="kyAns"></div>
+          <div class="kkb" id="kkb"></div>
+        </div>
         <div class="kside">
           <button class="kbtn" data-act="kclearAll" id="kclearAll">🧽 ぜんぶ けす</button>
+          <button class="kbtn give" data-act="kgive" id="kgive">🤔 わからない</button>
           <button class="kbtn ok" data-act="kok" id="kok">⚽ けってい</button>
           <span id="kmodeTxt"></span>
         </div>
@@ -605,7 +634,10 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・数字ボタンを押しただけでは答えになりません。「けってい」を押すと答え合わせをします。<br>
         ・7問中5問以上を1回目で正解するとシールがもらえます（2回目で正解した問題は数えません）。<br>
         ・まちがえた問題は覚えておいて、次の回に出やすくなります（1回につき2問まで）。<br>
-        ・かんじテストは、学年別漢字配当表（2020年度〜）にそって 3年〜6年のレベルを選べます。問題文の――線以外は3年までの漢字だけを使っています。入試と同じく、カタカナの部分を漢字で書きます（送りがなは書きません）。<br>
+        ・かんじテストは、学年別漢字配当表（2020年度〜）にそって 3年〜6年のレベルを選べます。問題文の――線以外は3年までの漢字だけを使っています。<br>
+        ・「かきとり」は、入試と同じくカタカナの部分を漢字で書きます（送りがなは書きません）。各学年の配当漢字がすべて、どれかの問題の答えに入っています（3年169問・4年170問・5年170問・6年178問）。<br>
+        ・「よみ」は、――線の漢字の読みを画面のひらがなキーボードで答えます（送りがなは入れません。各学年100問）。<br>
+        ・わからないときは「わからない」で答えを見られます（不正解として数え、次の回に出やすくなります）。<br>
         ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。</p>
       </div>
     </div>
@@ -733,7 +765,7 @@ function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true },
+    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki' },
   };
 }
 let D = defaults();
@@ -1368,6 +1400,7 @@ function finishQuiz() {
 function endRound(ok, results, missedHTML) {
   if (ok >= PASS) {
     const res = awardSticker(ok, Game.kind, Game.lv);
+    if (Game.m === 'yomi') res.s.m = 'yomi';
     save();
     showWin(res, ok, results.length);
   } else {
@@ -1444,50 +1477,63 @@ function applyMemo() {
 }
 
 // ---------- かんじテスト ----------
-const KDATA = window.KANJI_Q || {};
+// kaki：――線の カタカナを かんじで かく ／ yomi：――線の かんじの よみを ひらがなで こたえる
+const KDATA = { kaki: window.KANJI_Q || {}, yomi: window.KANJI_Y || {} };
 const KLEVELS = [3, 4, 5, 6];
-const KLV_EX = { 3: 'れい：〔イソ〕ぐ → 急', 4: 'れい：〔ヨソウ〕 → 予想', 5: 'れい：〔ケンサ〕 → 検査', 6: 'れい：〔ワス〕れる → 忘' };
+const KMODES = {
+  kaki: { name: 'かきとり', icon: '✏️', ex: { 3: '〔イソ〕ぐ → 急', 4: '〔ヨソウ〕 → 予想', 5: '〔ケンサ〕 → 検査', 6: '〔ワス〕れる → 忘' }, note: '―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。' },
+  yomi: { name: 'よみ', icon: '📖', ex: { 3: '〔今朝〕 → けさ', 4: '〔器用〕 → きよう', 5: '〔快〕い → こころよ', 6: '〔著〕しい → いちじる' }, note: '―線の かんじの よみを ひらがなで こたえよう。おくりがなは いれなくて いいよ。' },
+};
 const HW_URL = 'https://inputtools.google.com/request?ime=handwriting&app=mobilesearch&cs=1&oe=UTF-8';
-const K = { lv: 3, list: [], idx: 0, tries: 0, results: [], combo: 0, lock: true, token: 0, active: false, canSkip: false, mode: 'hand', offline: false, pads: [], choices: [], sel: -1, wrongSel: [] };
+const K = { lv: 3, kind: 'kaki', list: [], idx: 0, tries: 0, results: [], combo: 0, lock: true, token: 0, active: false, canSkip: false, mode: 'hand', offline: false, pads: [], choices: [], sel: -1, wrongSel: [], val: '' };
 const kcur = () => K.list[K.idx];
-const kparts = q => { const m = q.s.match(/^(.*)〔(.+?)〕(.*)$/); return { pre: m[1], kana: m[2], post: m[3] }; };
-const ksay = q => { const p = kparts(q); return p.pre + p.kana + p.post; };
-const kstat = lv => (D.kstats[lv] = D.kstats[lv] || { play: 0, perfect: 0, q: 0, ok: 0 });
+const kparts = q => { const m = q.s.match(/^(.*)〔(.+?)〕(.*)$/); return { pre: m[1], mid: m[2], post: m[3] }; };
+const ksay = q => { const p = kparts(q); return p.pre + p.mid + p.post; };
+const kkey = (kind, lv) => kind === 'yomi' ? `y${lv}` : String(lv);  // きろく・まちがえた もんだい の キー
+const kid = q => q.a || q.s;  // もんだいの 目じるし（かきとり＝こたえ、よみ＝もんだい文）
+const kans = q => q.a || q.r[0];
+const kstat = key => (D.kstats[key] = D.kstats[key] || { play: 0, perfect: 0, q: 0, ok: 0 });
+const kmodeOf = s => s.m === 'yomi' ? 'yomi' : 'kaki';
 
 function renderLevels() {
-  const cnt = lv => D.stickers.filter(s => themeOf(s) === 'kanji' && s.lv === lv).length;
+  const kind = S().kmode === 'yomi' ? 'yomi' : 'kaki', M = KMODES[kind];
+  $$('#kmodeSeg [data-val]').forEach(b => b.classList.toggle('on', b.dataset.val === kind));
+  const cnt = lv => D.stickers.filter(s => themeOf(s) === 'kanji' && s.lv === lv && kmodeOf(s) === kind).length;
   const stars = c => c ? '⭐'.repeat(Math.min(c, 3)) + (c > 3 ? `+${c - 3}` : '') : '';
   $('#lvGrid').innerHTML = KLEVELS.map(lv => {
-    const n = (KDATA[lv] || []).length;
-    return `<button class="lvb" data-act="startLv" data-lv="${lv}"><b>${lv}年</b><span>レベル</span><small>${KLV_EX[lv].replace(/〔(.+?)〕/, '<u>$1</u>')}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
+    const n = (KDATA[kind][lv] || []).length;
+    const ex = M.ex[lv].replace(/〔(.+?)〕/, '<u>$1</u>');
+    return `<button class="lvb" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lv}年</b><span>${M.icon} ${M.name}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
   }).join('');
+  $('#lvNote').textContent = M.note;
 }
 
-function makeKanjiQuestions(lv) {
-  const pool = KDATA[lv] || [];
+function makeKanjiQuestions(kind, lv) {
+  const pool = KDATA[kind][lv] || [];
   const out = [], used = new Set();
   // まちがえた もんだいを すこし まぜる
-  for (const a of shuffle((D.kmiss[lv] || []).slice()).slice(0, MISS_PER_SET)) {
-    const q = pool.find(x => x.a === a);
-    if (q && !used.has(a)) { out.push({ ...q, again: true }); used.add(a); }
+  for (const id of shuffle((D.kmiss[kkey(kind, lv)] || []).slice()).slice(0, MISS_PER_SET)) {
+    const q = pool.find(x => kid(x) === id);
+    if (q && !used.has(id)) { out.push({ ...q, again: true }); used.add(id); }
   }
-  const rest = shuffle(pool.filter(q => !used.has(q.a)));
+  const rest = shuffle(pool.filter(q => !used.has(kid(q))));
   while (out.length < QUESTIONS && rest.length) out.push({ ...rest.pop() });
   return shuffle(out);
 }
 function kUpdateMiss(q, ok) {
-  const lv = K.lv, list = (D.kmiss[lv] || []).filter(a => a !== q.a);
-  if (!ok) list.push(q.a);
-  D.kmiss[lv] = list.slice(-MISS_KEEP);
+  const key = kkey(K.kind, K.lv), list = (D.kmiss[key] || []).filter(id => id !== kid(q));
+  if (!ok) list.push(kid(q));
+  D.kmiss[key] = list.slice(-MISS_KEEP);
 }
 
-function startKanji(lv) {
+function startKanji(lv, kind) {
+  kind = kind || (S().kmode === 'yomi' ? 'yomi' : 'kaki');
   SFX.unlock();
   closeOverlays();
-  Game = { kind: 'kanji', lv };
-  Object.assign(K, { lv, list: makeKanjiQuestions(lv), idx: 0, results: [], combo: 0, active: true, offline: false });
+  Game = { kind: 'kanji', lv, m: kind };
+  Object.assign(K, { lv, kind, list: makeKanjiQuestions(kind, lv), idx: 0, results: [], combo: 0, active: true, offline: false });
   if (!K.list.length) return;
-  $('#kTheme').textContent = `かんじ ${lv}年`;
+  $('#kTheme').textContent = `${KMODES[kind].icon} ${lv}年 ${KMODES[kind].name}`;
   show('kquiz');
   kShowQuestion();
   SFX.start();
@@ -1495,7 +1541,9 @@ function startKanji(lv) {
 
 function kRenderSentence(state) {
   const q = kcur(), p = kparts(q);
-  const mid = state ? `<span class="tg ${state}"><ruby>${q.a}<rt>${p.kana}</rt></ruby></span>` : `<span class="tg">${p.kana}</span>`;
+  let mid;
+  if (K.kind === 'yomi') mid = state ? `<span class="tg ${state}"><ruby>${p.mid}<rt>${q.r[0]}</rt></ruby></span>` : `<span class="tg">${p.mid}</span>`;
+  else mid = state ? `<span class="tg ${state}"><ruby>${q.a}<rt>${p.mid}</rt></ruby></span>` : `<span class="tg">${p.mid}</span>`;
   $('#ksent').innerHTML = `${p.pre}${mid}${p.post}`;
 }
 function kNote(t) { $('#knote').textContent = t; }
@@ -1504,42 +1552,78 @@ function kSetOk(next) {
   b.classList.toggle('next', next);
   b.classList.remove('busy');
   b.textContent = next ? 'つぎへ ▶' : '⚽ けってい';
+  $('#kgive').hidden = next;
+}
+function kQuestionSpeech(q) {
+  // よみの もんだいは こたえを いわないように、文は よまない
+  return K.kind === 'yomi' ? 'せんの かんじの よみを ひらがなで こたえてね' : ksay(q);
 }
 
 function kShowQuestion() {
   const q = kcur();
-  Object.assign(K, { tries: 0, lock: false, canSkip: false, sel: -1, wrongSel: [] });
+  Object.assign(K, { tries: 0, lock: false, canSkip: false, sel: -1, wrongSel: [], val: '' });
   K.token++;
-  K.mode = S().hand && !K.offline ? 'hand' : 'choice';
+  K.mode = K.kind === 'yomi' ? 'kana' : S().hand && !K.offline ? 'hand' : 'choice';
   kRenderSentence('');
   kNote(q.again ? '🔁 まえに まちがえた もんだい' : '');
   kSetOk(false);
   kRenderAnswer();
   kRenderProgress();
-  Speech.speak(ksay(q));
+  Speech.speak(kQuestionSpeech(q));
 }
 
 function kRenderAnswer() {
-  const q = kcur(), hand = K.mode === 'hand';
-  $('#kboxes').hidden = !hand;
-  $('#kchoices').hidden = hand;
-  $('#kclearAll').hidden = !hand;
-  $('#kmodeTxt').textContent = hand ? 'マスに かんじを かいてね' : '4つから えらんでね';
-  if (hand) {
+  const q = kcur(), m = K.mode;
+  $('#kboxes').hidden = m !== 'hand';
+  $('#kchoices').hidden = m !== 'choice';
+  $('#kyomi').hidden = m !== 'kana';
+  $('#kclearAll').hidden = m !== 'hand';
+  $('#kmodeTxt').textContent = m === 'hand' ? 'マスに かんじを かいてね' : m === 'choice' ? '4つから えらんでね' : 'ひらがなを おしてね';
+  K.pads = [];
+  if (m === 'hand') {
     const n = [...q.a].length;
     $('#kboxes').innerHTML = Array.from({ length: n }, (_, i) =>
       `<div class="kbox" data-i="${i}"><canvas></canvas><button class="kclr" data-act="kclr" data-i="${i}" aria-label="このマスを けす">✕</button><span class="kread"></span></div>`).join('');
     K.pads = $$('#kboxes .kbox').map(box => makePad(box, box.querySelector('canvas'), { color: '#111', width: W => Math.max(5, W / 26) }));
-  } else {
-    K.pads = [];
+  } else if (m === 'choice') {
     K.choices = shuffle((q.c && q.c.length ? q.c : [q.a]).slice());
     if (!K.choices.includes(q.a)) K.choices[0] = q.a;
     kRenderChoices();
+  } else {
+    kSetVal('');
+    $('#kyAns').classList.remove('ok', 'ng', 'reveal');
   }
 }
 function kRenderChoices() {
   $('#kchoices').innerHTML = K.choices.map((c, i) =>
     `<button class="kch${i === K.sel ? ' sel' : ''}${K.wrongSel.includes(i) ? ' wrong' : ''}" data-act="kch" data-i="${i}">${c}</button>`).join('');
+}
+
+// ---------- ひらがな キーボード（よみ） ----------
+const KANA_COLS = ['あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの', 'はひふへほ', 'まみむめも', 'や ゆ よ', 'らりるれろ', 'わ を ん'];
+const DAKU = { か: 'が', き: 'ぎ', く: 'ぐ', け: 'げ', こ: 'ご', さ: 'ざ', し: 'じ', す: 'ず', せ: 'ぜ', そ: 'ぞ', た: 'だ', ち: 'ぢ', つ: 'づ', て: 'で', と: 'ど', は: 'ば', ひ: 'び', ふ: 'ぶ', へ: 'べ', ほ: 'ぼ' };
+const HANDAKU = { は: 'ぱ', ひ: 'ぴ', ふ: 'ぷ', へ: 'ぺ', ほ: 'ぽ', ば: 'ぱ', び: 'ぴ', ぶ: 'ぷ', べ: 'ぺ', ぼ: 'ぽ' };
+const SMALL = { あ: 'ぁ', い: 'ぃ', う: 'ぅ', え: 'ぇ', お: 'ぉ', つ: 'っ', や: 'ゃ', ゆ: 'ゅ', よ: 'ょ', わ: 'ゎ' };
+const invert = o => Object.fromEntries(Object.entries(o).map(([a, b]) => [b, a]));
+const UNDAKU = invert(DAKU), UNSMALL = invert(SMALL), UNHANDAKU = { ぱ: 'は', ぴ: 'ひ', ぷ: 'ふ', ぺ: 'へ', ぽ: 'ほ' };
+function renderKanaKeyboard() {
+  let h = '';
+  for (const col of KANA_COLS) for (const ch of col) h += ch === ' ' ? '<span class="kk blank"></span>' : `<button class="kk" data-act="kana" data-k="${ch}">${ch}</button>`;
+  h += '<button class="kk mod" data-act="kana" data-k="daku">゛</button><button class="kk mod" data-act="kana" data-k="handaku">゜</button><button class="kk mod sm" data-act="kana" data-k="small">小</button><button class="kk del" data-act="kana" data-k="del">⌫</button><button class="kk del sm" data-act="kana" data-k="clear">ぜんぶ<br>けす</button>';
+  $('#kkb').innerHTML = h;
+}
+function kSetVal(v) { K.val = v; $('#kyAns').textContent = v; }
+function kanaKey(k) {
+  if (!K.active || K.lock || K.mode !== 'kana') return;
+  SFX.tap();
+  $('#kyAns').classList.remove('ok', 'ng');
+  const v = K.val, last = v.slice(-1), head = v.slice(0, -1);
+  if (k === 'del') return kSetVal(head);
+  if (k === 'clear') return kSetVal('');
+  if (k === 'daku') { if (DAKU[last]) kSetVal(head + DAKU[last]); else if (UNDAKU[last]) kSetVal(head + UNDAKU[last]); else if (UNHANDAKU[last]) kSetVal(head + DAKU[UNHANDAKU[last]]); return; }
+  if (k === 'handaku') { if (HANDAKU[last]) kSetVal(head + HANDAKU[last]); else if (UNHANDAKU[last]) kSetVal(head + UNHANDAKU[last]); return; }
+  if (k === 'small') { if (SMALL[last]) kSetVal(head + SMALL[last]); else if (UNSMALL[last]) kSetVal(head + UNSMALL[last]); return; }
+  if (v.length < 10) kSetVal(v + k);
 }
 
 function kRenderProgress() {
@@ -1585,6 +1669,10 @@ async function kCheck() {
   if (K.canSkip) return kSkip();
   if (K.lock) return;
   const q = kcur();
+  if (K.mode === 'kana') {
+    if (!K.val) { kNote('よみを ひらがなで 入れてから「けってい」を おしてね'); return; }
+    return q.r.includes(K.val) ? kCorrect() : kWrong(K.val);
+  }
   if (K.mode === 'choice') {
     if (K.sel < 0) { kNote('こたえを 1つ えらんでから「けってい」を おしてね'); return; }
     return K.choices[K.sel] === q.a ? kCorrect() : kWrong(K.choices[K.sel]);
@@ -1636,46 +1724,64 @@ async function kCorrect() {
   kUpdateMiss(q, first);
   save();
   kRenderSentence('done');
+  $('#kgive').hidden = true;
   if (K.mode === 'choice') { K.sel = K.choices.indexOf(q.a); kRenderChoices(); $$('#kchoices .kch')[K.sel].classList.add('right'); }
+  if (K.mode === 'kana') $('#kyAns').classList.add('ok');
   kRenderProgress();
   const [txt, say] = pick(PRAISE);
-  showGoal(txt, `${q.a}（${kparts(q).kana}）`, K.combo >= 5);
+  const p = kparts(q);
+  showGoal(txt, K.kind === 'yomi' ? `${p.mid}（${q.r[0]}）` : `${q.a}（${p.mid}）`, K.combo >= 5);
   SFX.goal(K.combo);
   K.canSkip = true;
-  let line = say;
+  let line = K.kind === 'yomi' ? `${say} ${ksay(q)}` : say;
   if ([3, 5, 7].includes(K.combo)) line += `。 ${K.combo}れんぞく！`;
   await Promise.all([Speech.speak(line), sleep(1300)]);
   if (tk === K.token) kNext();
 }
 
-async function kWrong(read) {
+// こたえを みせて、「つぎへ」を おすまで まつ（2かい まちがえた とき・「わからない」の とき）
+async function kReveal(msg) {
   const q = kcur();
-  K.tries++;
-  SFX.wrong();
   const tk = ++K.token;
-  if (K.mode === 'choice') { K.wrongSel.push(K.sel); K.sel = -1; kRenderChoices(); }
-  if (K.tries === 1) {
-    kNote(K.mode === 'hand'
-      ? `「${read}」と よめたよ。もう一回 かいてみよう（2回目の せいかいは かぞえないよ）`
-      : 'ちがうよ。もう一回 えらんでね（2回目の せいかいは かぞえないよ）');
-    Speech.speak(K.mode === 'hand' ? 'おしい！ もう一回 かいてみよう' : 'ちがうよ。もう一回');
-    return;
-  }
-  // 2かい まちがえたら こたえを みせて、「つぎへ」を おすまで まつ
   K.lock = true;
   K.results.push(false);
   K.combo = 0;
   kUpdateMiss(q, false);
   save();
   kRenderProgress();
-  await sleep(350);
-  if (tk !== K.token) return;
-  kRenderSentence('rev');
-  if (K.mode === 'choice') { const i = K.choices.indexOf(q.a); $$('#kchoices .kch')[i].classList.add('right'); }
-  kNote(`こたえは「${q.a}」。たしかめたら「つぎへ」を おしてね`);
   kSetOk(true);
   K.canSkip = true;
-  Speech.speak('答えは この かんじだよ');
+  kRenderSentence('rev');
+  if (K.mode === 'choice') { const i = K.choices.indexOf(q.a); $$('#kchoices .kch')[i].classList.add('right'); }
+  if (K.mode === 'kana') { kSetVal(q.r[0]); $('#kyAns').classList.remove('ng'); $('#kyAns').classList.add('reveal'); }
+  kNote(`${msg}こたえは「${kans(q)}」。たしかめたら「つぎへ」を おしてね`);
+  await sleep(200);
+  if (tk !== K.token) return;
+  Speech.speak(K.kind === 'yomi' ? `こたえは ${q.r[0]} だよ` : '答えは この かんじだよ');
+}
+
+function kWrong(read) {
+  K.tries++;
+  SFX.wrong();
+  K.token++;
+  if (K.mode === 'choice') { K.wrongSel.push(K.sel); K.sel = -1; kRenderChoices(); }
+  if (K.mode === 'kana') { const a = $('#kyAns'); a.classList.remove('ng'); void a.offsetWidth; a.classList.add('ng'); }
+  if (K.tries === 1) {
+    kNote(K.mode === 'hand'
+      ? `「${read}」と よめたよ。もう一回 かいてみよう（2回目の せいかいは かぞえないよ）`
+      : K.mode === 'kana' ? `「${read}」では ないよ。もう一回（2回目の せいかいは かぞえないよ）`
+      : 'ちがうよ。もう一回 えらんでね（2回目の せいかいは かぞえないよ）');
+    Speech.speak(K.mode === 'hand' ? 'おしい！ もう一回 かいてみよう' : 'ちがうよ。もう一回');
+    return;
+  }
+  kReveal('');
+}
+
+// 「わからない」：こたえを みる（まちがいと おなじ あつかい）
+function kGiveUp() {
+  if (!K.active || K.lock || K.canSkip) return;
+  SFX.tap();
+  kReveal('');
 }
 
 function kSkip() {
@@ -1694,12 +1800,12 @@ function kFinish() {
   K.active = false;
   K.lock = true;
   const ok = K.results.filter(Boolean).length;
-  const st = kstat(K.lv);
+  const st = kstat(kkey(K.kind, K.lv));
   st.play++; st.q += K.list.length; st.ok += ok;
   if (ok === K.list.length) st.perfect++;
   const missed = K.list.filter((q, i) => !K.results[i]).map(q => {
     const p = kparts(q);
-    return `<span>${p.kana} → <b>${q.a}</b></span>`;
+    return K.kind === 'yomi' ? `<span>${p.mid} → <b>${q.r[0]}</b></span>` : `<span>${p.mid} → <b>${q.a}</b></span>`;
   }).join('');
   endRound(ok, K.results, missed);
 }
@@ -1798,10 +1904,12 @@ function renderSettings() {
     <tbody><tr><td>${s.play}回</td><td>${s.perfect}回</td><td>${n}枚</td><td>${rk[2]} ${rk[1]}</td><td>${pct(s.ok22, s.q22)}</td><td>${pct(s.ok32, s.q32)}</td></tr></tbody></table>
     <p class="note">まちがえた問題（新しい順・次の回に出やすくなります）：${weak || 'まだ ありません'}</p>
     <table class="st"><thead><tr><th>かんじテスト</th><th>あそんだ</th><th>全問正解</th><th>シール</th><th>1回目の正解率</th><th>まちがえた問題</th></tr></thead><tbody>${
-      KLEVELS.map(lv => {
-        const k = kstat(lv), c = D.stickers.filter(x => themeOf(x) === 'kanji' && x.lv === lv).length;
-        return `<tr><th>${lv}年</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${(D.kmiss[lv] || []).slice().reverse().join('、') || '−'}</td></tr>`;
-      }).join('')}</tbody></table>`;
+      ['kaki', 'yomi'].flatMap(kind => KLEVELS.map(lv => {
+        const key = kkey(kind, lv), k = kstat(key);
+        const c = D.stickers.filter(x => themeOf(x) === 'kanji' && x.lv === lv && kmodeOf(x) === kind).length;
+        const miss = (D.kmiss[key] || []).slice().reverse().map(id => kind === 'yomi' ? (id.match(/〔(.+?)〕/) || [, id])[1] : id).join('、');
+        return `<tr><th>${lv}年 ${KMODES[kind].name}</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${miss || '−'}</td></tr>`;
+      })).join('')}</tbody></table>`;
 }
 
 // ---------- できごと ----------
@@ -1814,14 +1922,17 @@ document.addEventListener('click', e => {
   if (act !== 'key') SFX.tap();
   switch (act) {
     case 'start': startQuiz(); break;
-    case 'again': if (Game.kind === 'kanji') startKanji(Game.lv); else startQuiz(); break;
+    case 'again': if (Game.kind === 'kanji') startKanji(Game.lv, Game.m); else startQuiz(); break;
+    case 'kmodeSel': S().kmode = b.dataset.val; save(); renderLevels(); break;
+    case 'kgive': kGiveUp(); break;
+    case 'kana': kanaKey(b.dataset.k); break;
     case 'kanji': closeOverlays(); Speech.stop(); renderLevels(); show('klevel'); break;
     case 'startLv': startKanji(+b.dataset.lv); break;
     case 'kok': kCheck(); break;
     case 'kclr': if (K.pads[+b.dataset.i] && !K.lock) { K.pads[+b.dataset.i].clear(); $$('#kboxes .kbox')[+b.dataset.i].classList.remove('ok', 'ng'); } break;
     case 'kclearAll': if (!K.lock) { K.pads.forEach(p => p.clear()); $$('#kboxes .kbox').forEach(x => x.classList.remove('ok', 'ng')); } break;
     case 'kch': if (!K.lock && !K.wrongSel.includes(+b.dataset.i)) { K.sel = +b.dataset.i; kRenderChoices(); } break;
-    case 'krepeat': if (kcur()) Speech.speak(ksay(kcur())); break;
+    case 'krepeat': if (kcur()) Speech.speak(kQuestionSpeech(kcur())); break;
     case 'home': goHome(); break;
     case 'key': padKey(b.dataset.k); break;
     case 'repeat': if (cur()) Speech.speak(questionText(cur())); break;
@@ -1837,7 +1948,7 @@ document.addEventListener('click', e => {
     case 'stk': {
       const s = D.stickers[+b.dataset.sid];
       const dt = new Date(s.at);
-      const where = themeOf(s) === 'kanji' ? `かんじ ${s.lv}年` : 'かけざん';
+      const where = themeOf(s) === 'kanji' ? `かんじ ${s.lv}年 ${KMODES[kmodeOf(s)].name}` : 'かけざん';
       stickerDetail(s, `${where} ・ ${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
       break;
     }
@@ -1910,6 +2021,7 @@ document.addEventListener('visibilitychange', () => {
 // ---------- はじめる ----------
 load();
 fitViewport();
+renderKanaKeyboard();
 renderHome();
 Speech.init();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
