@@ -18,7 +18,7 @@
 <style>
 :root{
   --mul:#a35bf0; --t22:#2f8cff; --t32:#ff7a2f; --kan:#e8455a;
-  --navy:#132650; --navy-d:#0b1838;
+  --navy:#132650; --navy-d:#0b1838; --navy-l:#1d3670; --accent:#34a85f;
   --yellow:#ffd23f; --gold:#ffb300;
   --ink:#1d2b45; --mute:#7a879c;
   --pitch-a:#34a85f; --pitch-b:#2e9a56;
@@ -55,6 +55,35 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 .lines::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:5px solid rgba(255,255,255,.22);pointer-events:none}
 .lines>*{position:relative;z-index:1}
 
+/* ---------- デザインテーマ ---------- */
+/* ノーマル：あおい ほうがん ノート */
+body[data-skin="normal"]{--navy:#1b2f5e;--navy-d:#101d40;--navy-l:#29468a;--accent:#3a6fd8}
+html:has(body[data-skin="normal"]),body[data-skin="normal"]{background:#2b55b0}
+body[data-skin="normal"] .pitch{
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.2),transparent 60%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.09) 0 2px,transparent 2px 44px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.09) 0 2px,transparent 2px 44px),
+    linear-gradient(160deg,#4a86e8,#2b55b0);
+}
+/* かわいい：ピンクの みずたま */
+body[data-skin="cute"]{--navy:#6a2a7e;--navy-d:#4a165a;--navy-l:#8c3fa3;--accent:#e0569b;--yellow:#fff07a}
+html:has(body[data-skin="cute"]),body[data-skin="cute"]{background:#d76fb5}
+body[data-skin="cute"] .pitch{
+  background:
+    radial-gradient(rgba(255,255,255,.28) 4px,transparent 4.5px) 0 0/40px 40px,
+    radial-gradient(rgba(255,255,255,.18) 4px,transparent 4.5px) 20px 20px/40px 40px,
+    linear-gradient(160deg,#ff9cc8 0%,#f07ab8 45%,#b57cf0 100%);
+}
+body[data-skin="cute"] .win{background:radial-gradient(circle at 50% 42%,#ff8fd0 0%,#c04fb0 45%,#5a1a6e 100%)}
+body[data-skin="normal"] .win{background:radial-gradient(circle at 50% 42%,#5aa0ff 0%,#2350b8 45%,#0c1e5a 100%)}
+body:not([data-skin="soccer"]) .lines::before,body:not([data-skin="soccer"]) .lines::after{display:none}
+body:not([data-skin="soccer"]) .goal-net{visibility:hidden}
+body[data-skin="normal"] :is(.key.ok,.kbtn.ok):not(.next){background:linear-gradient(#6fa8ff,#2f6fe0);box-shadow:0 6px 0 #1d4fae}
+body[data-skin="cute"] :is(.key.ok,.kbtn.ok):not(.next){background:linear-gradient(#ff9ad0,#e8559f);box-shadow:0 6px 0 #b8357a}
+body[data-skin="cute"] .logo-ball{animation:sway 2.4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+
 .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 6px}
 .hd h2{margin:0;color:#fff;font-size:clamp(22px,3.2vw,36px);text-shadow:0 3px 0 rgba(0,0,0,.25);text-align:center;line-height:1.15}
 .hd>.sp{min-width:120px}
@@ -69,7 +98,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 .summary{
   display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;
   margin:6px 20px 16px;padding:14px 18px;color:#fff;
-  background:linear-gradient(#1d3670,var(--navy));border:4px solid var(--navy-d);border-radius:24px;
+  background:linear-gradient(var(--navy-l),var(--navy));border:4px solid var(--navy-d);border-radius:24px;
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 8px 0 rgba(0,0,0,.25);
 }
 .total{display:flex;flex-direction:column;align-items:flex-start;padding:2px 10px}
@@ -175,7 +204,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 .qtop{grid-area:top;position:relative;display:flex;justify-content:center;--eq:clamp(34px,min(6.2vw,calc(var(--vh)*.11)),92px)}
 .board{
   display:flex;align-items:center;gap:.25em;font-size:var(--eq);line-height:1;font-weight:900;color:#fff;
-  background:linear-gradient(#1d3670,var(--navy));border:5px solid var(--navy-d);border-radius:.28em;padding:.12em .42em;
+  background:linear-gradient(var(--navy-l),var(--navy));border:5px solid var(--navy-d);border-radius:.28em;padding:.12em .42em;
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.07),0 7px 0 rgba(0,0,0,.28);font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 .board .na{color:#6cc0ff}
@@ -586,9 +615,9 @@ body.nomemo .pad{justify-self:center}
 .sw i::after{content:"";position:absolute;left:3px;top:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:.2s}
 .sw input:checked+i{background:#34c759}
 .sw input:checked+i::after{transform:translateX(24px)}
-input[type=range]{flex:1;max-width:280px;accent-color:#34a85f}
+input[type=range]{flex:1;max-width:280px;accent-color:var(--accent)}
 select{font:inherit;font-size:16px;padding:6px 10px;border-radius:10px;border:1px solid #cfd6e2;background:#fff;max-width:60%}
-.mini{background:#34a85f;color:#fff;padding:8px 16px;border-radius:999px;font-size:16px;white-space:nowrap}
+.mini{background:var(--accent);color:#fff;padding:8px 16px;border-radius:999px;font-size:16px;white-space:nowrap}
 .bk-text{width:100%;height:84px;margin:6px 0;padding:8px 10px;border:1px solid #cfd6e2;border-radius:10px;font:13px/1.4 ui-monospace,Menlo,monospace;color:#5d6880;background:#f7f9fc;resize:vertical;-webkit-user-select:text;user-select:text;font-size:16px}
 .bk-note{font-weight:700;color:#14904a}
 .row .mini+.mini,.row .mini+.danger{margin-left:-6px}
@@ -655,7 +684,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   <!-- ホーム -->
   <section class="screen pitch lines on" id="home">
     <header class="hd">
-      <h1 class="logo"><span class="logo-ball">⚽</span>がくしゅう<b>アプリ</b></h1>
+      <h1 class="logo"><span class="logo-ball" data-ic="logo">⚽</span>がくしゅう<b>アプリ</b></h1>
       <button class="btn-ghost" data-act="settings">⚙️ おうちの方へ</button>
     </header>
     <div class="summary">
@@ -745,7 +774,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <button class="key" data-act="key" data-k="9">9</button>
         <button class="key k0" data-act="key" data-k="0">0</button>
         <button class="key del" data-act="key" data-k="del">⌫ けす</button>
-        <button class="key ok" data-act="key" data-k="ok" id="okKey">⚽ けってい</button>
+        <button class="key ok" data-act="key" data-k="ok" id="okKey"><span data-ic="ball">⚽</span> けってい</button>
       </div>
     </div>
   </section>
@@ -808,7 +837,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
           <button class="kbtn" data-act="kclearAll" id="kclearAll">🧽 ぜんぶ けす</button>
           <button class="kbtn hand-back" data-act="kHandBack" id="kHandBack" hidden>✍️ てがきに もどす<small>（つぎの もんだいから）</small></button>
           <button class="kbtn give" data-act="kgive" id="kgive">🤔 わからない</button>
-          <button class="kbtn ok" data-act="kok" id="kok">⚽ けってい</button>
+          <button class="kbtn ok" data-act="kok" id="kok"><span data-ic="ball">⚽</span> けってい</button>
           <span id="kmodeTxt"></span>
         </div>
       </div>
@@ -896,6 +925,11 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     </header>
     <div class="setbody">
       <div class="set-card">
+        <h3>🎨 デザイン</h3>
+        <div class="row"><span class="grow">テーマ<small>画面の色・もようや、正解のときの演出・効果音・ランクの名前が変わります。集めたシールや記録はそのままです</small></span>
+          <select data-set="skin"><option value="soccer">⚽ サッカー</option><option value="normal">⭐ ノーマル</option><option value="cute">🎀 かわいい</option></select></div>
+      </div>
+      <div class="set-card">
         <h3>🔊 読み上げ</h3>
         <label class="row"><span class="grow">問題と答えを読み上げる</span><span class="sw"><input type="checkbox" data-set="speech"><i></i></span></label>
         <div class="row"><span>速さ</span><input type="range" min="0.8" max="2" step="0.1" data-set="rate"><output id="rateOut">1.0</output><button class="mini" data-act="testVoice">ためす</button></div>
@@ -976,7 +1010,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <rect x="14" y="14" width="292" height="164" fill="url(#np)"/>
         <path d="M10 178V10H310V178" fill="none" stroke="#fff" stroke-width="10" stroke-linejoin="round"/>
       </svg>
-      <div class="goal-shot">⚽</div>
+      <div class="goal-shot" data-ic="shot">⚽</div>
     </div>
     <div class="goal-txt" id="goalTxt">ゴール！</div>
     <div class="goal-sub" id="goalSub"></div>
@@ -1011,7 +1045,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="win-rank" id="winRank"></div>
       <div class="win-rank win-mission" id="winMission"></div>
       <div class="win-btns">
-        <button class="bigbtn yellow" data-act="again">⚽ もういっかい</button>
+        <button class="bigbtn yellow" data-act="again"><span data-ic="ball">⚽</span> もういっかい</button>
         <button class="bigbtn yellow" data-act="exchange" hidden>🎁 もう1まい こうかん</button>
         <button class="bigbtn" data-act="bookFromWin">📒 シールちょう</button>
         <button class="bigbtn" data-act="home">🏠 トップ</button>
@@ -1022,13 +1056,13 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   <!-- けっか（シールなし） -->
   <div class="result" id="result">
     <div class="res-card">
-      <div class="res-top">しあい しゅうりょう！</div>
+      <div class="res-top" data-ic="end">しあい しゅうりょう！</div>
       <div class="res-balls" id="resBalls"></div>
-      <div class="res-score"><b id="resOk">0</b> / <span id="resTotal">7</span> ゴール</div>
+      <div class="res-score"><b id="resOk">0</b> / <span id="resTotal">7</span> <span data-ic="unit">ゴール</span></div>
       <div class="res-msg" id="resMsg"></div>
       <div class="res-miss" id="resMiss"></div>
       <div class="res-btns">
-        <button class="bigbtn yellow" data-act="again">⚽ もういっかい</button>
+        <button class="bigbtn yellow" data-act="again"><span data-ic="ball">⚽</span> もういっかい</button>
         <button class="bigbtn" data-act="home">🏠 トップ</button>
       </div>
     </div>
@@ -1119,7 +1153,27 @@ function stickerOdds() {
 }
 
 // ランク [ひつような まいすう, なまえ, アイコン]
-const RANKS = [[0, 'ルーキー', '🌱'], [45, 'レギュラー', '⚽'], [120, 'エース', '🔥'], [240, 'キャプテン', '🎖️'], [390, 'スター', '⭐'], [600, 'レジェンド', '👑'], [900, 'ワールドクラス', '🌏']];
+// デザインテーマ（ランクの なまえ・せいかいの えんしゅつ も テーマごとに かわる）
+const RANK_AT = [0, 45, 120, 240, 390, 600, 900];
+const SKINS = {
+  soccer: {
+    name: 'サッカー', ball: '⚽', logo: '⚽', shot: '⚽', end: 'しあい しゅうりょう！', unit: 'ゴール', color: '#238a4b',
+    ranks: [['ルーキー', '🌱'], ['レギュラー', '⚽'], ['エース', '🔥'], ['キャプテン', '🎖️'], ['スター', '⭐'], ['レジェンド', '👑'], ['ワールドクラス', '🌏']],
+    praise: [['ゴール！', 'ゴール！'], ['ゴール！', 'ゴール！'], ['ナイスシュート！', 'ナイスシュート！'], ['すごい！', 'すごい！'], ['やったね！', 'やったね！'], ['せいかい！', '正解！'], ['てんさい！', '天才！'], ['ばっちり！', 'ばっちり！']],
+  },
+  normal: {
+    name: 'ノーマル', ball: '⭐', logo: '⭐', shot: '⭐', end: 'おしまい！', unit: 'せいかい', color: '#2b55b0',
+    ranks: [['みならい', '🌱'], ['がんばりや', '✏️'], ['ものしり', '📚'], ['はかせ', '🎓'], ['めいじん', '🏅'], ['たつじん', '🌟'], ['でんせつ', '👑']],
+    praise: [['せいかい！', '正解！'], ['せいかい！', '正解！'], ['すごい！', 'すごい！'], ['やったね！', 'やったね！'], ['てんさい！', '天才！'], ['ばっちり！', 'ばっちり！'], ['かんぺき！', 'かんぺき！'], ['その ちょうし！', 'その ちょうし！']],
+  },
+  cute: {
+    name: 'かわいい', ball: '💖', logo: '🎀', shot: '💖', end: 'おつかれさま！', unit: 'せいかい', color: '#d76fb5',
+    ranks: [['たね', '🌱'], ['つぼみ', '🌷'], ['おはな', '🌸'], ['ようせい', '🧚'], ['おひめさま', '👸'], ['じょおうさま', '👑'], ['ミラクルスター', '💫']],
+    praise: [['すてき！', 'すてき！'], ['せいかい！', '正解！'], ['キラキラ！', 'キラキラ！'], ['やったね！', 'やったね！'], ['すごい！', 'すごい！'], ['ばっちり！', 'ばっちり！'], ['かんぺき！', 'かんぺき！'], ['さすが！', 'さすが！']],
+  },
+};
+for (const k in SKINS) SKINS[k].RANKS = SKINS[k].ranks.map((x, i) => [RANK_AT[i], x[0], x[1]]);
+const SK = () => SKINS[(D && D.settings && D.settings.skin) || 'soccer'] || SKINS.soccer;
 
 const QUESTIONS = 7;  // 1かいの もんだい数
 const PASS = 5;       // シールが もらえる せいかい数（7もん ちゅう）
@@ -1128,7 +1182,6 @@ const MISS_PER_SET = 2;  // まちがえた もんだいを 1かいに いれる
 const MISS_KEEP = 20;    // おぼえておく まちがえた もんだいの 数
 
 // [がめんの もじ, よみあげ]
-const PRAISE = [['ゴール！', 'ゴール！'], ['ゴール！', 'ゴール！'], ['ナイスシュート！', 'ナイスシュート！'], ['すごい！', 'すごい！'], ['やったね！', 'やったね！'], ['せいかい！', '正解！'], ['てんさい！', '天才！'], ['ばっちり！', 'ばっちり！']];
 const RETRY = ['おしい！ もう一回', 'ちがうよ。もう一回 けいさんしてみよう', 'おしい！ メモを みなおしてみよう'];
 
 // ---------- 保存（5さい向けとは べつの きろく） ----------
@@ -1138,7 +1191,7 @@ function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, gameGate: true, yinput: 'kb' },
+    settings: { skin: 'soccer', speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, gameGate: true, yinput: 'kb' },
     coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
@@ -1218,6 +1271,7 @@ function bkImport() {
   if (!confirm(`この記録を読み込みますか？\n\n読み込む記録：${bkSummary(obj.data)}${when ? `（${when} に書き出し）` : ''}\n今の記録：${bkSummary(D)}\n\n今の記録は、読み込んだ記録に置きかわります。`)) return;
   try { localStorage.setItem(KEY, JSON.stringify(obj.data)); } catch (e) { bkNote('⚠️ 保存できませんでした。'); return; }
   load();
+  applySkin();
   renderSettings();
   $('#bkText').value = '';
   bkNote(`✅ 読み込みました（${bkSummary(D)}）。トップに もどって シールを 確かめてください。`);
@@ -1285,6 +1339,7 @@ const SFX = (() => {
     if (ac.state !== 'running') ac.resume();
   }
   const on = () => ac && S().sfx;
+  const soc = () => S().skin === 'soccer';
   const now = () => ac.currentTime + 0.02;
   function env(g, t, vol, a, dur) {
     g.gain.setValueAtTime(0.0001, t);
@@ -1355,19 +1410,27 @@ const SFX = (() => {
     unlock,
     tap() { if (on()) tone(740, now(), 0.07, { vol: 0.12 }); },
     pop(n) { if (on()) tone(520 + Math.min(n, 20) * 40, now(), 0.12, { type: 'triangle', vol: 0.22 }); },
-    start() { if (on()) whistle(now(), 0.3); },
+    start() {
+      if (!on()) return;
+      if (soc()) { whistle(now(), 0.3); return; }
+      const t = now();
+      [784, 1046.5].forEach((f, i) => tone(f, t + i * 0.1, 0.22, { type: 'triangle', vol: 0.16 }));
+    },
     goal(combo) {
       if (!on()) return;
       const t = now();
-      tone(140, t, 0.13, { vol: 0.5, f2: 45 });                          // キック
-      noise(t + 0.3, 0.3, { type: 'highpass', freq: 2500, vol: 0.12 });  // ネット
+      const sc = soc();
+      if (sc) {
+        tone(140, t, 0.13, { vol: 0.5, f2: 45 });                          // キック
+        noise(t + 0.3, 0.3, { type: 'highpass', freq: 2500, vol: 0.12 });  // ネット
+      } else sparkleAt(t + 0.3, 6);
       const notes = combo >= 5 ? [1568, 1976, 2349, 3136] : [1318.5, 1568, 2093];
       notes.forEach((f, i) => {
         tone(f, t + 0.32 + i * 0.07, 0.4, { type: 'triangle', vol: 0.2 });
         tone(f * 2, t + 0.32 + i * 0.07, 0.25, { vol: 0.05 });
       });
-      crowd(t + 0.3, 1.2, 0.16);
-      claps(t + 0.35, 1.0, combo >= 3 ? 45 : 28);
+      if (sc) crowd(t + 0.3, 1.2, 0.16);
+      claps(t + 0.35, 1.0, sc ? (combo >= 3 ? 45 : 28) : (combo >= 3 ? 22 : 12));
     },
     wrong() {
       if (!on()) return;
@@ -1378,7 +1441,9 @@ const SFX = (() => {
     fanfare() {
       if (!on()) return;
       const t = now();
-      whistle(t, 0.13); whistle(t + 0.2, 0.13); whistle(t + 0.4, 0.55);  // しあい しゅうりょう
+      const sc = soc();
+      if (sc) { whistle(t, 0.13); whistle(t + 0.2, 0.13); whistle(t + 0.4, 0.55); }  // しあい しゅうりょう
+      else [1046.5, 1318.5, 1568, 2093].forEach((f, i) => tone(f, t + 0.3 + i * 0.12, 0.3, { type: 'triangle', vol: 0.14 }));
       const s = t + 1.05;
       for (let i = 0; i < 12; i++) noise(s - 0.5 + i * 0.04, 0.06, { freq: 180, q: 0.7, vol: 0.2 + i * 0.015 }); // ドラムロール
       tone(80, s, 0.4, { vol: 0.45, f2: 40 });
@@ -1386,8 +1451,8 @@ const SFX = (() => {
       [[392, 0, 0.12], [523.25, 0.13, 0.12], [659.25, 0.26, 0.12], [783.99, 0.39, 0.32], [659.25, 0.74, 0.14], [783.99, 0.9, 0.9]]
         .forEach(([f, d, l]) => brass(f, s + d, l));
       [523.25, 659.25, 783.99, 1046.5].forEach(f => brass(f, s + 0.9, 1.2, 0.06));
-      crowd(s, 3.8, 0.2);
-      claps(s + 0.2, 3.5, 150);
+      if (sc) crowd(s, 3.8, 0.2);
+      claps(s + 0.2, 3.5, sc ? 150 : 70);
       sparkleAt(s + 1.0, 12);
     },
     rankup() {
@@ -1576,6 +1641,7 @@ function stickerHTML(s, size = '') {
   return `<span class="stk ${size}${s.k ? ' shiny' : ''}" style="--bg:${d.bg}"><span class="em">${d.e}</span></span>`;
 }
 function rankOf(n) {
+  const RANKS = SK().RANKS;
   let r = RANKS[0], next = null;
   for (const x of RANKS) { if (n >= x[0]) r = x; else { next = x; break; } }
   return { r, next };
@@ -1595,6 +1661,16 @@ function awardSticker(ok, t, lv) {
   if (lv) s.lv = lv;
   D.stickers.push(s);
   return { s, isNew: !owned.has(s.d), rankUp: rankOf(D.stickers.length).r !== before };
+}
+
+// ---------- デザインテーマ ----------
+function applySkin() {
+  if (!SKINS[S().skin]) S().skin = 'soccer';
+  const sk = SK();
+  document.body.dataset.skin = S().skin;
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = sk.color;
+  $$('[data-ic]').forEach(el => { el.textContent = sk[el.dataset.ic]; });
 }
 
 // ---------- ホーム ----------
@@ -1683,7 +1759,7 @@ function setAns(v) {
 function setOkKey(next) {
   const k = $('#okKey');
   k.classList.toggle('next', next);
-  k.textContent = next ? 'つぎへ ▶' : '⚽ けってい';
+  k.textContent = next ? 'つぎへ ▶' : `${SK().ball} けってい`;
 }
 
 function startQuiz() {
@@ -1719,7 +1795,7 @@ function renderProgress() {
   $('#pg').innerHTML = Q.list.map((q, i) => {
     const r = Q.results[i];
     const cls = r === true ? 'ok' : r === false ? 'ng' : i === Q.idx ? 'cur' : '';
-    return `<i class="${cls}">${r === true ? '⚽' : ''}</i>`;
+    return `<i class="${cls}">${r === true ? SK().ball : ''}</i>`;
   }).join('');
   const c = $('#combo');
   c.textContent = Q.combo >= 2 ? `🔥 ${Q.combo}れんぞく` : '';
@@ -1757,7 +1833,7 @@ async function onCorrect() {
   ansEl.classList.remove('ng', 'typing');
   ansEl.classList.add('ok');
   renderProgress();
-  const [txt, say] = pick(PRAISE);
+  const [txt, say] = pick(SK().praise);
   showGoal(txt, `${q.a} × ${q.b} = ${q.ans}`, Q.combo >= 5);
   SFX.goal(Q.combo);
   Q.canSkip = true;
@@ -1822,7 +1898,7 @@ function showGoal(text, sub, big) {
   g.classList.remove('show'); void g.offsetWidth; g.classList.add('show');
   setTimeout(() => {
     if (!g.classList.contains('show')) return;  // もう つぎの もんだいへ すすんだ
-    const r = $('#goalNet').getBoundingClientRect();
+    const r = $('#goal .goal-box').getBoundingClientRect();
     FX.confetti(r.left + r.width / 2, r.top + r.height * 0.55, big ? 150 : 80, big ? 16 : 13, -Math.PI / 2, Math.PI * 1.3);
   }, 430);
 }
@@ -1889,7 +1965,7 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
 }
 
 function showResult(ok, results, missedHTML) {
-  $('#resBalls').innerHTML = results.map(r => `<i class="${r ? 'ok' : 'ng'}">${r ? '⚽' : ''}</i>`).join('');
+  $('#resBalls').innerHTML = results.map(r => `<i class="${r ? 'ok' : 'ng'}">${r ? SK().ball : ''}</i>`).join('');
   $('#resOk').textContent = ok;
   $('#resTotal').textContent = results.length;
   const ns = Game.noSticker;
@@ -2115,7 +2191,7 @@ function kSetOk(next) {
   const b = $('#kok');
   b.classList.toggle('next', next);
   b.classList.remove('busy');
-  b.textContent = next ? 'つぎへ ▶' : '⚽ けってい';
+  b.textContent = next ? 'つぎへ ▶' : `${SK().ball} けってい`;
   $('#kgive').hidden = next;
 }
 function kQuestionSpeech(q) {
@@ -2369,7 +2445,7 @@ function kRenderProgress() {
   $('#kpg').innerHTML = K.list.map((q, i) => {
     const r = K.results[i];
     const cls = r === true ? 'ok' : r === false ? 'ng' : i === K.idx ? 'cur' : '';
-    return `<i class="${cls}">${r === true ? '⚽' : ''}</i>`;
+    return `<i class="${cls}">${r === true ? SK().ball : ''}</i>`;
   }).join('');
   const c = $('#kcombo');
   c.textContent = K.combo >= 2 ? `🔥 ${K.combo}れんぞく` : '';
@@ -2474,7 +2550,7 @@ async function kCorrect() {
   if (K.mode === 'choice') { K.sel = K.choices.indexOf(q.a); kRenderChoices(); $$('#kchoices .kch')[K.sel].classList.add('right'); }
   if (K.mode === 'kana') $('#kyAns').classList.add('ok');
   kRenderProgress();
-  const [txt, say] = pick(PRAISE);
+  const [txt, say] = pick(SK().praise);
   const p = kparts(q);
   showGoal(txt, K.kind === 'yomi' ? `${p.mid}（${q.r[0]}）` : `${q.a}（${p.mid}）`, K.combo >= 5);
   SFX.goal(K.combo);
@@ -3148,7 +3224,7 @@ document.addEventListener('click', e => {
     case 'sayRank': sayRank(); break;
     case 'rankInfo': {
       const n = D.stickers.length, { r, next } = rankOf(n);
-      const rows = RANKS.map(x => {
+      const rows = SK().RANKS.map(x => {
         const state = x === r ? 'now' : n >= x[0] ? 'got' : 'lock';
         const right = state === 'now' ? '<em>いま ここ！</em>' : state === 'got' ? '<b class="ok">✓</b>' : `<span class="left">あと ${x[0] - n}まい</span>`;
         const need = x[0] ? `シール ${x[0]}まい で なれる` : 'さいしょの ランク';
@@ -3160,7 +3236,7 @@ document.addEventListener('click', e => {
     }
     case 'settings': openGate(); break;
     case 'gateKey': gateKey(b.dataset.k); break;
-    case 'testVoice': Speech.speak('347 かける 28 わ？ ゴール！ 347 かける 28 わ 9716'); break;
+    case 'testVoice': Speech.speak(`347 かける 28 わ？ ${SK().praise[0][1]} 347 かける 28 わ 9716`); break;
     case 'bkExport': bkExport(); break;
     case 'bkFile': bkFile(); break;
     case 'bkPaste': bkPaste(); break;
@@ -3185,6 +3261,7 @@ document.addEventListener('input', e => {
   S()[k] = inp.type === 'checkbox' ? inp.checked : inp.type === 'range' ? parseFloat(inp.value) : inp.value;
   if (k === 'rate') $('#rateOut').textContent = S().rate.toFixed(1);
   if (k === 'voice') Speech.choose();
+  if (k === 'skin') { applySkin(); renderHome(); renderSettings(); }
   save();
 });
 
@@ -3251,6 +3328,7 @@ document.addEventListener('visibilitychange', () => {
 
 // ---------- はじめる ----------
 load();
+applySkin();
 fitViewport();
 renderKanaKeyboard();
 renderHome();
