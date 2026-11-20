@@ -121,10 +121,10 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
   box-shadow:inset 0 -8px 0 rgba(0,0,0,.15),0 5px 0 rgba(0,0,0,.15);
 }
 .card-name{font-size:clamp(30px,min(4.6vw,6vh),54px)}
-.card-types{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.ttag{--c:var(--t22);display:flex;flex-direction:column;align-items:center;border:3px solid var(--c);border-radius:18px;padding:6px 18px;font-size:clamp(18px,2.2vw,24px);color:var(--c)}
-.ttag small{font-size:.75em;color:var(--mute)}
-.ttag.t32{--c:var(--t32)}
+.card-ex{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:clamp(18px,2.2vw,24px);color:var(--ink);text-align:center}
+.card-ex small{font-size:.8em;color:var(--mute);font-variant-numeric:tabular-nums}
+.card-go{background:var(--mul);color:#fff;font-size:clamp(24px,3.2vw,36px);padding:.3em 1.4em;border-radius:999px;box-shadow:0 5px 0 #6f2fb8;text-shadow:0 2px 0 rgba(0,0,0,.2)}
+.card:active .card-go{box-shadow:0 2px 0 #6f2fb8;transform:translateY(3px)}
 .card-rule{font-size:clamp(15px,1.8vw,20px);color:var(--mute)}
 .card-cnt{display:flex;align-items:baseline;gap:.15em;font-size:clamp(18px,2.2vw,24px);background:#fff4c7;border:3px solid var(--yellow);color:#7a5600;padding:3px 16px;border-radius:999px;white-space:nowrap}
 .card-cnt b{font-size:1.5em;color:#e08a00}
@@ -404,11 +404,9 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button class="card" data-act="start">
         <span class="card-op">×</span>
         <span class="card-name">かけざん チャレンジ</span>
-        <span class="card-types">
-          <span class="ttag">2けた × 2けた<small>れい：47 × 36</small></span>
-          <span class="ttag t32">3けた × 2けた<small>れい：258 × 43</small></span>
-        </span>
-        <span class="card-rule">10もん ちゅう 7もん いじょう せいかいで シール ゲット！</span>
+        <span class="card-ex">2けた × 2けた と 3けた × 2けた が まざって でるよ<small>れい：47 × 36 ・ 258 × 43</small></span>
+        <span class="card-go">▶ スタート</span>
+        <span class="card-rule">7もん ちゅう 5もん いじょう せいかいで シール ゲット！</span>
         <span class="card-cnt">シール<b id="cardCnt">0</b>まい</span>
         <span class="card-mini" id="cardMini"></span>
       </button>
@@ -497,9 +495,9 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="set-card">
         <h3>💡 使い方のヒント</h3>
         <p class="note">・Safari の共有ボタン →「ホーム画面に追加」で、アプリのように全画面で使えます。記録（シール）もこの iPad の中に保存され、消えにくくなります。<br>
-        ・1回10問で、「2けた×2けた」と「3けた×2けた」が5問ずつ、ばらばらの順に出ます。<br>
+        ・1回7問で、「2けた×2けた」と「3けた×2けた」が3問と4問（どちらが4問かは毎回ちがいます）、ばらばらの順に出ます。<br>
         ・数字ボタンを押しただけでは答えになりません。「けってい」を押すと答え合わせをします。<br>
-        ・10問中7問以上を1回目で正解するとシールがもらえます（2回目で正解した問題は数えません）。<br>
+        ・7問中5問以上を1回目で正解するとシールがもらえます（2回目で正解した問題は数えません）。<br>
         ・まちがえた問題は覚えておいて、次の回に出やすくなります（1回につき2問まで）。</p>
       </div>
     </div>
@@ -547,7 +545,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     <div class="res-card">
       <div class="res-top">しあい しゅうりょう！</div>
       <div class="res-balls" id="resBalls"></div>
-      <div class="res-score"><b id="resOk">0</b> / <span id="resTotal">10</span> ゴール</div>
+      <div class="res-score"><b id="resOk">0</b> / <span id="resTotal">7</span> ゴール</div>
       <div class="res-msg" id="resMsg"></div>
       <div class="res-miss" id="resMiss"></div>
       <div class="res-btns">
@@ -609,8 +607,8 @@ const SHINY_RATE = 0.12;
 // ランク [ひつような まいすう, なまえ, アイコン]
 const RANKS = [[0, 'ルーキー', '🌱'], [15, 'レギュラー', '⚽'], [40, 'エース', '🔥'], [80, 'キャプテン', '🎖️'], [130, 'スター', '⭐'], [200, 'レジェンド', '👑'], [300, 'ワールドクラス', '🌏']];
 
-const QUESTIONS = 10;  // 1かいの もんだい数
-const PASS = 7;        // シールが もらえる せいかい数（10もん ちゅう）
+const QUESTIONS = 7;  // 1かいの もんだい数
+const PASS = 5;       // シールが もらえる せいかい数（7もん ちゅう）
 const MAX_DIGITS = 5;  // こたえの けたすう（999 × 99 = 98901）
 const MISS_PER_SET = 2;  // まちがえた もんだいを 1かいに いれる 数
 const MISS_KEEP = 20;    // おぼえておく まちがえた もんだいの 数
@@ -994,7 +992,7 @@ function awardSticker(ok) {
   let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
   for (; i < DESIGNS.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
   const before = rankOf(D.stickers.length).r;
-  const s = { d: DESIGNS[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok };
+  const s = { d: DESIGNS[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QUESTIONS };
   D.stickers.push(s);
   return { s, isNew: !owned.has(s.d), rankUp: rankOf(D.stickers.length).r !== before };
 }
@@ -1031,8 +1029,10 @@ function makeQuestions() {
     out.push({ a: m.a, b: m.b, ans: m.a * m.b, again: true });
     used.add(qkey(m));
   }
-  // のこりは 2けた×2けた と 3けた×2けた が 5もんずつに なるように
-  const need = { t22: QUESTIONS / 2, t32: QUESTIONS / 2 };
+  // のこりは 2けた×2けた と 3けた×2けた が はんぶんずつに なるように（7もんなら 3もん と 4もん）
+  const half = Math.floor(QUESTIONS / 2), big = Math.random() < 0.5 ? 't22' : 't32';
+  const need = { t22: half, t32: half };
+  need[big] += QUESTIONS - half * 2;
   out.forEach(q => need[typeOf(q)]--);
   const kinds = [];
   for (const t of ['t22', 't32']) for (let i = 0; i < Math.max(0, need[t]); i++) kinds.push(t);
@@ -1146,7 +1146,7 @@ async function onCorrect() {
   SFX.goal(Q.combo);
   Q.canSkip = true;
   let line = `${say} ${answerText(q)}`;
-  if ([3, 5, 7, 10].includes(Q.combo)) line += `。 ${Q.combo}れんぞく！`;
+  if ([3, 5, 7].includes(Q.combo)) line += `。 ${Q.combo}れんぞく！`;
   await Promise.all([Speech.speak(line), sleep(1300)]);
   if (tk === Q.token) nextQuestion();
 }
@@ -1417,7 +1417,7 @@ document.addEventListener('click', e => {
     case 'stk': {
       const s = D.stickers[+b.dataset.sid];
       const dt = new Date(s.at);
-      stickerDetail(s, `${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ 10もん ちゅう ${s.ok}もん せいかい` : ''));
+      stickerDetail(s, `${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
       break;
     }
     case 'zukanItem': {
