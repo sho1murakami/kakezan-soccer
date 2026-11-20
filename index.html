@@ -67,7 +67,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 
 /* ---------- ホーム ---------- */
 .summary{
-  display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;
+  display:grid;grid-template-columns:auto 1fr auto auto;gap:16px;align-items:center;
   margin:6px 20px 16px;padding:14px 18px;color:#fff;
   background:linear-gradient(#1d3670,var(--navy));border:4px solid var(--navy-d);border-radius:24px;
   box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 8px 0 rgba(0,0,0,.25);
@@ -100,6 +100,23 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 .rank-bar{height:14px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
 .rank-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe066,#ffb300);border-radius:99px;transition:width .6s}
 .rank-next{font-size:clamp(13px,1.6vw,17px);color:#d6e2ff}
+.coinbtn{position:relative;display:flex;flex-direction:column;align-items:center;background:#fff4c7;color:var(--ink);padding:6px 16px;border-radius:20px;box-shadow:0 6px 0 #d9b94a;font-size:clamp(16px,2vw,22px);white-space:nowrap;border:3px solid #ffd23f}
+.coinbtn .coin-ico{font-size:1.5em;line-height:1.1}
+.coinbtn .coin-num b{font-size:1.4em;color:#c27c00;margin-right:.1em}
+.coinbtn small{font-size:.66em;color:#7a5600}
+.coinbtn.ready{background:linear-gradient(#fff7c2,#ffd23f);animation:beat 1.2s infinite}
+.coinbtn.ready small{color:#b02238;font-weight:900}
+.coinbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #d9b94a}
+.card-cnt.coin{background:#fff4c7;font-size:clamp(14px,1.6vw,20px)}
+.gcoin{color:#c27c00 !important}
+.coin-get{display:flex;align-items:center;gap:6px;font-size:clamp(22px,2.8vw,30px);color:#c27c00}
+.coin-get .coin{font-style:normal;font-size:1.4em;animation:popIn .5s cubic-bezier(.2,1.5,.4,1) both}
+.coin-get .coin:nth-child(2){animation-delay:.15s}.coin-get .coin:nth-child(3){animation-delay:.3s}
+.coin-meter{display:flex;flex-direction:column;align-items:center;gap:6px}
+.coin-dots{display:flex;gap:6px}
+.coin-dots i{width:clamp(20px,2.6vw,28px);aspect-ratio:1;border-radius:50%;background:#eef1f6;border:3px dashed #c4ccd9}
+.coin-dots i.on{background:radial-gradient(circle at 35% 30%,#fff3b0,#ffc83d 55%,#d99a00);border:3px solid #b07a00}
+.coin-meter small{font-size:clamp(15px,1.8vw,19px);color:var(--mute)}
 .bookbtn{display:flex;flex-direction:column;align-items:center;background:var(--yellow);color:var(--ink);padding:8px 22px;border-radius:20px;box-shadow:0 6px 0 #c99a00;font-size:clamp(18px,2.2vw,24px);white-space:nowrap}
 .bookbtn span{font-size:1.7em;line-height:1.15}
 .bookbtn small{font-size:.68em;color:#7a5600}
@@ -492,8 +509,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
 
 /* ---------- たて がめん ---------- */
 @media (orientation:portrait){
-  .summary{grid-template-columns:auto 1fr;grid-template-areas:"t b" "r r"}
-  .total{grid-area:t}.bookbtn{grid-area:b;justify-self:end}.rank-wrap{grid-area:r}
+  .summary{grid-template-columns:auto 1fr auto;grid-template-areas:"t c b" "r r r"}
+  .total{grid-area:t}.coinbtn{grid-area:c;justify-self:end}.bookbtn{grid-area:b;justify-self:end}.rank-wrap{grid-area:r}
   .qtop{--eq:clamp(30px,min(8.4vw,calc(var(--vh)*.08)),84px)}
   .qmain{grid-template:"top" auto "memo" minmax(0,1fr) "pad" auto / minmax(0,1fr)}
   .pad{width:min(100%,680px);justify-self:center;grid-template-columns:repeat(6,1fr)}
@@ -563,6 +580,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         </div>
         <button class="rank-info" data-act="rankInfo" aria-label="ランクの いちらん">i</button>
       </div>
+      <button class="coinbtn" data-act="exchange" id="coinBtn"><span class="coin-ico">🪙</span><span class="coin-num"><b id="coinNum">0</b>まい</span><small id="coinTxt">あと 10まいで こうかん</small></button>
       <button class="bookbtn" data-act="book"><span>📒</span>シールちょう<small id="todayTxt">きょう 0まい</small></button>
     </div>
     <div class="cards">
@@ -587,19 +605,17 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <span class="card-name">めいろ</span>
         <span class="card-ex">すうじの じゅんに<small>ぜんぶの マスを とおろう</small></span>
         <span class="card-go">▶ あそぶ</span>
-        <span class="card-cnt">シール<b data-cnt="meiro">0</b>まい</span>
-        <span class="card-mini" data-mini="meiro"></span>
+        <span class="card-cnt coin">🪙 クリアで コイン</span>
       </button>
       <button class="card sd" data-act="gsel" data-g="sudoku">
         <span class="card-op"><svg viewBox="0 0 24 24" width="64%" height="64%" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M12 3v18M3 9h18M3 15h18" stroke="#fff" stroke-width="1.6"/><path d="M7.5 3v18M16.5 3v18" stroke="#fff" stroke-width=".8" opacity=".7"/></svg></span>
         <span class="card-name">すうどく</span>
         <span class="card-ex">1〜6を 1つずつ<small>たて・よこ・わく</small></span>
         <span class="card-go">▶ あそぶ</span>
-        <span class="card-cnt">シール<b data-cnt="sudoku">0</b>まい</span>
-        <span class="card-mini" data-mini="sudoku"></span>
+        <span class="card-cnt coin">🪙 クリアで コイン</span>
       </button>
     </div>
-    <p class="home-rule">べんきょうは 7もん ちゅう 5もん いじょう せいかい、ゲームは クリアで シール ゲット！</p>
+    <p class="home-rule">べんきょうは 7もん ちゅう 5もん いじょう せいかいで シール！ ゲームは クリアで コイン（10まいで シールと こうかん）！</p>
   </section>
 
   <!-- もんだい -->
@@ -749,8 +765,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button data-act="bookTab" data-f="all">ぜんぶ<b></b></button>
       <button data-act="bookTab" data-f="mul">かけざん<b></b></button>
       <button data-act="bookTab" data-f="kanji">かんじ<b></b></button>
-      <button data-act="bookTab" data-f="meiro">めいろ<b></b></button>
-      <button data-act="bookTab" data-f="sudoku">すうどく<b></b></button>
+      <button data-act="bookTab" data-f="coin">🪙 こうかん<b></b></button>
       <button data-act="bookTab" data-f="zukan">🔍 ずかん</button>
     </div>
     <div class="bookbody" id="bookBody"></div>
@@ -780,7 +795,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🎮 ゲーム（めいろ・すうどく）</h3>
-        <label class="row"><span class="grow">ゲームをクリアしたらシールをもらえる<small>オフにすると、ゲームはシールなしで遊べます（勉強のシールだけになります）。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameSticker"><i></i></span></label>
+        <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>やさしい1枚・ふつう2枚・むずかしい3枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
+        <p class="note" id="coinNote"></p>
       </div>
       <div class="set-card">
         <h3>漢 かんじテスト</h3>
@@ -805,7 +821,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・かきとりは、答えたあとに正しい書き順をアニメーションで表示します（書き順のデータは KanjiVG〔© Ulrich Apel, CC BY-SA 3.0, kanjivg.tagaini.net〕をインターネットから読み込みます）。<br>
         ・「チャレンジ1〜4」は、小学校で習わない常用漢字（中学で習う1110字）を、新聞でよく使われる順に4つに分けたものです（1がよく使う字、4があまり使わない字）。かきとり・よみとも、1110字がすべてどれかの問題に入っています。難関校の入試で出やすい言葉を優先していますが、実際の過去問と照らし合わせたものではありません。<br>
         ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。<br>
-        ・「めいろ」「すうどく」は、遊ぶたびに新しい問題を自動で作ります（答えは1通りとは限りませんが、ルールどおりなら正解です。すうどくは答えが1通りになるように作っています）。クリアでシールがもらえます（上の設定でオフにできます）。</p>
+        ・「めいろ」「すうどく」は、遊ぶたびに新しい問題を自動で作ります（答えは1通りとは限りませんが、ルールどおりなら正解です。すうどくは答えが1通りになるように作っています）。クリアでコインがもらえ、コイン10枚でシール1枚（ランダム）と交換できます。交換はトップ画面の「🪙」ボタンを押したときだけ行います。</p>
       </div>
     </div>
   </section>
@@ -855,6 +871,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="win-rank" id="winRank"></div>
       <div class="win-btns">
         <button class="bigbtn yellow" data-act="again">⚽ もういっかい</button>
+        <button class="bigbtn yellow" data-act="exchange" hidden>🎁 もう1まい こうかん</button>
         <button class="bigbtn" data-act="bookFromWin">📒 シールちょう</button>
         <button class="bigbtn" data-act="home">🏠 トップ</button>
       </div>
@@ -946,7 +963,8 @@ function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameSticker: true },
+    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true },
+    coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
 let D = defaults();
@@ -964,6 +982,8 @@ function load() {
       kmiss: d.kmiss && typeof d.kmiss === 'object' ? d.kmiss : {},
       kstats: d.kstats && typeof d.kstats === 'object' ? d.kstats : {},
       gstats: d.gstats && typeof d.gstats === 'object' ? d.gstats : {},
+      coins: Number.isFinite(d.coins) ? d.coins : 0,
+      coinsTotal: Number.isFinite(d.coinsTotal) ? d.coinsTotal : 0,
     };
   } catch (e) { D = defaults(); }
 }
@@ -1352,7 +1372,11 @@ function renderHome() {
   $('#rankNext').textContent = next ? `あと ${next[0] - n}まいで ${next[1]}` : 'さいこう ランク！';
   $('#rankBar').style.width = next ? ((n - r[0]) / (next[0] - r[0]) * 100) + '%' : '100%';
   $('#todayTxt').textContent = `きょう ${st.filter(s => isToday(s.at)).length}まい`;
-  for (const t of ['mul', 'kanji', 'meiro', 'sudoku']) {
+  const cb = $('#coinBtn'), can = D.coins >= COIN_RATE;
+  $('#coinNum').textContent = D.coins;
+  $('#coinTxt').textContent = can ? '🎁 シールと こうかん！' : `あと ${COIN_RATE - D.coins}まいで こうかん`;
+  cb.classList.toggle('ready', can);
+  for (const t of ['mul', 'kanji']) {
     $(`[data-cnt="${t}"]`).textContent = themeCount(t);
     $(`[data-mini="${t}"]`).innerHTML = st.filter(s => themeOf(s) === t).slice(-8).reverse().map(s => stickerHTML(s, 'xs')).join('');
   }
@@ -1597,6 +1621,8 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   const rk = rankOf(n).r;
   const perfect = ok === total;
   $('#winTop').textContent = top || (perfect ? 'ぜんもん せいかい！' : `${total}もん ちゅう ${ok}もん せいかい！`);
+  $('#win [data-act="again"]').hidden = Game.kind === 'coin';
+  $('#win [data-act="exchange"]').hidden = !(Game.kind === 'coin' && D.coins >= COIN_RATE);
   $('#winStk').innerHTML = stickerHTML(s, 'xxl');
   $('#winName').innerHTML = `${d.name}${s.k ? ' <span class="kira">✨キラキラ✨</span>' : ''}${isNew ? ' <span class="newb">NEW!</span>' : ''}`;
   $('#winSub').textContent = `シール ${n}まいめ ・ きょう ${D.stickers.filter(x => isToday(x.at)).length}まい`;
@@ -1607,7 +1633,7 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   SFX.fanfare();
   setTimeout(() => SFX.sparkle(), 1300);
   if (rankUp) setTimeout(() => SFX.rankup(), 2500);
-  const line = `やったー！ ${top ? 'クリア！' : `${perfect ? '全問' : `${ok}問`} 正解！`} ${d.name}の シール ゲット！${s.k ? ' キラキラだよ！' : ''}`
+  const line = `やったー！ ${Game.kind === 'coin' ? 'こうかん！' : top ? 'クリア！' : `${perfect ? '全問' : `${ok}問`} 正解！`} ${d.name}の シール ゲット！${s.k ? ' キラキラだよ！' : ''}`
     + (rankUp ? ` ランクアップ！ ${rk[1]}に なったよ！` : '');
   setTimeout(() => Speech.speak(line), 1000);
   setTimeout(() => w.classList.add('ready'), 2200);
@@ -2092,14 +2118,15 @@ function kFinish() {
 
 // ---------- ゲーム（めいろ・すうどく） ----------
 const GAMES = {
-  meiro: { name: 'めいろ', lv: { 1: { name: 'やさしい', n: 5, k: 7, walls: 0 }, 2: { name: 'ふつう', n: 6, k: 9, walls: 3 }, 3: { name: 'むずかしい', n: 7, k: 10, walls: 6 } } },
-  sudoku: { name: 'すうどく', lv: { 1: { name: 'やさしい', givens: 18 }, 2: { name: 'ふつう', givens: 14 }, 3: { name: 'むずかしい', givens: 11 } } },
+  meiro: { name: 'めいろ', lv: { 1: { name: 'やさしい', n: 5, k: 7, walls: 0, coin: 1 }, 2: { name: 'ふつう', n: 6, k: 9, walls: 3, coin: 2 }, 3: { name: 'むずかしい', n: 7, k: 10, walls: 6, coin: 3 } } },
+  sudoku: { name: 'すうどく', lv: { 1: { name: 'やさしい', givens: 18, coin: 1 }, 2: { name: 'ふつう', givens: 14, coin: 2 }, 3: { name: 'むずかしい', givens: 11, coin: 3 } } },
 };
 const GAME_RULE = {
   meiro: '1 → 2 → 3 … の じゅんに、ぜんぶの マスを 1かいずつ とおって、さいごの すうじまで つなごう。ゆびで なぞってね。',
   sudoku: 'たて・よこ・ふとい わくの 中に、1〜6が 1つずつ はいるように すうじを 入れよう。',
 };
 const HINTS = 3;
+const COIN_RATE = 10;  // シール1まいに ひつような コイン
 const starsOf = c => c ? '⭐'.repeat(Math.min(c, 3)) + (c > 3 ? `+${c - 3}` : '') : '';
 const fmtTime = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const gstat = (g, lv) => { D.gstats = D.gstats || {}; const k = g + lv; return (D.gstats[k] = D.gstats[k] || { play: 0, clear: 0, best: 0 }); };
@@ -2110,8 +2137,8 @@ function renderGameSel(g) {
   const G = GAMES[g];
   $('#gselTitle').innerHTML = `${G.name}<small style="display:block;font-size:.6em;color:var(--yellow)">どの むずかしさに する？</small>`;
   $('#gsGrid').innerHTML = [1, 2, 3].map(lv => {
-    const L = G.lv[lv], st = gstat(g, lv), c = D.stickers.filter(s => themeOf(s) === g && s.lv === lv).length;
-    return `<button class="lvb gsb ${g}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${L.name}</b><small>${gameDesc(g, L)}</small><span class="gbest">${st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em>${starsOf(c)}</em></button>`;
+    const L = G.lv[lv], st = gstat(g, lv);
+    return `<button class="lvb gsb ${g}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${L.name}</b><small>${gameDesc(g, L)}</small><span class="gbest">${st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em class="gcoin">クリアで 🪙 ${L.coin}まい</em></button>`;
   }).join('');
   $('#gsNote').textContent = GAME_RULE[g];
 }
@@ -2153,19 +2180,49 @@ function gameClear() {
   const best = !st.best || Gm.sec < st.best;
   if (best) st.best = Gm.sec;
   const top = `クリア！ タイム ${fmtTime(Gm.sec)}${best ? '（ベスト きろく！）' : ''}`;
+  const coin = S().gameCoin !== false ? GAMES[g].lv[lv].coin : 0;
+  D.coins += coin;
+  D.coinsTotal += coin;
+  st.coins = (st.coins || 0) + coin;
+  save();
   setTimeout(() => {
-    if (S().gameSticker !== false) {
-      const res = awardSticker(null, g, lv);
-      save();
-      showWin(res, null, null, top);
-    } else {
-      save();
-      SFX.cheer();
-      FX.confetti(innerWidth / 2, innerHeight * 0.55, 90, 14);
-      openModal(`<div class="lock-ico">🎉</div><p class="mq">${top}</p><div class="mbtns"><button class="bigbtn yellow" data-act="again">もういっかい</button><button class="bigbtn" data-act="home">🏠 トップ</button></div>`);
-      Speech.speak('クリア！ すごいね！');
-    }
+    SFX.cheer();
+    FX.confetti(innerWidth / 2, innerHeight * 0.55, 90, 14);
+    const can = D.coins >= COIN_RATE;
+    openModal(`<div class="lock-ico">🎉</div><p class="mq">${top}</p>
+      ${coin ? `<div class="coin-get">${'<i class="coin">🪙</i>'.repeat(coin)}<b>コイン +${coin}まい ゲット！</b></div>${coinMeter()}` : ''}
+      <div class="mbtns">${can ? '<button class="bigbtn yellow" data-act="exchange">🎁 シールと こうかん</button>' : ''}<button class="bigbtn${can ? '' : ' yellow'}" data-act="again">もういっかい</button><button class="bigbtn" data-act="home">🏠 トップ</button></div>`);
+    Speech.speak(coin ? `クリア！ コインを ${coin}まい ゲット！${can ? ' シールと こうかん できるよ！' : ''}` : 'クリア！ すごいね！');
   }, 450);
+}
+// コインの メーター（10まいで シール1まい）
+function coinMeter() {
+  const have = D.coins, n = Math.min(have, COIN_RATE);
+  const dots = Array.from({ length: COIN_RATE }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('');
+  const msg = have >= COIN_RATE ? `いま ${have}まい。シールと こうかん できるよ！` : `いま ${have}まい。あと ${COIN_RATE - have}まいで シール1まいと こうかん`;
+  return `<div class="coin-meter"><span class="coin-dots">${dots}</span><small>${msg}</small></div>`;
+}
+// こうかん：じぶんで ボタンを おしたときだけ
+function openExchange() {
+  Speech.stop();
+  if (D.coins < COIN_RATE) {
+    openModal(`<div class="lock-ico">🪙</div><p class="mq">コインが まだ たりないよ</p>${coinMeter()}<p class="msub">めいろ・すうどくを クリアすると コインが もらえるよ<br>（やさしい 1まい・ふつう 2まい・むずかしい 3まい）</p><button class="bigbtn yellow" data-act="closeModal">とじる</button>`);
+    Speech.speak(`あと ${COIN_RATE - D.coins}まいで シールと こうかん できるよ`);
+    return;
+  }
+  openModal(`<div class="lock-ico">🎁</div><p class="mq">コイン ${COIN_RATE}まいで<br>シール 1まいと こうかん する？</p>${coinMeter()}<p class="msub">どの シールが でるかは おたのしみ！</p>
+    <div class="mbtns"><button class="bigbtn yellow" data-act="exchangeOk">🎁 こうかん する</button><button class="bigbtn" data-act="closeModal">やめる</button></div>`);
+  Speech.speak('コイン10まいで シールと こうかん する？');
+}
+function doExchange() {
+  if (D.coins < COIN_RATE) return closeModal();
+  D.coins -= COIN_RATE;
+  const res = awardSticker(null, 'coin', 0);
+  save();
+  closeModal();
+  Game = { kind: 'coin', lv: 0 };
+  showWin(res, null, null, 'コインと こうかん！');
+  renderHome();
 }
 
 // ===== めいろ =====
@@ -2438,6 +2495,8 @@ function sdHint() {
 }
 
 // ---------- シールちょう ----------
+// 「こうかん」タブには、まえに ゲームで もらった シールも いれる
+const inTab = (s, f) => f === 'all' || themeOf(s) === f || (f === 'coin' && ['meiro', 'sudoku'].includes(themeOf(s)));
 let bookFilter = 'all', bookNew = -1;
 function renderBook() {
   const st = D.stickers;
@@ -2446,7 +2505,7 @@ function renderBook() {
   $$('#bookTabs [data-f]').forEach(b => {
     const cnt = b.querySelector('b'), f = b.dataset.f;
     b.classList.toggle('on', f === bookFilter);
-    if (cnt) cnt.textContent = f === 'all' ? st.length : themeCount(f);
+    if (cnt) cnt.textContent = st.filter(x => inTab(x, f)).length;
   });
   const body = $('#bookBody');
   if (bookFilter === 'zukan') {
@@ -2457,7 +2516,7 @@ function renderBook() {
     }).join('') + '</div>';
     return;
   }
-  const list = st.map((s, i) => ({ s, i })).filter(x => bookFilter === 'all' || themeOf(x.s) === bookFilter);
+  const list = st.map((s, i) => ({ s, i })).filter(x => inTab(x.s, bookFilter));
   if (!list.length) {
     body.innerHTML = `<div class="empty">まだ シールが ないよ。<br>${QUESTIONS}もん ちゅう ${PASS}もん いじょう せいかいで シール ゲット！</div>`;
     return;
@@ -2537,11 +2596,12 @@ function renderSettings() {
         const miss = (D.kmiss[key] || []).slice().reverse().map(id => kind === 'yomi' ? (id.match(/〔(.+?)〕/) || [, id])[1] : id).join('、');
         return `<tr><th>${lvName(lv)} ${KMODES[kind].name}</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${miss || '−'}</td></tr>`;
       })).join('')}</tbody></table>
-    <table class="st"><thead><tr><th>ゲーム</th><th>あそんだ</th><th>クリア</th><th>シール</th><th>ベストタイム</th></tr></thead><tbody>${
+    <table class="st"><thead><tr><th>ゲーム</th><th>あそんだ</th><th>クリア</th><th>もらったコイン</th><th>ベストタイム</th></tr></thead><tbody>${
       ['meiro', 'sudoku'].flatMap(g => [1, 2, 3].map(lv => {
-        const st = gstat(g, lv), c = D.stickers.filter(x => themeOf(x) === g && x.lv === lv).length;
-        return `<tr><th>${GAMES[g].name} ${GAMES[g].lv[lv].name}</th><td>${st.play}回</td><td>${st.clear}回</td><td>${c}枚</td><td>${st.best ? fmtTime(st.best) : '−'}</td></tr>`;
+        const st = gstat(g, lv);
+        return `<tr><th>${GAMES[g].name} ${GAMES[g].lv[lv].name}</th><td>${st.play}回</td><td>${st.clear}回</td><td>${st.coins || 0}枚</td><td>${st.best ? fmtTime(st.best) : '−'}</td></tr>`;
       })).join('')}</tbody></table>`;
+  $('#coinNote').textContent = `いまのコイン：${D.coins}枚（これまでにもらったコイン：${D.coinsTotal}枚、交換したシール：${D.stickers.filter(x => themeOf(x) === 'coin').length}枚）`;
 }
 
 // ---------- できごと ----------
@@ -2554,9 +2614,11 @@ document.addEventListener('click', e => {
   if (act !== 'key') SFX.tap();
   switch (act) {
     case 'start': startQuiz(); break;
-    case 'again': if (Game.kind === 'kanji') startKanji(Game.lv, Game.m); else if (GAMES[Game.kind]) startGame(Game.kind, Game.lv); else startQuiz(); break;
+    case 'again': if (Game.kind === 'kanji') startKanji(Game.lv, Game.m); else if (GAMES[Game.kind]) startGame(Game.kind, Game.lv); else if (Game.kind === 'coin') goHome(); else startQuiz(); break;
     case 'gsel': closeOverlays(); Speech.stop(); renderGameSel(b.dataset.g); show('gsel'); break;
     case 'gstart': startGame(b.dataset.g, +b.dataset.lv); break;
+    case 'exchange': closeOverlays(); openExchange(); break;
+    case 'exchangeOk': doExchange(); break;
     case 'mzUndo': if (Gm.active && MZ.path.length) { MZ.path.pop(); mzAfter(); } break;
     case 'mzReset': if (Gm.active) { MZ.path = []; mzNote(''); mzRender(); } break;
     case 'mzHint': mzHint(); break;
@@ -2585,7 +2647,7 @@ document.addEventListener('click', e => {
       openModal('<p class="mq">とちゅうで やめる？</p><div class="mbtns"><button class="bigbtn yellow" data-act="resume">つづける</button><button class="bigbtn" data-act="home">やめる</button></div>');
       break;
     case 'resume': closeModal(); break;
-    case 'closeModal': closeModal(); Speech.stop(); break;
+    case 'closeModal': closeModal(); Speech.stop(); if (screen === 'home') renderHome(); break;
     case 'book': bookNew = -1; renderBook(); show('book'); break;
     case 'bookFromWin': closeOverlays(); Speech.stop(); bookFilter = 'all'; bookNew = D.stickers.length - 1; renderBook(); show('book'); break;
     case 'bookTab': bookFilter = b.dataset.f; bookNew = -1; renderBook(); break;
@@ -2593,7 +2655,7 @@ document.addEventListener('click', e => {
       const s = D.stickers[+b.dataset.sid];
       const dt = new Date(s.at);
       const t = themeOf(s);
-      const where = t === 'kanji' ? `かんじ ${lvName(s.lv)} ${KMODES[kmodeOf(s)].name}` : GAMES[t] ? `${GAMES[t].name} ${GAMES[t].lv[s.lv] ? GAMES[t].lv[s.lv].name : ''}` : 'かけざん';
+      const where = t === 'kanji' ? `かんじ ${lvName(s.lv)} ${KMODES[kmodeOf(s)].name}` : t === 'coin' ? 'コインと こうかん' : GAMES[t] ? `${GAMES[t].name} ${GAMES[t].lv[s.lv] ? GAMES[t].lv[s.lv].name : ''}` : 'かけざん';
       stickerDetail(s, `${where} ・ ${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
       break;
     }
