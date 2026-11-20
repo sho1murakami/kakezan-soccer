@@ -229,6 +229,37 @@ body.nomemo .pad{justify-self:center}
 .lvb span{font-size:clamp(20px,2.4vw,28px)}
 .lvb small{font-size:clamp(14px,1.6vw,18px);color:var(--mute);text-align:center;line-height:1.5}
 .lvb em{font-style:normal;font-size:18px;min-height:1.3em;color:#e0a000}
+.kpbar{position:relative;display:block;width:86%;height:12px;border-radius:99px;background:#e6eaf1;overflow:hidden;flex:none}
+.kpbar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.kpbar i.t{background:#ffd23f}
+.kpbar i.m{background:#22b45a}
+.lvb .lvpn{font-size:clamp(12px,1.35vw,16px);color:var(--ink)}
+.lvb .lvpn em,.kp-num em.m,.kp-all em.m{font-style:normal;color:#14904a;font-size:inherit;min-height:0}
+.kp-num em.t,.kp-all em.t{font-style:normal;color:#b07a00}
+.kp-btn{background:#fff;color:var(--ink);padding:6px 16px;border-radius:999px;font-size:clamp(15px,1.8vw,19px);box-shadow:0 3px 0 rgba(0,0,0,.2);margin-left:8px;text-shadow:none}
+#kprog{background:#eef3f8}
+#kprog .hd h2{color:var(--ink);text-shadow:none}
+.kp-top{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 20px 8px}
+#kprog .kmode-seg{background:#dfe6f0}
+#kprog .kmode-seg button{color:#5b6780}
+#kprog .kmode-seg button.on{background:#fff;color:var(--ink)}
+.kp-all{margin:0;font-size:clamp(17px,2vw,22px)}
+.kp-legend{margin:0;font-size:clamp(13px,1.5vw,16px);color:#5d6880;text-align:center;font-weight:500}
+.lg{display:inline-block;width:14px;height:14px;border-radius:4px;background:#e6eaf1;vertical-align:-2px;margin-right:4px}
+.lg.m{background:#22b45a}.lg.t{background:#ffd23f}
+.kp-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 20px 30px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:980px;margin:0 auto}
+.kp-item{background:#fff;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.kp-row{width:100%;display:grid;grid-template-columns:clamp(110px,14vw,150px) 1fr auto auto;align-items:center;gap:14px;padding:12px 18px;text-align:left}
+.kp-row b{font-size:clamp(18px,2.2vw,24px)}
+.kp-row .kpbar{width:100%;height:16px}
+.kp-num{display:flex;gap:12px;font-size:clamp(14px,1.6vw,18px);white-space:nowrap}
+.kp-num em{font-style:normal}
+.kp-open{color:var(--mute)}
+.kp-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:5px;padding:0 18px 16px}
+.kp-tiles span{display:grid;place-items:center;aspect-ratio:1;border-radius:8px;background:#eef1f6;color:#9aa4b5;font-size:clamp(18px,2.2vw,24px)}
+.kp-tiles span.t{background:#fff1b8;color:#7a5600}
+.kp-tiles span.m{background:#22b45a;color:#fff}
+@media (orientation:portrait){ .kp-row{grid-template-columns:1fr auto;grid-template-areas:"n o" "b b" "c c";row-gap:8px} .kp-row b{grid-area:n} .kp-row .kpbar{grid-area:b} .kp-num{grid-area:c} .kp-open{grid-area:o} }
 .kmode-seg{align-self:center;margin:4px 0 6px;background:rgba(0,0,0,.2);border-radius:999px;padding:4px}
 .kmode-seg button{color:#fff;font-size:clamp(18px,2.2vw,24px);padding:8px 26px;border-radius:999px}
 .kmode-seg button.on{background:#fff;color:var(--ink)}
@@ -668,7 +699,25 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button data-act="kmodeSel" data-val="yomi">📖 よみ</button>
     </div>
     <div class="lv-grid" id="lvGrid"></div>
-    <p class="lv-note" id="lvNote"></p>
+    <p class="lv-note"><span id="lvNote"></span> <button class="kp-btn" data-act="kprog">📊 かんじの きろく</button></p>
+  </section>
+
+  <!-- かんじ：きろく -->
+  <section class="screen" id="kprog">
+    <header class="hd">
+      <button class="back" data-act="kanji">◀ もどる</button>
+      <h2>📊 かんじの きろく</h2>
+      <span class="sp"></span>
+    </header>
+    <div class="kp-top">
+      <div class="seg kmode-seg" id="kpSeg">
+        <button data-act="kpMode" data-val="kaki">✏️ かきとり</button>
+        <button data-act="kpMode" data-val="yomi">📖 よみ</button>
+      </div>
+      <p class="kp-all" id="kpAll"></p>
+      <p class="kp-legend"><span class="lg m"></span>おぼえた：ちがう日に 2回、1回目で せいかい（まちがえると また 0から）　<span class="lg t"></span>やった：1回 いじょう こたえた　<span class="lg"></span>まだ</p>
+    </div>
+    <div class="kp-body" id="kpBody"></div>
   </section>
 
   <!-- かんじ：もんだい -->
@@ -795,7 +844,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🎮 ゲーム（めいろ・すうどく）</h3>
-        <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>やさしい1枚・ふつう2枚・むずかしい3枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
+        <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>クリア1回でコイン1枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
         <p class="note" id="coinNote"></p>
       </div>
       <div class="set-card">
@@ -1707,18 +1756,63 @@ const kans = q => q.a || q.r[0];
 const kstat = key => (D.kstats[key] = D.kstats[key] || { play: 0, perfect: 0, q: 0, ok: 0 });
 const kmodeOf = s => s.m === 'yomi' ? 'yomi' : 'kaki';
 
+// ---------- かんじの きろく（漢字ごとに「やった」「おぼえた」を つける） ----------
+// おぼえた ＝ ちがう日に 2回、1回目で せいかい（とちゅうで まちがえると また 0から）
+const KSETS = window.KANJI_SETS || {};
+const KMASTER = 2;
+const dayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+function kTargets(q, kind, lv) {
+  const set = KSETS[lv] || '', src = kind === 'yomi' ? kparts(q).mid : q.a;
+  return [...new Set([...src].filter(c => set.includes(c)))];
+}
+function kProgress(q, ok) {
+  D.kprog = D.kprog || {};
+  const P = (D.kprog[K.kind] = D.kprog[K.kind] || {});
+  for (const c of kTargets(q, K.kind, K.lv)) {
+    const e = (P[c] = P[c] || { n: 0, d: [] });
+    e.n++;
+    if (ok) { const t = dayKey(); if (!e.d.includes(t)) e.d = e.d.concat(t).slice(-KMASTER); }
+    else e.d = [];
+  }
+}
+const kState = (kind, c) => { const e = ((D.kprog || {})[kind] || {})[c]; return !e || !e.n ? '' : e.d.length >= KMASTER ? 'm' : 't'; };
+function kLevelProgress(kind, lv) {
+  let tried = 0, mastered = 0;
+  const set = [...(KSETS[lv] || '')];
+  for (const c of set) { const st = kState(kind, c); if (st) tried++; if (st === 'm') mastered++; }
+  return { total: set.length, tried, mastered };
+}
+function progBar(pr) {
+  const pct = x => pr.total ? (x / pr.total * 100).toFixed(1) : 0;
+  return `<span class="kpbar"><i class="t" style="width:${pct(pr.tried)}%"></i><i class="m" style="width:${pct(pr.mastered)}%"></i></span>`;
+}
+let kpOpen = 0;
+function renderKProg() {
+  const kind = S().kmode === 'yomi' ? 'yomi' : 'kaki';
+  $$('#kpSeg [data-val]').forEach(b => b.classList.toggle('on', b.dataset.val === kind));
+  $('#kpBody').innerHTML = KLEVELS.map(lv => {
+    const pr = kLevelProgress(kind, lv), open = kpOpen === lv;
+    const tiles = open ? `<div class="kp-tiles">${[...(KSETS[lv] || '')].map(c => `<span class="${kState(kind, c)}">${c}</span>`).join('')}</div>` : '';
+    return `<div class="kp-item${open ? ' open' : ''}"><button class="kp-row" data-act="kpRow" data-lv="${lv}">
+      <b>${lvName(lv)}</b>${progBar(pr)}
+      <span class="kp-num"><em class="m">おぼえた ${pr.mastered}</em><em class="t">やった ${pr.tried}</em><em>ぜんぶ ${pr.total}字</em></span>
+      <span class="kp-open">${open ? '▲' : '▼'}</span></button>${tiles}</div>`;
+  }).join('');
+  const all = KLEVELS.reduce((a, lv) => { const pr = kLevelProgress(kind, lv); a.total += pr.total; a.tried += pr.tried; a.mastered += pr.mastered; return a; }, { total: 0, tried: 0, mastered: 0 });
+  $('#kpAll').innerHTML = `${KMODES[kind].icon} ${KMODES[kind].name} ぜんぶで：<em class="m">おぼえた ${all.mastered}字</em> ・ <em class="t">やった ${all.tried}字</em> ・ ${all.total}字 ちゅう`;
+}
+
 function renderLevels() {
   const kind = S().kmode === 'yomi' ? 'yomi' : 'kaki', M = KMODES[kind];
   $$('#kmodeSeg [data-val]').forEach(b => b.classList.toggle('on', b.dataset.val === kind));
-  const cnt = lv => D.stickers.filter(s => themeOf(s) === 'kanji' && s.lv === lv && kmodeOf(s) === kind).length;
-  const stars = c => c ? '⭐'.repeat(Math.min(c, 3)) + (c > 3 ? `+${c - 3}` : '') : '';
   $('#lvGrid').innerHTML = KLEVELS.map(lv => {
     const n = (KDATA[kind][lv] || []).length;
     const q0 = (KDATA[kind][lv] || [])[0];
     const exRaw = lv < 7 ? M.ex[lv] : !q0 ? '' : kind === 'yomi' ? `〔${kparts(q0).mid}〕 → ${q0.r[0]}` : `〔${kparts(q0).mid}〕 → ${q0.a}`;
     const ex = exRaw.replace(/〔(.+?)〕/, '<u>$1</u>');
     const sub = lv >= 7 ? `${M.icon} 中学の字` : `${M.icon} ${M.name}`;
-    return `<button class="lvb${lv >= 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
+    const pr = kLevelProgress(kind, lv);
+    return `<button class="lvb${lv >= 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}</small>${progBar(pr)}<small class="lvpn"><em class="m">おぼえた ${pr.mastered}</em> / ${pr.total}字（やった ${pr.tried}）</small></button>`;
   }).join('');
   $('#lvNote').textContent = M.note;
 }
@@ -1873,6 +1967,7 @@ function kvgStrokes(ch) {
 }
 const Stroke = { token: 0, q: null };
 function showStroke(q, state) {
+  if (screen !== 'kquiz') return;  // もう ほかの がめんに うつって いたら ださない
   Stroke.q = q;
   const p = kparts(q);
   $('#stkTitle').textContent = state === 'ok' ? '⭕ せいかい！ かきじゅんを たしかめよう' : 'こたえと かきじゅんを おぼえよう';
@@ -2021,6 +2116,7 @@ async function kCorrect() {
   K.results.push(first);
   K.combo = first ? K.combo + 1 : 0;
   kUpdateMiss(q, first);
+  kProgress(q, first);
   save();
   kRenderSentence('done');
   $('#kgive').hidden = true;
@@ -2050,6 +2146,7 @@ async function kReveal(msg) {
   K.results.push(false);
   K.combo = 0;
   kUpdateMiss(q, false);
+  kProgress(q, false);
   save();
   kRenderProgress();
   kSetOk(true);
@@ -2118,8 +2215,8 @@ function kFinish() {
 
 // ---------- ゲーム（めいろ・すうどく） ----------
 const GAMES = {
-  meiro: { name: 'めいろ', lv: { 1: { name: 'やさしい', n: 5, k: 7, walls: 0, coin: 1 }, 2: { name: 'ふつう', n: 6, k: 9, walls: 3, coin: 2 }, 3: { name: 'むずかしい', n: 7, k: 10, walls: 6, coin: 3 } } },
-  sudoku: { name: 'すうどく', lv: { 1: { name: 'やさしい', givens: 18, coin: 1 }, 2: { name: 'ふつう', givens: 14, coin: 2 }, 3: { name: 'むずかしい', givens: 11, coin: 3 } } },
+  meiro: { name: 'めいろ', lv: { 1: { name: 'やさしい', n: 5, k: 7, walls: 0, coin: 1 }, 2: { name: 'ふつう', n: 6, k: 9, walls: 3, coin: 1 }, 3: { name: 'むずかしい', n: 7, k: 10, walls: 6, coin: 1 } } },
+  sudoku: { name: 'すうどく', lv: { 1: { name: 'やさしい', givens: 18, coin: 1 }, 2: { name: 'ふつう', givens: 14, coin: 1 }, 3: { name: 'むずかしい', givens: 11, coin: 1 } } },
 };
 const GAME_RULE = {
   meiro: '1 → 2 → 3 … の じゅんに、ぜんぶの マスを 1かいずつ とおって、さいごの すうじまで つなごう。ゆびで なぞってね。',
@@ -2206,7 +2303,7 @@ function coinMeter() {
 function openExchange() {
   Speech.stop();
   if (D.coins < COIN_RATE) {
-    openModal(`<div class="lock-ico">🪙</div><p class="mq">コインが まだ たりないよ</p>${coinMeter()}<p class="msub">めいろ・すうどくを クリアすると コインが もらえるよ<br>（やさしい 1まい・ふつう 2まい・むずかしい 3まい）</p><button class="bigbtn yellow" data-act="closeModal">とじる</button>`);
+    openModal(`<div class="lock-ico">🪙</div><p class="mq">コインが まだ たりないよ</p>${coinMeter()}<p class="msub">めいろ・すうどくを クリアすると コインが もらえるよ<br>（1かい クリアで 1まい）</p><button class="bigbtn yellow" data-act="closeModal">とじる</button>`);
     Speech.speak(`あと ${COIN_RATE - D.coins}まいで シールと こうかん できるよ`);
     return;
   }
@@ -2629,6 +2726,9 @@ document.addEventListener('click', e => {
     case 'sdMemo': SDK.memoMode = !SDK.memoMode; sdMemoLabel(); break;
     case 'sdHint': sdHint(); break;
     case 'kmodeSel': S().kmode = b.dataset.val; save(); renderLevels(); break;
+    case 'kprog': kpOpen = 0; renderKProg(); show('kprog'); break;
+    case 'kpMode': S().kmode = b.dataset.val; save(); renderKProg(); break;
+    case 'kpRow': kpOpen = kpOpen === +b.dataset.lv ? 0 : +b.dataset.lv; renderKProg(); break;
     case 'kgive': kGiveUp(); break;
     case 'kana': kanaKey(b.dataset.k); break;
     case 'stkAgain': playStroke(); break;
