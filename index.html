@@ -327,6 +327,7 @@ body.nomemo .pad{justify-self:center}
 .kyans.ok{background:#d6ffe4;color:#0c8a3e}
 .kyans.ng{animation:shake .4s;background:#ffe1e4;color:#e0283c}
 .kyans.reveal{background:#fff1b8;color:#c27c00}
+.ky-switch{background:rgba(255,255,255,.9);color:var(--ink);border-radius:999px;padding:6px 16px;font-size:clamp(14px,1.6vw,18px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .kkb{display:grid;grid-template-rows:repeat(5,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;width:min(780px,100%)}
 .kk{height:clamp(40px,calc((var(--vh) - 400px) / 5.6),64px);min-width:0;border-radius:12px;background:#fff;font-size:clamp(20px,2.6vw,30px);color:var(--ink);box-shadow:0 4px 0 #b8c4d8}
 .kk:active{transform:translateY(3px);box-shadow:0 1px 0 #b8c4d8}
@@ -757,6 +758,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <div class="kchoices" id="kchoices" hidden></div>
         <div class="kyomi" id="kyomi" hidden>
           <input class="kyans" id="kyAns" type="text" lang="ja" inputmode="text" placeholder="？" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="よみ（ひらがな）">
+          <button class="ky-switch" data-act="kySwitch" id="kySwitch">あ 50音ボタンで こたえる</button>
           <div class="kkb" id="kkb"></div>
         </div>
         <div class="kside">
@@ -873,6 +875,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <div class="row"><span class="grow">優先するレベル<small>このレベルのシールをその日に5枚集めるまで、ほかのレベルではシールがもらえません（練習はできます）。かきとり・よみ どちらのシールも数えます</small></span>
           <select data-set="kpri" id="kpriSel"><option value="3">3年</option><option value="4">4年</option><option value="5">5年</option><option value="6">6年</option><option value="7">チャレンジ1</option><option value="8">チャレンジ2</option><option value="9">チャレンジ3</option><option value="10">チャレンジ4</option><option value="0">優先しない</option></select></div>
         <p class="note" id="kpriNote"></p>
+        <div class="row"><span class="grow">「よみ」の答え方<small>キーボード：問題が出たときから答えの欄に入力できる状態になります（iPad のキーボードやローマ字で入力）。50音ボタン：画面の あいうえお ボタンで答えます。問題の画面でも切り替えられます。<br>iPad の日本語キーボードで勝手に漢字に変わるときは、iPad の「設定」→「一般」→「キーボード」→「ライブ変換」をオフにしてください（アプリからは変更できません）</small></span>
+          <select data-set="yinput"><option value="kb">キーボード</option><option value="pad">50音ボタン</option></select></div>
         <label class="row"><span class="grow">手書きで答える（自動判定）<small>オフにすると4択になります。手書きの判定には Google の手書き文字認識を使うため、書いた線の形（座標）だけがインターネットで Google に送られます。ネットにつながらないときは、自動で4択に切り替わります。とめ・はね・書き順までは判定できません</small></span><span class="sw"><input type="checkbox" data-set="hand"><i></i></span></label>
       </div>
       <div class="set-card">
@@ -1052,7 +1056,7 @@ function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, gameGate: true },
+    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, gameGate: true, yinput: 'kb' },
     coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
@@ -2056,7 +2060,7 @@ function kRenderAnswer() {
   $('#kchoices').hidden = m !== 'choice';
   $('#kyomi').hidden = m !== 'kana';
   $('#kclearAll').hidden = m !== 'hand';
-  $('#kmodeTxt').textContent = m === 'hand' ? 'マスに かんじを かいてね' : m === 'choice' ? '4つから えらんでね' : 'ひらがなを おしてね（こたえの らんを タップすると キーボードでも 入力できるよ）';
+  $('#kmodeTxt').textContent = m === 'hand' ? 'マスに かんじを かいてね' : m === 'choice' ? '4つから えらんでね' : '';
   K.pads = [];
   if (m === 'hand') {
     const n = [...q.a].length;
@@ -2071,8 +2075,19 @@ function kRenderAnswer() {
   } else {
     kSetVal('');
     $('#kyAns').classList.remove('ok', 'ng', 'reveal');
+    kyApplyInput();
   }
 }
+// よみの こたえかた：キーボード（さいしょから 入力できる じょうたい）か、50音ボタン
+const kyKb = () => S().yinput !== 'pad';
+function kyApplyInput() {
+  const kb = kyKb(), el = $('#kyAns');
+  $('#kkb').hidden = kb;
+  $('#kySwitch').textContent = kb ? 'あ 50音ボタンで こたえる' : '⌨️ キーボードで こたえる';
+  $('#kmodeTxt').textContent = kb ? 'キーボードで ひらがなを うって、さいごに「けってい」か Enter' : 'ひらがなを おしてね';
+  if (kb && K.mode === 'kana' && !K.lock) el.focus({ preventScroll: true });
+}
+const kyKeepOrBlur = () => { if (!kyKb()) $('#kyAns').blur(); };
 function kRenderChoices() {
   $('#kchoices').innerHTML = K.choices.map((c, i) =>
     `<button class="kch${i === K.sel ? ' sel' : ''}${K.wrongSel.includes(i) ? ' wrong' : ''}" data-act="kch" data-i="${i}">${c}</button>`).join('');
@@ -2092,15 +2107,53 @@ function renderKanaKeyboard() {
   $('#kkb').innerHTML = h;
 }
 function kSetVal(v) { K.val = v; $('#kyAns').value = v; }
-// キーボード（iPad の ソフトウェアキーボード・ハードウェアキーボード）での 入力：カタカナは ひらがなに、ほかの 字は のぞく
-function kanaOnly(v) {
-  return v.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/[^ぁ-ゖ]/g, '').slice(0, 10);
+// キーボード（iPad の ソフトウェアキーボード・ハードウェアキーボード）での 入力
+//   カタカナ → ひらがな、ローマ字（kesa など）→ ひらがな、そのほかの 字は のぞく
+const ROMA = (() => {
+  const t = { a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お', ya: 'や', yu: 'ゆ', yo: 'よ', wa: 'わ', wo: 'を',
+    shi: 'し', chi: 'ち', tsu: 'つ', fu: 'ふ', ji: 'じ', fa: 'ふぁ', fi: 'ふぃ', fe: 'ふぇ', fo: 'ふぉ',
+    xa: 'ぁ', xi: 'ぃ', xu: 'ぅ', xe: 'ぇ', xo: 'ぉ', la: 'ぁ', li: 'ぃ', lu: 'ぅ', le: 'ぇ', lo: 'ぉ',
+    xya: 'ゃ', xyu: 'ゅ', xyo: 'ょ', lya: 'ゃ', lyu: 'ゅ', lyo: 'ょ', xtu: 'っ', ltu: 'っ', xtsu: 'っ', ltsu: 'っ', xwa: 'ゎ' };
+  const rows = { k: 'かきくけこ', s: 'さしすせそ', t: 'たちつてと', n: 'なにぬねの', h: 'はひふへほ', m: 'まみむめも', r: 'らりるれろ',
+    g: 'がぎぐげご', z: 'ざじずぜぞ', d: 'だぢづでど', b: 'ばびぶべぼ', p: 'ぱぴぷぺぽ' };
+  for (const [c, k] of Object.entries(rows)) [...'aiueo'].forEach((v, i) => { t[c + v] = k[i]; });
+  const yoon = { ky: 'き', gy: 'ぎ', sy: 'し', sh: 'し', zy: 'じ', jy: 'じ', j: 'じ', ty: 'ち', cy: 'ち', ch: 'ち', dy: 'ぢ',
+    ny: 'に', hy: 'ひ', by: 'び', py: 'ぴ', my: 'み', ry: 'り' };
+  for (const [c, k] of Object.entries(yoon)) { t[c + 'a'] = k + 'ゃ'; t[c + 'u'] = k + 'ゅ'; t[c + 'o'] = k + 'ょ'; }
+  t.she = 'しぇ'; t.che = 'ちぇ'; t.je = 'じぇ';
+  return t;
+})();
+function romaToKana(s) {
+  let out = '', i = 0;
+  while (i < s.length) {
+    const c = s[i], nx = s[i + 1];
+    if (!/[a-z']/.test(c)) { out += c; i++; continue; }
+    if (c === "'") { i++; continue; }
+    if (c === 'n' && (nx === 'n' || nx === "'")) { out += 'ん'; i += 2; continue; }  // nn・n' は ん（ふつうの キーボードと おなじ）
+    if (c === 'n' && nx && !'aiueoy'.includes(nx)) { out += 'ん'; i++; continue; }
+    if (c !== 'n' && !'aiueo'.includes(c) && nx === c) { out += 'っ'; i++; continue; }
+    let hit = false;
+    for (const L of [4, 3, 2, 1]) { const k = s.substr(i, L); if (ROMA[k]) { out += ROMA[k]; i += L; hit = true; break; } }
+    if (!hit) { out += s.slice(i); break; }  // とちゅうの ローマ字（k, ky など）は そのまま のこす
+  }
+  return out;
+}
+function kanaClean(v) {
+  v = v.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).toLowerCase();
+  return romaToKana(v).replace(/[^ぁ-ゖa-z']/g, '').slice(0, 14);
 }
 function onKyInput(e) {
   if (e && e.isComposing) return;
   const el = $('#kyAns');
   if (!K.active || K.lock || K.mode !== 'kana') { el.value = K.val; return; }
-  const v = kanaOnly(el.value);
+  let raw = el.value;
+  if (/[\u3400-\u9fff々]/.test(raw)) {
+    // 漢字に かわって しまった：へんかん する まえの ひらがなに もどす
+    raw = K.compKana ? (K.compBase || '') + K.compKana : K.val;
+    kNote('かんじに かわっちゃったので、ひらがなに もどしたよ。たしかめてね');
+  }
+  K.compKana = '';
+  const v = kanaClean(raw);
   K.val = v;
   if (el.value !== v) el.value = v;
   el.classList.remove('ok', 'ng');
@@ -2232,6 +2285,11 @@ async function kCheck() {
   if (K.lock) return;
   const q = kcur();
   if (K.mode === 'kana') {
+    if (/[a-z']/.test(K.val)) {
+      const v = K.val.replace(/n$/, 'ん');
+      if (/[a-z']/.test(v)) { kNote('ローマ字が とちゅうだよ。さいごまで うってね'); return; }
+      kSetVal(v);
+    }
     if (!K.val) { kNote('よみを ひらがなで 入れてから「けってい」を おしてね'); return; }
     return q.r.includes(K.val) ? kCorrect() : kWrong(K.val);
   }
@@ -2295,7 +2353,7 @@ async function kCorrect() {
   const p = kparts(q);
   showGoal(txt, K.kind === 'yomi' ? `${p.mid}（${q.r[0]}）` : `${q.a}（${p.mid}）`, K.combo >= 5);
   SFX.goal(K.combo);
-  $('#kyAns').blur();
+  kyKeepOrBlur();
   // かきとり は ゴールの あとに かきじゅん を みせるので、ゴール中は とばさない
   K.canSkip = K.kind !== 'kaki';
   let line = K.kind === 'yomi' ? `${say} ${ksay(q)}` : say;
@@ -2323,7 +2381,7 @@ async function kReveal(msg) {
   if (K.mode === 'choice') { const i = K.choices.indexOf(q.a); $$('#kchoices .kch')[i].classList.add('right'); }
   if (K.mode === 'kana') { kSetVal(q.r[0]); $('#kyAns').classList.remove('ng'); $('#kyAns').classList.add('reveal'); }
   kNote(`${msg}こたえは「${kans(q)}」。たしかめたら「つぎへ」を おしてね`);
-  $('#kyAns').blur();
+  kyKeepOrBlur();
   if (K.kind === 'kaki') showStroke(q, 'rev');
   await sleep(200);
   if (tk !== K.token) return;
@@ -2900,6 +2958,7 @@ document.addEventListener('click', e => {
     case 'kpRow': kpOpen = kpOpen === +b.dataset.lv ? 0 : +b.dataset.lv; renderKProg(); break;
     case 'kgive': kGiveUp(); break;
     case 'kana': kanaKey(b.dataset.k); break;
+    case 'kySwitch': S().yinput = kyKb() ? 'pad' : 'kb'; save(); kyApplyInput(); if (!kyKb()) $('#kyAns').blur(); break;
     case 'stkAgain': playStroke(); break;
     case 'kanji': closeOverlays(); gStop(); Speech.stop(); renderLevels(); show('klevel'); break;
     case 'startLv': closeModal(); chooseKanjiLevel(+b.dataset.lv); break;
@@ -2995,6 +3054,15 @@ $('#bkFileIn').addEventListener('change', async e => {
   const ky = $('#kyAns');
   ky.addEventListener('input', onKyInput);
   ky.addEventListener('compositionend', onKyInput);
+  ky.addEventListener('compositionstart', () => { K.compBase = K.val; K.compKana = ''; });
+  ky.addEventListener('compositionupdate', e => { const d = e.data || ''; if (/^[ぁ-ゖァ-ヶーa-zA-Z']+$/.test(d)) K.compKana = d; });
+  // キーボードで こたえる ときは、「けってい」などを おしても 入力らんから はなれない（キーボードが とじない）
+  const keep = e => {
+    if (K.active && K.mode === 'kana' && kyKb() && document.activeElement === ky && e.target !== ky
+      && e.target.closest('#kquiz button') && !e.target.closest('.qquit')) e.preventDefault();
+  };
+  $('#kquiz').addEventListener('mousedown', keep);
+  $('#kquiz').addEventListener('pointerdown', keep);
   ky.addEventListener('keydown', e => {
     if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;  // 変換の かくてい の Enter では こたえない
     e.preventDefault();
