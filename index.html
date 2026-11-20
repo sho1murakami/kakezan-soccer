@@ -710,12 +710,14 @@ body.nomemo .pad{justify-self:center}
 .odds-kira{margin:0;background:linear-gradient(90deg,#fff6c8,#ffe3f3,#dff4ff);border-radius:14px;padding:10px 14px;font-size:clamp(15px,1.8vw,19px);text-align:center}
 .odds-note{margin:0;color:#8a7a55;font-size:clamp(13px,1.5vw,16px);line-height:1.6;font-weight:500}
 .odds h4{margin:6px 0 0;font-size:18px}
-.odds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
-.odds-item{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;background:#fff;border-radius:12px;padding:5px 10px;font-size:14px}
+.odds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.odds-legend{margin:14px 0 0;font-size:14px;color:#6b5a35}
+.odds-legend b{color:#c27c00}.odds-legend b.pf{color:#d0457a}
+.odds-item{display:grid;grid-template-columns:30px 1fr 4.2em 5.4em;align-items:center;gap:6px;background:#fff;border-radius:12px;padding:5px 10px;font-size:14px}
 .odds-item.new{background:#fffbe6}
 .odds-item .on{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .odds-item b{color:#c27c00;text-align:right;line-height:1.2}
-.odds-item b .pf{display:block;font-size:11px;color:#d0457a}
+.odds-item b.pf{color:#d0457a}
 .odds-t .big.pf{color:#d0457a}
 .empty{text-align:center;font-size:26px;color:#8a7a55;padding:60px 20px;line-height:1.6}
 
@@ -3941,13 +3943,15 @@ function oddsHTML() {
     const list = byG(g), have = list.filter(o => o.owned).length;
     return `<tr><th><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</th><td>${list.length}しゅるい</td><td>${have}しゅるい</td><td class="big">${pct(sumG(g))}</td><td class="big pf">${pct(sumP(g))}</td></tr>`;
   }).join('');
+  // シールごと：みぎに「ぜんもん せいかいの とき」の かくりつも ならべる
   const tiles = ['sr', 'r', 'n'].map(g => `<h4><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</h4><div class="odds-grid">${byG(g).sort((a, b) => b.p - a.p).map(o =>
-    `<div class="odds-item${o.owned ? '' : ' new'}">${o.owned ? stickerHTML({ d: o.d.id }, 'xs') : '<span class="stk xs unknown"><span class="em">？</span></span>'}<span class="on">${o.owned ? o.d.name : '？？？'}</span><b>${pct(o.p)}${g === 'sr' ? `<small class="pf">ぜんもん ${pct(pOf(o.d.id))}</small>` : ''}</b></div>`).join('')}</div>`).join('');
+    `<div class="odds-item${o.owned ? '' : ' new'}">${o.owned ? stickerHTML({ d: o.d.id }, 'xs') : '<span class="stk xs unknown"><span class="em">？</span></span>'}<span class="on">${o.owned ? o.d.name : '？？？'}</span><b>${pct(o.p)}</b><b class="pf">🌟${pct(pOf(o.d.id))}</b></div>`).join('')}</div>`).join('');
   return `<div class="odds">
     <p class="odds-lead">シールを 1まい もらうと、どの シールが でるかは くじびきで きまるよ。いまの かくりつは こうだよ。</p>
     <table class="odds-t"><thead><tr><th>グレード</th><th>ぜんぶ</th><th>もってる</th><th>でる かくりつ</th><th>🌟 ぜんもん<br>せいかいの とき</th></tr></thead><tbody>${rows}</tbody></table>
     <p class="odds-kira">✨ キラキラ：どの シールでも <b>${Math.round(SHINY_RATE * 100)}%</b>（100まいに ${Math.round(SHINY_RATE * 100)}まいくらい）で キラキラに なるよ</p>
     <p class="odds-note">・まだ もって いない シールは、もって いる シールの ${UNOWNED_BOOST}ばい でやすいよ（だから あつめるほど かくりつが かわるよ）<br>・でやすさ：ノーマル 1 ・ レア ${GRADES.r.w} ・ スーパーレア ${GRADES.sr.w}（ノーマルを 1と したとき）<br>・🌟 ぜんもん せいかいで シールを もらうと、スーパーレアが ${PERFECT_SR}ばい でやすく なるよ（コインの こうかんは ふつうの かくりつ）</p>
+    <p class="odds-legend">シール 1まい ずつの かくりつ：<b>ひだり＝ふだん</b>　<b class="pf">みぎ（🌟）＝ぜんもん せいかいの とき</b></p>
     ${tiles}
   </div>`;
 }
