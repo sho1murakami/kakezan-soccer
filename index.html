@@ -202,7 +202,7 @@ body.nomemo .pad{justify-self:center}
 
 
 /* ---------- かんじ：レベル えらび ---------- */
-.lv-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:10px 24px 24px}
+.lv-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:10px 24px 24px}
 .lvb{background:#fff;border:5px solid var(--kan);border-radius:28px;box-shadow:0 8px 0 rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;padding:10px}
 .lvb:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .lvb b{font-size:clamp(52px,min(7.5vw,12vh),96px);color:var(--kan);line-height:1}
@@ -213,6 +213,8 @@ body.nomemo .pad{justify-self:center}
 .kmode-seg button{color:#fff;font-size:clamp(18px,2.2vw,24px);padding:8px 26px;border-radius:999px}
 .kmode-seg button.on{background:#fff;color:var(--ink)}
 .lvb:disabled{opacity:.45}
+.lvb.cha{border-color:#7a3cf0;background:linear-gradient(#fff,#f1e8ff)}
+.lvb.cha b{color:#7a3cf0;font-size:clamp(22px,min(2.7vw,5.4vh),44px);white-space:nowrap}
 .lv-note{margin:0 24px 18px;text-align:center;color:#fff;font-size:clamp(14px,1.7vw,18px);text-shadow:0 2px 0 rgba(0,0,0,.25)}
 
 /* ---------- かんじ：もんだい ---------- */
@@ -252,8 +254,9 @@ body.nomemo .pad{justify-self:center}
 .kbtn.give{background:#fff4c7;box-shadow:0 6px 0 #d9b94a;font-size:clamp(18px,2.1vw,24px)}
 .kbtn.give:active{box-shadow:0 2px 0 #d9b94a}
 .kyomi{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
-.kyans{min-width:5em;height:1.35em;font-size:clamp(30px,4vw,48px);background:#fff;border-radius:14px;padding:0 .4em;display:grid;place-items:center;box-shadow:0 5px 0 rgba(0,0,0,.2);letter-spacing:.05em}
-.kyans:empty::before{content:"？";color:#b6c0d4}
+.kyans{width:7em;max-width:100%;height:1.35em;font:inherit;font-weight:800;font-size:clamp(30px,4vw,48px);color:var(--ink);background:#fff;border:0;border-radius:14px;padding:0 .4em;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.2);letter-spacing:.05em;outline:none;-webkit-user-select:text;user-select:text;-webkit-appearance:none;appearance:none}
+.kyans::placeholder{color:#b6c0d4;opacity:1}
+.kyans:focus{box-shadow:0 0 0 4px var(--yellow),0 5px 0 rgba(0,0,0,.2)}
 .kyans.ok{background:#d6ffe4;color:#0c8a3e}
 .kyans.ng{animation:shake .4s;background:#ffe1e4;color:#e0283c}
 .kyans.reveal{background:#fff1b8;color:#c27c00}
@@ -265,6 +268,31 @@ body.nomemo .pad{justify-self:center}
 .kk.del{background:#ffe7e7;color:#d33;box-shadow:0 4px 0 #e9b4b4}
 .kk.sm{font-size:clamp(13px,1.5vw,17px);line-height:1.15}
 #kmodeTxt{font-size:14px;color:#fff;text-align:center;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+
+/* ---------- かきじゅん ---------- */
+.stroke-ov{position:absolute;inset:0;z-index:48;display:none;place-items:center;background:rgba(8,20,50,.6);padding:12px}
+.stroke-ov.show{display:grid;animation:fadeIn .2s}
+.stk-card{background:#fff;border-radius:28px;padding:14px 26px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:96vw;max-height:100%;box-shadow:0 12px 0 rgba(0,0,0,.25);animation:popIn .35s cubic-bezier(.2,1.5,.4,1)}
+.stk-title{font-size:clamp(20px,2.6vw,30px);color:var(--navy)}
+.stk-word{font-size:clamp(24px,3vw,34px);color:var(--kan)}
+.stk-word rt{font-size:.45em;color:var(--mute)}
+.stk-boxes{display:flex;gap:14px;--sb:min(calc(var(--vh) * .5),38vw,420px)}
+.stk-box{position:relative;width:var(--sb);height:var(--sb);border-radius:16px;background:#fffdf6;box-shadow:inset 0 0 0 3px #e6dcc4;overflow:hidden}
+.stk-box::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent calc(50% - 1px),rgba(232,69,90,.25) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),
+             linear-gradient(transparent calc(50% - 1px),rgba(232,69,90,.25) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px));
+}
+.stk-box svg{position:absolute;inset:6%;width:88%;height:88%}
+.stk-box path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.stk-box .ghost path{stroke:#e3e6ee;stroke-width:4.5}
+.stk-box .ink path{stroke:#1d2b45;stroke-width:4.5}
+.stk-box .ink path.now{stroke:var(--kan);stroke-width:5}
+.stk-n{position:absolute;right:10px;top:6px;font-size:clamp(20px,2.4vw,30px);color:var(--kan)}
+.stk-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:calc(var(--sb) * .7);color:var(--ink)}
+.stk-note{font-size:clamp(15px,1.8vw,20px);color:var(--mute);min-height:1.3em;text-align:center}
+.stk-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+@media (orientation:portrait){ .stk-boxes{--sb:min(42vw,calc(var(--vh) * .34),420px)} }
 
 /* ---------- ゴール！ ---------- */
 .goal-ov{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(5,20,50,.45),rgba(5,20,50,0) 70%)}
@@ -423,6 +451,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   body.nomemo .qmain{grid-template:"top" auto "pad" minmax(0,1fr) / minmax(0,1fr)}
   .cards{grid-template-columns:1fr}
   .lv-grid{grid-template-columns:repeat(2,1fr)}
+  .lvb.cha{grid-column:span 2}
   .kbody{flex-direction:column}
   .kboxes{--bx:min(42vw,calc(var(--vh) * .34),340px)}
   .kside{flex-direction:row;width:min(100%,620px)}
@@ -567,7 +596,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <div class="kboxes" id="kboxes"></div>
         <div class="kchoices" id="kchoices" hidden></div>
         <div class="kyomi" id="kyomi" hidden>
-          <div class="kyans" id="kyAns"></div>
+          <input class="kyans" id="kyAns" type="text" lang="ja" inputmode="text" placeholder="？" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="よみ（ひらがな）">
           <div class="kkb" id="kkb"></div>
         </div>
         <div class="kside">
@@ -636,8 +665,10 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・まちがえた問題は覚えておいて、次の回に出やすくなります（1回につき2問まで）。<br>
         ・かんじテストは、学年別漢字配当表（2020年度〜）にそって 3年〜6年のレベルを選べます。問題文の――線以外は3年までの漢字だけを使っています。<br>
         ・「かきとり」は、入試と同じくカタカナの部分を漢字で書きます（送りがなは書きません）。各学年の配当漢字がすべて、どれかの問題の答えに入っています（3年169問・4年170問・5年170問・6年178問）。<br>
-        ・「よみ」は、――線の漢字の読みを画面のひらがなキーボードで答えます（送りがなは入れません。各学年100問）。<br>
+        ・「よみ」は、――線の漢字の読みを画面のひらがなキーボードで答えます。答えの欄をタップすると iPad のキーボードでも入力でき、Enter で答え合わせをします（送りがなは入れません）。各学年の配当漢字がすべて、どれかの問題に入っています（3年190問・4年178問・5年177問・6年176問）。<br>
         ・わからないときは「わからない」で答えを見られます（不正解として数え、次の回に出やすくなります）。<br>
+        ・かきとりは、答えたあとに正しい書き順をアニメーションで表示します（書き順のデータは KanjiVG〔© Ulrich Apel, CC BY-SA 3.0, kanjivg.tagaini.net〕をインターネットから読み込みます）。<br>
+        ・「チャレンジ」は、小学校で習わない常用漢字（中学で習う字）をふくむ、難関校の入試で出やすい言葉です。実際の過去問と照らし合わせたものではありません。<br>
         ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。</p>
       </div>
     </div>
@@ -660,6 +691,20 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     </div>
     <div class="goal-txt" id="goalTxt">ゴール！</div>
     <div class="goal-sub" id="goalSub"></div>
+  </div>
+
+  <!-- かきじゅん -->
+  <div class="stroke-ov" id="stroke">
+    <div class="stk-card">
+      <div class="stk-title" id="stkTitle">かきじゅん</div>
+      <div class="stk-word" id="stkWord"></div>
+      <div class="stk-boxes" id="stkBoxes"></div>
+      <div class="stk-note" id="stkNote"></div>
+      <div class="stk-btns">
+        <button class="bigbtn" data-act="stkAgain">🔁 もう一回 みる</button>
+        <button class="bigbtn yellow" data-act="kok">つぎへ ▶</button>
+      </div>
+    </div>
   </div>
 
   <!-- シール ゲット！ -->
@@ -1446,6 +1491,7 @@ function showResult(ok, results, missedHTML) {
 }
 
 function closeOverlays() {
+  hideStroke();
   $('#win').classList.remove('show', 'ready');
   $('#result').classList.remove('show');
   $('#goal').classList.remove('show');
@@ -1479,10 +1525,11 @@ function applyMemo() {
 // ---------- かんじテスト ----------
 // kaki：――線の カタカナを かんじで かく ／ yomi：――線の かんじの よみを ひらがなで こたえる
 const KDATA = { kaki: window.KANJI_Q || {}, yomi: window.KANJI_Y || {} };
-const KLEVELS = [3, 4, 5, 6];
+const KLEVELS = [3, 4, 5, 6, 7];  // 7 は チャレンジ（小学校で ならわない 常用漢字）
+const lvName = lv => lv === 7 ? 'チャレンジ' : `${lv}年`;
 const KMODES = {
-  kaki: { name: 'かきとり', icon: '✏️', ex: { 3: '〔イソ〕ぐ → 急', 4: '〔ヨソウ〕 → 予想', 5: '〔ケンサ〕 → 検査', 6: '〔ワス〕れる → 忘' }, note: '―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。' },
-  yomi: { name: 'よみ', icon: '📖', ex: { 3: '〔今朝〕 → けさ', 4: '〔器用〕 → きよう', 5: '〔快〕い → こころよ', 6: '〔著〕しい → いちじる' }, note: '―線の かんじの よみを ひらがなで こたえよう。おくりがなは いれなくて いいよ。' },
+  kaki: { name: 'かきとり', icon: '✏️', ex: { 3: '〔イソ〕ぐ → 急', 4: '〔ヨソウ〕 → 予想', 5: '〔ケンサ〕 → 検査', 6: '〔ワス〕れる → 忘', 7: '〔ハモン〕 → 波紋' }, note: '―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。' },
+  yomi: { name: 'よみ', icon: '📖', ex: { 3: '〔今朝〕 → けさ', 4: '〔器用〕 → きよう', 5: '〔快〕い → こころよ', 6: '〔著〕しい → いちじる', 7: '〔雰囲気〕 → ふんいき' }, note: '―線の かんじの よみを ひらがなで こたえよう。おくりがなは いれなくて いいよ。' },
 };
 const HW_URL = 'https://inputtools.google.com/request?ime=handwriting&app=mobilesearch&cs=1&oe=UTF-8';
 const K = { lv: 3, kind: 'kaki', list: [], idx: 0, tries: 0, results: [], combo: 0, lock: true, token: 0, active: false, canSkip: false, mode: 'hand', offline: false, pads: [], choices: [], sel: -1, wrongSel: [], val: '' };
@@ -1503,7 +1550,8 @@ function renderLevels() {
   $('#lvGrid').innerHTML = KLEVELS.map(lv => {
     const n = (KDATA[kind][lv] || []).length;
     const ex = M.ex[lv].replace(/〔(.+?)〕/, '<u>$1</u>');
-    return `<button class="lvb" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lv}年</b><span>${M.icon} ${M.name}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
+    const sub = lv === 7 ? '中学で ならう 字' : `${M.icon} ${M.name}`;
+    return `<button class="lvb${lv === 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
   }).join('');
   $('#lvNote').textContent = M.note;
 }
@@ -1533,7 +1581,7 @@ function startKanji(lv, kind) {
   Game = { kind: 'kanji', lv, m: kind };
   Object.assign(K, { lv, kind, list: makeKanjiQuestions(kind, lv), idx: 0, results: [], combo: 0, active: true, offline: false });
   if (!K.list.length) return;
-  $('#kTheme').textContent = `${KMODES[kind].icon} ${lv}年 ${KMODES[kind].name}`;
+  $('#kTheme').textContent = `${KMODES[kind].icon} ${lvName(lv)} ${KMODES[kind].name}`;
   show('kquiz');
   kShowQuestion();
   SFX.start();
@@ -1569,6 +1617,7 @@ function kShowQuestion() {
   kSetOk(false);
   kRenderAnswer();
   kRenderProgress();
+  if (K.kind === 'kaki') [...q.a].forEach(ch => kvgStrokes(ch).catch(() => {}));
   Speech.speak(kQuestionSpeech(q));
 }
 
@@ -1578,7 +1627,7 @@ function kRenderAnswer() {
   $('#kchoices').hidden = m !== 'choice';
   $('#kyomi').hidden = m !== 'kana';
   $('#kclearAll').hidden = m !== 'hand';
-  $('#kmodeTxt').textContent = m === 'hand' ? 'マスに かんじを かいてね' : m === 'choice' ? '4つから えらんでね' : 'ひらがなを おしてね';
+  $('#kmodeTxt').textContent = m === 'hand' ? 'マスに かんじを かいてね' : m === 'choice' ? '4つから えらんでね' : 'ひらがなを おしてね（こたえの らんを タップすると キーボードでも 入力できるよ）';
   K.pads = [];
   if (m === 'hand') {
     const n = [...q.a].length;
@@ -1612,7 +1661,20 @@ function renderKanaKeyboard() {
   h += '<button class="kk mod" data-act="kana" data-k="daku">゛</button><button class="kk mod" data-act="kana" data-k="handaku">゜</button><button class="kk mod sm" data-act="kana" data-k="small">小</button><button class="kk del" data-act="kana" data-k="del">⌫</button><button class="kk del sm" data-act="kana" data-k="clear">ぜんぶ<br>けす</button>';
   $('#kkb').innerHTML = h;
 }
-function kSetVal(v) { K.val = v; $('#kyAns').textContent = v; }
+function kSetVal(v) { K.val = v; $('#kyAns').value = v; }
+// キーボード（iPad の ソフトウェアキーボード・ハードウェアキーボード）での 入力：カタカナは ひらがなに、ほかの 字は のぞく
+function kanaOnly(v) {
+  return v.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/[^ぁ-ゖ]/g, '').slice(0, 10);
+}
+function onKyInput(e) {
+  if (e && e.isComposing) return;
+  const el = $('#kyAns');
+  if (!K.active || K.lock || K.mode !== 'kana') { el.value = K.val; return; }
+  const v = kanaOnly(el.value);
+  K.val = v;
+  if (el.value !== v) el.value = v;
+  el.classList.remove('ok', 'ng');
+}
 function kanaKey(k) {
   if (!K.active || K.lock || K.mode !== 'kana') return;
   SFX.tap();
@@ -1624,6 +1686,74 @@ function kanaKey(k) {
   if (k === 'handaku') { if (HANDAKU[last]) kSetVal(head + HANDAKU[last]); else if (UNHANDAKU[last]) kSetVal(head + UNHANDAKU[last]); return; }
   if (k === 'small') { if (SMALL[last]) kSetVal(head + SMALL[last]); else if (UNSMALL[last]) kSetVal(head + UNSMALL[last]); return; }
   if (v.length < 10) kSetVal(v + k);
+}
+
+
+// ---------- かきじゅん アニメーション（KanjiVG のデータを つかう） ----------
+// KanjiVG © Ulrich Apel, CC BY-SA 3.0 — http://kanjivg.tagaini.net
+const KVG_URL = 'https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@r20250816/kanji/';
+const kvgCache = {};
+function kvgStrokes(ch) {
+  if (!kvgCache[ch]) {
+    const code = ch.codePointAt(0).toString(16).padStart(5, '0');
+    kvgCache[ch] = fetch(KVG_URL + code + '.svg')
+      .then(r => { if (!r.ok) throw new Error('no data'); return r.text(); })
+      .then(t => [...t.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map(m => m[1]))
+      .catch(e => { delete kvgCache[ch]; throw e; });
+  }
+  return kvgCache[ch];
+}
+const Stroke = { token: 0, q: null };
+function showStroke(q, state) {
+  Stroke.q = q;
+  const p = kparts(q);
+  $('#stkTitle').textContent = state === 'ok' ? '⭕ せいかい！ かきじゅんを たしかめよう' : 'こたえと かきじゅんを おぼえよう';
+  $('#stkWord').innerHTML = `<ruby>${q.a}<rt>${p.mid}</rt></ruby>`;
+  $('#stroke').classList.add('show');
+  playStroke();
+}
+function hideStroke() { Stroke.token++; $('#stroke').classList.remove('show'); }
+async function playStroke() {
+  const q = Stroke.q, tk = ++Stroke.token, chars = [...q.a];
+  const box = $('#stkBoxes');
+  box.innerHTML = chars.map(() => `<div class="stk-box"><svg viewBox="0 0 109 109"><g class="ghost"></g><g class="ink"></g></svg><span class="stk-n"></span></div>`).join('');
+  const boxes = $$('.stk-box', box);
+  let data;
+  try { data = await Promise.all(chars.map(kvgStrokes)); }
+  catch (e) {
+    if (tk !== Stroke.token) return;
+    boxes.forEach((b, i) => { b.innerHTML = `<span class="stk-fallback">${chars[i]}</span>`; });
+    $('#stkNote').textContent = 'かきじゅんの データを よみこめませんでした（ネットに つながっているか たしかめてね）';
+    return;
+  }
+  if (tk !== Stroke.token) return;
+  $('#stkNote').textContent = chars.map((c, i) => `${c}：${data[i].length}かく`).join('　');
+  const NS = 'http://www.w3.org/2000/svg';
+  // さきに うすい 字を ぜんぶ かいておく
+  boxes.forEach((b, i) => {
+    const g = b.querySelector('.ghost');
+    data[i].forEach(d => { const el = document.createElementNS(NS, 'path'); el.setAttribute('d', d); g.appendChild(el); });
+  });
+  for (let i = 0; i < chars.length; i++) {
+    const g = boxes[i].querySelector('.ink'), n = boxes[i].querySelector('.stk-n');
+    for (let k = 0; k < data[i].length; k++) {
+      if (tk !== Stroke.token) return;
+      const el = document.createElementNS(NS, 'path');
+      el.setAttribute('d', data[i][k]);
+      el.setAttribute('class', 'now');
+      g.appendChild(el);
+      const len = el.getTotalLength ? el.getTotalLength() : 100;
+      el.style.strokeDasharray = len;
+      el.style.strokeDashoffset = len;
+      n.textContent = k + 1;
+      const dur = 260 + len * 7;
+      if (el.animate) await el.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'ease-in-out', fill: 'forwards' }).finished.catch(() => {});
+      else await sleep(dur);
+      el.style.strokeDashoffset = 0;
+      el.setAttribute('class', 'done');
+      await sleep(110);
+    }
+  }
 }
 
 function kRenderProgress() {
@@ -1732,11 +1862,15 @@ async function kCorrect() {
   const p = kparts(q);
   showGoal(txt, K.kind === 'yomi' ? `${p.mid}（${q.r[0]}）` : `${q.a}（${p.mid}）`, K.combo >= 5);
   SFX.goal(K.combo);
-  K.canSkip = true;
+  $('#kyAns').blur();
+  // かきとり は ゴールの あとに かきじゅん を みせるので、ゴール中は とばさない
+  K.canSkip = K.kind !== 'kaki';
   let line = K.kind === 'yomi' ? `${say} ${ksay(q)}` : say;
   if ([3, 5, 7].includes(K.combo)) line += `。 ${K.combo}れんぞく！`;
   await Promise.all([Speech.speak(line), sleep(1300)]);
-  if (tk === K.token) kNext();
+  if (tk !== K.token) return;
+  if (K.kind === 'kaki') { $('#goal').classList.remove('show'); kSetOk(true); K.canSkip = true; showStroke(q, 'ok'); }
+  else kNext();
 }
 
 // こたえを みせて、「つぎへ」を おすまで まつ（2かい まちがえた とき・「わからない」の とき）
@@ -1755,6 +1889,8 @@ async function kReveal(msg) {
   if (K.mode === 'choice') { const i = K.choices.indexOf(q.a); $$('#kchoices .kch')[i].classList.add('right'); }
   if (K.mode === 'kana') { kSetVal(q.r[0]); $('#kyAns').classList.remove('ng'); $('#kyAns').classList.add('reveal'); }
   kNote(`${msg}こたえは「${kans(q)}」。たしかめたら「つぎへ」を おしてね`);
+  $('#kyAns').blur();
+  if (K.kind === 'kaki') showStroke(q, 'rev');
   await sleep(200);
   if (tk !== K.token) return;
   Speech.speak(K.kind === 'yomi' ? `こたえは ${q.r[0]} だよ` : '答えは この かんじだよ');
@@ -1793,6 +1929,7 @@ function kSkip() {
 function kNext() {
   K.canSkip = false;
   $('#goal').classList.remove('show');
+  hideStroke();
   K.idx++;
   if (K.idx >= K.list.length) kFinish(); else kShowQuestion();
 }
@@ -1908,7 +2045,7 @@ function renderSettings() {
         const key = kkey(kind, lv), k = kstat(key);
         const c = D.stickers.filter(x => themeOf(x) === 'kanji' && x.lv === lv && kmodeOf(x) === kind).length;
         const miss = (D.kmiss[key] || []).slice().reverse().map(id => kind === 'yomi' ? (id.match(/〔(.+?)〕/) || [, id])[1] : id).join('、');
-        return `<tr><th>${lv}年 ${KMODES[kind].name}</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${miss || '−'}</td></tr>`;
+        return `<tr><th>${lvName(lv)} ${KMODES[kind].name}</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${miss || '−'}</td></tr>`;
       })).join('')}</tbody></table>`;
 }
 
@@ -1926,6 +2063,7 @@ document.addEventListener('click', e => {
     case 'kmodeSel': S().kmode = b.dataset.val; save(); renderLevels(); break;
     case 'kgive': kGiveUp(); break;
     case 'kana': kanaKey(b.dataset.k); break;
+    case 'stkAgain': playStroke(); break;
     case 'kanji': closeOverlays(); Speech.stop(); renderLevels(); show('klevel'); break;
     case 'startLv': startKanji(+b.dataset.lv); break;
     case 'kok': kCheck(); break;
@@ -1948,7 +2086,7 @@ document.addEventListener('click', e => {
     case 'stk': {
       const s = D.stickers[+b.dataset.sid];
       const dt = new Date(s.at);
-      const where = themeOf(s) === 'kanji' ? `かんじ ${s.lv}年 ${KMODES[kmodeOf(s)].name}` : 'かけざん';
+      const where = themeOf(s) === 'kanji' ? `かんじ ${lvName(s.lv)} ${KMODES[kmodeOf(s)].name}` : 'かけざん';
       stickerDetail(s, `${where} ・ ${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
       break;
     }
@@ -2002,10 +2140,24 @@ function sayRank() {
 }
 
 // ゴールの えんしゅつ中に タップすると すぐ つぎへ
+{
+  const ky = $('#kyAns');
+  ky.addEventListener('input', onKyInput);
+  ky.addEventListener('compositionend', onKyInput);
+  ky.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;  // 変換の かくてい の Enter では こたえない
+    e.preventDefault();
+    onKyInput();
+    kCheck();
+  });
+}
 $('#goal').addEventListener('click', () => { if (screen === 'kquiz') { if (K.canSkip) kSkip(); } else if (Q.canSkip) skip(); });
 // ハードウェアキーボード：すうじ・Backspace・Enter（Enter が「けってい」）
 document.addEventListener('keydown', e => {
-  if (screen === 'kquiz' && K.active && !$('#modal').classList.contains('show') && e.key === 'Enter') { e.preventDefault(); kCheck(); return; }
+  if (screen === 'kquiz' && K.active && !$('#modal').classList.contains('show') && e.key === 'Enter') {
+    if (e.target === $('#kyAns')) return;  // 入力らんの Enter は べつに あつかう
+    e.preventDefault(); kCheck(); return;
+  }
   if (screen !== 'quiz' || !Q.active || $('#modal').classList.contains('show')) return;
   if (/^[0-9]$/.test(e.key)) padKey(e.key);
   else if (e.key === 'Backspace') padKey('del');
