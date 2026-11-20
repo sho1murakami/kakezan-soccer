@@ -6,12 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="かけざん・かんじ">
+<meta name="apple-mobile-web-app-title" content="がくしゅうアプリ">
 <meta name="theme-color" content="#238a4b">
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="apple-touch-icon.png">
-<title>かけざん・かんじ</title>
+<title>がくしゅうアプリ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800;900&display=swap">
@@ -202,7 +202,7 @@ body.nomemo .pad{justify-self:center}
 
 
 /* ---------- かんじ：レベル えらび ---------- */
-.lv-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:10px 24px 24px}
+.lv-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:10px 24px 24px}
 .lvb{background:#fff;border:5px solid var(--kan);border-radius:28px;box-shadow:0 8px 0 rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;padding:10px}
 .lvb:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .lvb b{font-size:clamp(52px,min(7.5vw,12vh),96px);color:var(--kan);line-height:1}
@@ -227,6 +227,7 @@ body.nomemo .pad{justify-self:center}
 .knote{min-height:1.5em;font-size:clamp(16px,2vw,22px);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3);text-align:center}
 .kbody{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.4vw,32px)}
 .kboxes{display:flex;gap:clamp(10px,1.6vw,20px);--bx:min(calc(var(--vh) * .4),30vw,320px)}
+.kboxes.n3{--bx:min(calc(var(--vh) * .36),22vw,250px)}
 .kbox{position:relative;flex:none;width:var(--bx);height:var(--bx);background:#fff;border-radius:16px;box-shadow:0 6px 0 rgba(0,0,0,.2);overflow:hidden}
 .kbox::before{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -277,6 +278,7 @@ body.nomemo .pad{justify-self:center}
 .stk-word{font-size:clamp(24px,3vw,34px);color:var(--kan)}
 .stk-word rt{font-size:.45em;color:var(--mute)}
 .stk-boxes{display:flex;gap:14px;--sb:min(calc(var(--vh) * .5),38vw,420px)}
+.stk-boxes.n3{--sb:min(calc(var(--vh) * .42),27vw,300px)}
 .stk-box{position:relative;width:var(--sb);height:var(--sb);border-radius:16px;background:#fffdf6;box-shadow:inset 0 0 0 3px #e6dcc4;overflow:hidden}
 .stk-box::before{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -292,7 +294,7 @@ body.nomemo .pad{justify-self:center}
 .stk-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:calc(var(--sb) * .7);color:var(--ink)}
 .stk-note{font-size:clamp(15px,1.8vw,20px);color:var(--mute);min-height:1.3em;text-align:center}
 .stk-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-@media (orientation:portrait){ .stk-boxes{--sb:min(42vw,calc(var(--vh) * .34),420px)} }
+@media (orientation:portrait){ .stk-boxes{--sb:min(42vw,calc(var(--vh) * .34),420px)} .stk-boxes.n3{--sb:min(28vw,calc(var(--vh) * .3),300px)} .kboxes.n3{--bx:min(28vw,calc(var(--vh) * .28),240px)} }
 
 /* ---------- ゴール！ ---------- */
 .goal-ov{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(5,20,50,.45),rgba(5,20,50,0) 70%)}
@@ -451,7 +453,6 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   body.nomemo .qmain{grid-template:"top" auto "pad" minmax(0,1fr) / minmax(0,1fr)}
   .cards{grid-template-columns:1fr}
   .lv-grid{grid-template-columns:repeat(2,1fr)}
-  .lvb.cha{grid-column:span 2}
   .kbody{flex-direction:column}
   .kboxes{--bx:min(42vw,calc(var(--vh) * .34),340px)}
   .kside{flex-direction:row;width:min(100%,620px)}
@@ -486,7 +487,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   <!-- ホーム -->
   <section class="screen pitch lines on" id="home">
     <header class="hd">
-      <h1 class="logo"><span class="logo-ball">⚽</span>かけざん・<b>かんじ</b></h1>
+      <h1 class="logo"><span class="logo-ball">⚽</span>がくしゅう<b>アプリ</b></h1>
       <button class="btn-ghost" data-act="settings">⚙️ おうちの方へ</button>
     </header>
     <div class="summary">
@@ -668,7 +669,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・「よみ」は、――線の漢字の読みを画面のひらがなキーボードで答えます。答えの欄をタップすると iPad のキーボードでも入力でき、Enter で答え合わせをします（送りがなは入れません）。各学年の配当漢字がすべて、どれかの問題に入っています（3年190問・4年178問・5年177問・6年176問）。<br>
         ・わからないときは「わからない」で答えを見られます（不正解として数え、次の回に出やすくなります）。<br>
         ・かきとりは、答えたあとに正しい書き順をアニメーションで表示します（書き順のデータは KanjiVG〔© Ulrich Apel, CC BY-SA 3.0, kanjivg.tagaini.net〕をインターネットから読み込みます）。<br>
-        ・「チャレンジ」は、小学校で習わない常用漢字（中学で習う字）をふくむ、難関校の入試で出やすい言葉です。実際の過去問と照らし合わせたものではありません。<br>
+        ・「チャレンジ1〜4」は、小学校で習わない常用漢字（中学で習う1110字）を、新聞でよく使われる順に4つに分けたものです（1がよく使う字、4があまり使わない字）。かきとり・よみとも、1110字がすべてどれかの問題に入っています。難関校の入試で出やすい言葉を優先していますが、実際の過去問と照らし合わせたものではありません。<br>
         ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。</p>
       </div>
     </div>
@@ -1525,8 +1526,8 @@ function applyMemo() {
 // ---------- かんじテスト ----------
 // kaki：――線の カタカナを かんじで かく ／ yomi：――線の かんじの よみを ひらがなで こたえる
 const KDATA = { kaki: window.KANJI_Q || {}, yomi: window.KANJI_Y || {} };
-const KLEVELS = [3, 4, 5, 6, 7];  // 7 は チャレンジ（小学校で ならわない 常用漢字）
-const lvName = lv => lv === 7 ? 'チャレンジ' : `${lv}年`;
+const KLEVELS = [3, 4, 5, 6, 7, 8, 9, 10];  // 7〜10 は チャレンジ1〜4（小学校で ならわない 常用漢字を、よく つかう じゅんに 4つに わけた もの）
+const lvName = lv => lv >= 7 ? `チャレンジ${lv - 6}` : `${lv}年`;
 const KMODES = {
   kaki: { name: 'かきとり', icon: '✏️', ex: { 3: '〔イソ〕ぐ → 急', 4: '〔ヨソウ〕 → 予想', 5: '〔ケンサ〕 → 検査', 6: '〔ワス〕れる → 忘', 7: '〔ハモン〕 → 波紋' }, note: '―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。' },
   yomi: { name: 'よみ', icon: '📖', ex: { 3: '〔今朝〕 → けさ', 4: '〔器用〕 → きよう', 5: '〔快〕い → こころよ', 6: '〔著〕しい → いちじる', 7: '〔雰囲気〕 → ふんいき' }, note: '―線の かんじの よみを ひらがなで こたえよう。おくりがなは いれなくて いいよ。' },
@@ -1549,9 +1550,11 @@ function renderLevels() {
   const stars = c => c ? '⭐'.repeat(Math.min(c, 3)) + (c > 3 ? `+${c - 3}` : '') : '';
   $('#lvGrid').innerHTML = KLEVELS.map(lv => {
     const n = (KDATA[kind][lv] || []).length;
-    const ex = M.ex[lv].replace(/〔(.+?)〕/, '<u>$1</u>');
-    const sub = lv === 7 ? '中学で ならう 字' : `${M.icon} ${M.name}`;
-    return `<button class="lvb${lv === 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
+    const q0 = (KDATA[kind][lv] || [])[0];
+    const exRaw = lv < 7 ? M.ex[lv] : !q0 ? '' : kind === 'yomi' ? `〔${kparts(q0).mid}〕 → ${q0.r[0]}` : `〔${kparts(q0).mid}〕 → ${q0.a}`;
+    const ex = exRaw.replace(/〔(.+?)〕/, '<u>$1</u>');
+    const sub = lv >= 7 ? `${M.icon} 中学の字` : `${M.icon} ${M.name}`;
+    return `<button class="lvb${lv >= 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
   }).join('');
   $('#lvNote').textContent = M.note;
 }
@@ -1631,6 +1634,7 @@ function kRenderAnswer() {
   K.pads = [];
   if (m === 'hand') {
     const n = [...q.a].length;
+    $('#kboxes').classList.toggle('n3', n >= 3);
     $('#kboxes').innerHTML = Array.from({ length: n }, (_, i) =>
       `<div class="kbox" data-i="${i}"><canvas></canvas><button class="kclr" data-act="kclr" data-i="${i}" aria-label="このマスを けす">✕</button><span class="kread"></span></div>`).join('');
     K.pads = $$('#kboxes .kbox').map(box => makePad(box, box.querySelector('canvas'), { color: '#111', width: W => Math.max(5, W / 26) }));
@@ -1716,6 +1720,7 @@ function hideStroke() { Stroke.token++; $('#stroke').classList.remove('show'); }
 async function playStroke() {
   const q = Stroke.q, tk = ++Stroke.token, chars = [...q.a];
   const box = $('#stkBoxes');
+  box.classList.toggle('n3', chars.length >= 3);
   box.innerHTML = chars.map(() => `<div class="stk-box"><svg viewBox="0 0 109 109"><g class="ghost"></g><g class="ink"></g></svg><span class="stk-n"></span></div>`).join('');
   const boxes = $$('.stk-box', box);
   let data;
