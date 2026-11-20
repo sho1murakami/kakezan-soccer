@@ -6,18 +6,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="かけざんアプリ">
+<meta name="apple-mobile-web-app-title" content="かけざん・かんじ">
 <meta name="theme-color" content="#238a4b">
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="apple-touch-icon.png">
-<title>かけざんアプリ</title>
+<title>かけざん・かんじ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800;900&display=swap">
 <style>
 :root{
-  --mul:#a35bf0; --t22:#2f8cff; --t32:#ff7a2f;
+  --mul:#a35bf0; --t22:#2f8cff; --t32:#ff7a2f; --kan:#e8455a;
   --navy:#132650; --navy-d:#0b1838;
   --yellow:#ffd23f; --gold:#ffb300;
   --ink:#1d2b45; --mute:#7a879c;
@@ -34,6 +34,7 @@ body{
   touch-action:manipulation;-webkit-text-size-adjust:100%;
 }
 button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer;touch-action:manipulation}
+[hidden]{display:none!important}
 #app{position:fixed;left:0;right:0;top:0;height:var(--vh);overflow:hidden}
 
 /* ---------- 画面 ---------- */
@@ -104,10 +105,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 .bookbtn small{font-size:.68em;color:#7a5600}
 .bookbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #c99a00}
 
-.cards{flex:1;min-height:0;display:grid;place-items:center;padding:0 20px 22px}
+.cards{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,24px);padding:0 20px 8px}
+.home-rule{margin:4px 20px 14px;text-align:center;color:#fff;font-size:clamp(15px,1.8vw,20px);text-shadow:0 2px 0 rgba(0,0,0,.25)}
 .card{
-  --c:var(--mul);--op:clamp(80px,min(12vw,16vh),140px);
-  position:relative;overflow:hidden;width:min(100%,760px);height:100%;max-height:520px;
+  --c:var(--mul);--cd:#6f2fb8;--op:clamp(64px,min(9vw,12vh),120px);
+  position:relative;overflow:hidden;width:100%;height:100%;min-height:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.4vh,16px);
   background:#fff;border:5px solid var(--c);border-radius:32px;padding:16px;
   box-shadow:0 10px 0 rgba(0,0,0,.22);transition:transform .08s;
@@ -120,11 +122,13 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
   display:grid;place-items:center;font-size:calc(var(--op)*.72);font-weight:900;line-height:1;
   box-shadow:inset 0 -8px 0 rgba(0,0,0,.15),0 5px 0 rgba(0,0,0,.15);
 }
-.card-name{font-size:clamp(30px,min(4.6vw,6vh),54px)}
-.card-ex{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:clamp(18px,2.2vw,24px);color:var(--ink);text-align:center}
+.card.kan{--c:var(--kan);--cd:#b02238}
+.card-name{font-size:clamp(26px,min(3.6vw,5.4vh),46px)}
+.card-ex{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:clamp(15px,1.9vw,22px);color:var(--ink);text-align:center}
+.card-ex u{text-decoration-color:var(--kan);text-decoration-thickness:3px;text-underline-offset:4px}
 .card-ex small{font-size:.8em;color:var(--mute);font-variant-numeric:tabular-nums}
-.card-go{background:var(--mul);color:#fff;font-size:clamp(24px,3.2vw,36px);padding:.3em 1.4em;border-radius:999px;box-shadow:0 5px 0 #6f2fb8;text-shadow:0 2px 0 rgba(0,0,0,.2)}
-.card:active .card-go{box-shadow:0 2px 0 #6f2fb8;transform:translateY(3px)}
+.card-go{background:var(--c);color:#fff;font-size:clamp(20px,2.7vw,32px);padding:.3em 1.2em;border-radius:999px;box-shadow:0 5px 0 var(--cd);text-shadow:0 2px 0 rgba(0,0,0,.2);white-space:nowrap}
+.card:active .card-go{box-shadow:0 2px 0 var(--cd);transform:translateY(3px)}
 .card-rule{font-size:clamp(15px,1.8vw,20px);color:var(--mute)}
 .card-cnt{display:flex;align-items:baseline;gap:.15em;font-size:clamp(18px,2.2vw,24px);background:#fff4c7;border:3px solid var(--yellow);color:#7a5600;padding:3px 16px;border-radius:999px;white-space:nowrap}
 .card-cnt b{font-size:1.5em;color:#e08a00}
@@ -195,6 +199,53 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cu
 body.nomemo .memo{display:none}
 body.nomemo .qmain{grid-template:"top" auto "pad" minmax(0,1fr) / minmax(0,1fr)}
 body.nomemo .pad{justify-self:center}
+
+
+/* ---------- かんじ：レベル えらび ---------- */
+.lv-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:10px 24px 24px}
+.lvb{background:#fff;border:5px solid var(--kan);border-radius:28px;box-shadow:0 8px 0 rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;padding:10px}
+.lvb:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.lvb b{font-size:clamp(52px,min(7.5vw,12vh),96px);color:var(--kan);line-height:1}
+.lvb span{font-size:clamp(20px,2.4vw,28px)}
+.lvb small{font-size:clamp(14px,1.6vw,18px);color:var(--mute);text-align:center;line-height:1.5}
+.lvb em{font-style:normal;font-size:18px;min-height:1.3em;color:#e0a000}
+.lv-note{margin:0 24px 18px;text-align:center;color:#fff;font-size:clamp(14px,1.7vw,18px);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+
+/* ---------- かんじ：もんだい ---------- */
+.kmain{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.4vh,14px);padding:4px 16px 14px}
+.ksent{background:#fff;border-radius:24px;padding:.35em 1em;font-size:clamp(24px,min(3.4vw,5.6vh),44px);line-height:1.8;box-shadow:0 6px 0 rgba(0,0,0,.2);max-width:100%;text-align:center}
+.ksent .tg{display:inline-block;border-bottom:.12em solid var(--kan);padding:0 .12em;line-height:1.25;color:var(--kan);margin:0 .05em}
+.ksent .tg.done{color:#0c8a3e;border-color:#22b45a}
+.ksent .tg.rev{color:#c27c00;border-color:var(--gold)}
+.ksent rt{font-size:.42em;color:var(--mute)}
+.knote{min-height:1.5em;font-size:clamp(16px,2vw,22px);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3);text-align:center}
+.kbody{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.4vw,32px)}
+.kboxes{display:flex;gap:clamp(10px,1.6vw,20px);--bx:min(calc(var(--vh) * .4),30vw,320px)}
+.kbox{position:relative;flex:none;width:var(--bx);height:var(--bx);background:#fff;border-radius:16px;box-shadow:0 6px 0 rgba(0,0,0,.2);overflow:hidden}
+.kbox::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent calc(50% - 1px),rgba(232,69,90,.22) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),
+             linear-gradient(transparent calc(50% - 1px),rgba(232,69,90,.22) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px));
+}
+.kbox canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.kclr{position:absolute;right:6px;top:6px;z-index:2;width:42px;height:42px;border-radius:50%;background:#f1f4f9;color:var(--ink);font-size:18px;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.kread{position:absolute;left:8px;bottom:6px;z-index:2;font-size:15px;color:var(--mute);pointer-events:none}
+.kbox.ok{box-shadow:0 0 0 5px #22b45a,0 6px 0 rgba(0,0,0,.2)}
+.kbox.ng{box-shadow:0 0 0 5px #e0283c,0 6px 0 rgba(0,0,0,.2)}
+.kbox.shake{animation:shake .4s}
+.kchoices{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:min(620px,100%)}
+.kch{background:#fff;border-radius:20px;font-size:clamp(34px,min(5vw,8vh),64px);padding:.15em .4em;box-shadow:0 6px 0 #b8c4d8;border:4px solid transparent;font-weight:800}
+.kch:active{transform:translateY(4px);box-shadow:0 2px 0 #b8c4d8}
+.kch.sel{border-color:var(--kan);background:#fff0f2}
+.kch.right{background:#d6ffe4;border-color:#22b45a;color:#0c8a3e}
+.kch.wrong{background:#ffe1e4;border-color:#e0283c;color:#e0283c;opacity:.7}
+.kside{display:flex;flex-direction:column;gap:12px;width:clamp(170px,19vw,250px)}
+.kbtn{border-radius:18px;font-size:clamp(20px,2.4vw,28px);padding:.55em .4em;background:#fff;color:var(--ink);box-shadow:0 6px 0 #b8c4d8;white-space:nowrap}
+.kbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #b8c4d8}
+.kbtn.ok{background:linear-gradient(#5ee08c,#22b45a);color:#fff;box-shadow:0 6px 0 #15843f;font-size:clamp(24px,3vw,34px);text-shadow:0 2px 0 rgba(0,0,0,.2);padding:.7em .4em}
+.kbtn.ok.next{background:linear-gradient(#ffe066,#ffb300);color:var(--ink);text-shadow:none;box-shadow:0 6px 0 #c99a00}
+.kbtn.ok.busy{opacity:.6}
+#kmodeTxt{font-size:14px;color:#fff;text-align:center;text-shadow:0 1px 0 rgba(0,0,0,.3)}
 
 /* ---------- ゴール！ ---------- */
 .goal-ov{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(5,20,50,.45),rgba(5,20,50,0) 70%)}
@@ -351,6 +402,12 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   .key.k0{grid-column:auto}
   .key.del{grid-column:span 2}
   body.nomemo .qmain{grid-template:"top" auto "pad" minmax(0,1fr) / minmax(0,1fr)}
+  .cards{grid-template-columns:1fr}
+  .lv-grid{grid-template-columns:repeat(2,1fr)}
+  .kbody{flex-direction:column}
+  .kboxes{--bx:min(42vw,calc(var(--vh) * .34),340px)}
+  .kside{flex-direction:row;width:min(100%,620px)}
+  .kside .kbtn{flex:1}
 }
 
 /* ---------- うごき ---------- */
@@ -380,7 +437,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
   <!-- ホーム -->
   <section class="screen pitch lines on" id="home">
     <header class="hd">
-      <h1 class="logo"><span class="logo-ball">⚽</span>かけざん<b>アプリ</b></h1>
+      <h1 class="logo"><span class="logo-ball">⚽</span>かけざん・<b>かんじ</b></h1>
       <button class="btn-ghost" data-act="settings">⚙️ おうちの方へ</button>
     </header>
     <div class="summary">
@@ -403,14 +460,22 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     <div class="cards">
       <button class="card" data-act="start">
         <span class="card-op">×</span>
-        <span class="card-name">かけざん チャレンジ</span>
-        <span class="card-ex">2けた × 2けた と 3けた × 2けた が まざって でるよ<small>れい：47 × 36 ・ 258 × 43</small></span>
+        <span class="card-name">かけざん</span>
+        <span class="card-ex">2けた × 2けた と 3けた × 2けた<small>れい：47 × 36 ・ 258 × 43</small></span>
         <span class="card-go">▶ スタート</span>
-        <span class="card-rule">7もん ちゅう 5もん いじょう せいかいで シール ゲット！</span>
-        <span class="card-cnt">シール<b id="cardCnt">0</b>まい</span>
-        <span class="card-mini" id="cardMini"></span>
+        <span class="card-cnt">シール<b data-cnt="mul">0</b>まい</span>
+        <span class="card-mini" data-mini="mul"></span>
+      </button>
+      <button class="card kan" data-act="kanji">
+        <span class="card-op">漢</span>
+        <span class="card-name">かんじ テスト</span>
+        <span class="card-ex">3年 〜 6年 の レベルから えらぶよ<small>れい：えきまで <u>イソ</u>いで 行く</small></span>
+        <span class="card-go">▶ レベルを えらぶ</span>
+        <span class="card-cnt">シール<b data-cnt="kanji">0</b>まい</span>
+        <span class="card-mini" data-mini="kanji"></span>
       </button>
     </div>
+    <p class="home-rule">どちらも 7もん ちゅう 5もん いじょう せいかいで シール ゲット！</p>
   </section>
 
   <!-- もんだい -->
@@ -451,6 +516,41 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     </div>
   </section>
 
+  <!-- かんじ：レベル えらび -->
+  <section class="screen pitch lines" id="klevel">
+    <header class="hd">
+      <button class="back" data-act="home">◀ もどる</button>
+      <h2>かんじ テスト<small style="display:block;font-size:.6em;color:var(--yellow)">どの レベルに する？</small></h2>
+      <span class="sp"></span>
+    </header>
+    <div class="lv-grid" id="lvGrid"></div>
+    <p class="lv-note">―線の カタカナを かんじで かこう。おくりがなは かかなくて いいよ。</p>
+  </section>
+
+  <!-- かんじ：もんだい -->
+  <section class="screen pitch" id="kquiz">
+    <div class="qbar">
+      <button class="qquit" data-act="quit" aria-label="やめる">✕</button>
+      <span class="qtheme" id="kTheme" style="--tc:var(--kan)">かんじ 3年</span>
+      <div class="pg" id="kpg"></div>
+      <span class="combo" id="kcombo"></span>
+      <button class="qsay" data-act="krepeat" aria-label="もういちど よむ">🔊</button>
+    </div>
+    <div class="kmain">
+      <div class="ksent" id="ksent"></div>
+      <div class="knote" id="knote"></div>
+      <div class="kbody">
+        <div class="kboxes" id="kboxes"></div>
+        <div class="kchoices" id="kchoices" hidden></div>
+        <div class="kside">
+          <button class="kbtn" data-act="kclearAll" id="kclearAll">🧽 ぜんぶ けす</button>
+          <button class="kbtn ok" data-act="kok" id="kok">⚽ けってい</button>
+          <span id="kmodeTxt"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- シールちょう -->
   <section class="screen" id="book">
     <header class="hd">
@@ -460,6 +560,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     </header>
     <div class="tabs" id="bookTabs">
       <button data-act="bookTab" data-f="all">ぜんぶ<b></b></button>
+      <button data-act="bookTab" data-f="mul">かけざん<b></b></button>
+      <button data-act="bookTab" data-f="kanji">かんじ<b></b></button>
       <button data-act="bookTab" data-f="zukan">🔍 ずかん</button>
     </div>
     <div class="bookbody" id="bookBody"></div>
@@ -488,6 +590,10 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <label class="row"><span class="grow">問題画面に手書きのメモ欄を出す<small>指や Apple Pencil で筆算を書けます。次の問題に進むと自動で消えます</small></span><span class="sw"><input type="checkbox" data-set="memo"><i></i></span></label>
       </div>
       <div class="set-card">
+        <h3>漢 かんじテスト</h3>
+        <label class="row"><span class="grow">手書きで答える（自動判定）<small>オフにすると4択になります。手書きの判定には Google の手書き文字認識を使うため、書いた線の形（座標）だけがインターネットで Google に送られます。ネットにつながらないときは、自動で4択に切り替わります。とめ・はね・書き順までは判定できません</small></span><span class="sw"><input type="checkbox" data-set="hand"><i></i></span></label>
+      </div>
+      <div class="set-card">
         <h3>📊 きろく</h3>
         <div id="stats"></div>
         <div class="row"><span class="grow">シールと記録をすべて消す</span><button class="danger" data-act="reset">すべて消す</button></div>
@@ -498,7 +604,9 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・1回7問で、「2けた×2けた」と「3けた×2けた」が3問と4問（どちらが4問かは毎回ちがいます）、ばらばらの順に出ます。<br>
         ・数字ボタンを押しただけでは答えになりません。「けってい」を押すと答え合わせをします。<br>
         ・7問中5問以上を1回目で正解するとシールがもらえます（2回目で正解した問題は数えません）。<br>
-        ・まちがえた問題は覚えておいて、次の回に出やすくなります（1回につき2問まで）。</p>
+        ・まちがえた問題は覚えておいて、次の回に出やすくなります（1回につき2問まで）。<br>
+        ・かんじテストは、学年別漢字配当表（2020年度〜）にそって 3年〜6年のレベルを選べます。問題文の――線以外は3年までの漢字だけを使っています。入試と同じく、カタカナの部分を漢字で書きます（送りがなは書きません）。<br>
+        ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。</p>
       </div>
     </div>
   </section>
@@ -559,6 +667,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
 </div>
 <canvas id="fx"></canvas>
 
+<script src="kanji-data.js"></script>
 <script>
 (() => {
 'use strict';
@@ -623,7 +732,8 @@ const blankStats = () => ({ play: 0, perfect: 0, q22: 0, ok22: 0, q32: 0, ok32: 
 function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true },
+    kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
+    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true },
   };
 }
 let D = defaults();
@@ -638,6 +748,8 @@ function load() {
       stats: { ...def.stats, ...(d.stats || {}) },
       stickers: Array.isArray(d.stickers) ? d.stickers : [],
       miss: Array.isArray(d.miss) ? d.miss : [],
+      kmiss: d.kmiss && typeof d.kmiss === 'object' ? d.kmiss : {},
+      kstats: d.kstats && typeof d.kstats === 'object' ? d.kstats : {},
     };
   } catch (e) { D = defaults(); }
 }
@@ -902,10 +1014,10 @@ const FX = (() => {
   return { confetti, show, stop };
 })();
 
-// ---------- けいさんメモ（てがき） ----------
-const Memo = (() => {
-  const box = $('#memo'), cv = $('#memoCv'), cx = cv.getContext('2d');
-  let strokes = [], curS = null, W = 0, H = 0;
+// ---------- てがきの キャンバス（けいさんメモ と かんじの マス） ----------
+function makePad(box, cv, { color = '#1d2b6b', width = () => 3.2 } = {}) {
+  const cx = cv.getContext('2d');
+  let strokes = [], curS = null, W = 0, H = 0, t0 = 0;
   function size() {
     const r = Math.min(2, window.devicePixelRatio || 1);
     W = box.clientWidth; H = box.clientHeight;
@@ -913,6 +1025,12 @@ const Memo = (() => {
     cv.width = W * r; cv.height = H * r;
     cx.setTransform(r, 0, 0, r, 0, 0);
     redraw();
+  }
+  function style() {
+    cx.strokeStyle = color;
+    cx.lineWidth = width(W, H);
+    cx.lineCap = 'round';
+    cx.lineJoin = 'round';
   }
   function line(s) {
     if (!s.length) return;
@@ -924,16 +1042,18 @@ const Memo = (() => {
   }
   function redraw() {
     cx.clearRect(0, 0, W, H);
-    cx.strokeStyle = '#1d2b6b';
-    cx.lineWidth = 3.2;
-    cx.lineCap = 'round';
-    cx.lineJoin = 'round';
+    style();
     strokes.forEach(line);
   }
-  const pos = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const pos = e => {
+    const r = cv.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top, t: Math.round(performance.now() - t0) };
+  };
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
+    if (W !== box.clientWidth || H !== box.clientHeight) size();
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    if (!strokes.length) t0 = performance.now();
     curS = [pos(e)];
     strokes.push(curS);
     redraw();
@@ -942,6 +1062,7 @@ const Memo = (() => {
     if (!curS) return;
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
     const last = curS[curS.length - 1];
+    style();
     cx.beginPath();
     cx.moveTo(last.x, last.y);
     for (const ev of evs.length ? evs : [e]) { const p = pos(ev); curS.push(p); cx.lineTo(p.x, p.y); }
@@ -951,8 +1072,16 @@ const Memo = (() => {
   cv.addEventListener('pointerup', end);
   cv.addEventListener('pointercancel', end);
   new ResizeObserver(size).observe(box);
-  return { clear() { strokes = []; curS = null; redraw(); }, size };
-})();
+  size();
+  return {
+    clear() { strokes = []; curS = null; redraw(); },
+    size,
+    empty: () => !strokes.length,
+    strokes: () => strokes,
+    w: () => W, h: () => H,
+  };
+}
+const Memo = makePad($('#memo'), $('#memoCv'));
 
 // ---------- がめんの おおきさ ----------
 function fitViewport() {
@@ -985,14 +1114,17 @@ function rankOf(n) {
 }
 const isToday = ms => new Date(ms).toDateString() === new Date().toDateString();
 
-function awardSticker(ok) {
+const themeOf = s => s.t || 'mul';
+const themeCount = t => D.stickers.filter(s => themeOf(s) === t).length;
+function awardSticker(ok, t, lv) {
   const owned = new Set(D.stickers.map(s => s.d));
   // まだ もっていない シールが でやすい・レアは でにくい
   const w = DESIGNS.map(d => (RARE.has(d.id) ? 0.35 : 1) * (owned.has(d.id) ? 1 : 2.5));
   let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
   for (; i < DESIGNS.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
   const before = rankOf(D.stickers.length).r;
-  const s = { d: DESIGNS[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QUESTIONS };
+  const s = { d: DESIGNS[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QUESTIONS, t };
+  if (lv) s.lv = lv;
   D.stickers.push(s);
   return { s, isNew: !owned.has(s.d), rankUp: rankOf(D.stickers.length).r !== before };
 }
@@ -1006,8 +1138,10 @@ function renderHome() {
   $('#rankNext').textContent = next ? `あと ${next[0] - n}まいで ${next[1]}` : 'さいこう ランク！';
   $('#rankBar').style.width = next ? ((n - r[0]) / (next[0] - r[0]) * 100) + '%' : '100%';
   $('#todayTxt').textContent = `きょう ${st.filter(s => isToday(s.at)).length}まい`;
-  $('#cardCnt').textContent = n;
-  $('#cardMini').innerHTML = st.slice(-8).reverse().map(s => stickerHTML(s, 'xs')).join('');
+  for (const t of ['mul', 'kanji']) {
+    $(`[data-cnt="${t}"]`).textContent = themeCount(t);
+    $(`[data-mini="${t}"]`).innerHTML = st.filter(s => themeOf(s) === t).slice(-8).reverse().map(s => stickerHTML(s, 'xs')).join('');
+  }
 }
 
 // ---------- もんだいを つくる ----------
@@ -1074,6 +1208,7 @@ function setOkKey(next) {
 function startQuiz() {
   SFX.unlock();
   closeOverlays();
+  Game = { kind: 'mul', lv: 0 };
   Object.assign(Q, { list: makeQuestions(), idx: 0, results: [], combo: 0, active: true });
   show('quiz');
   applyMemo();
@@ -1211,6 +1346,9 @@ function showGoal(text, sub, big) {
   }, 430);
 }
 
+// いま あそんでいる ゲーム（「もういっかい」で おなじものを はじめる）
+let Game = { kind: 'mul', lv: 0 };
+
 function finishQuiz() {
   Q.active = false;
   Q.lock = true;
@@ -1223,22 +1361,27 @@ function finishQuiz() {
     if (Q.results[i]) st['ok' + t]++;
   });
   if (ok === Q.list.length) st.perfect++;
+  const missed = Q.list.filter((q, i) => !Q.results[i]).map(q => `<span>${q.a} × ${q.b} = <b>${q.ans}</b></span>`).join('');
+  endRound(ok, Q.results, missed);
+}
+
+function endRound(ok, results, missedHTML) {
   if (ok >= PASS) {
-    const res = awardSticker(ok);
+    const res = awardSticker(ok, Game.kind, Game.lv);
     save();
-    showWin(res, ok);
+    showWin(res, ok, results.length);
   } else {
     save();
-    showResult(ok);
+    showResult(ok, results, missedHTML);
   }
 }
 
-function showWin({ s, isNew, rankUp }, ok) {
+function showWin({ s, isNew, rankUp }, ok, total) {
   const d = DMAP[s.d];
   const n = D.stickers.length;
   const rk = rankOf(n).r;
-  const perfect = ok === Q.list.length;
-  $('#winTop').textContent = perfect ? 'ぜんもん せいかい！' : `${Q.list.length}もん ちゅう ${ok}もん せいかい！`;
+  const perfect = ok === total;
+  $('#winTop').textContent = perfect ? 'ぜんもん せいかい！' : `${total}もん ちゅう ${ok}もん せいかい！`;
   $('#winStk').innerHTML = stickerHTML(s, 'xxl');
   $('#winName').innerHTML = `${d.name}${s.k ? ' <span class="kira">✨キラキラ✨</span>' : ''}${isNew ? ' <span class="newb">NEW!</span>' : ''}`;
   $('#winSub').textContent = `シール ${n}まいめ ・ きょう ${D.stickers.filter(x => isToday(x.at)).length}まい`;
@@ -1255,14 +1398,14 @@ function showWin({ s, isNew, rankUp }, ok) {
   setTimeout(() => w.classList.add('ready'), 2200);
 }
 
-function showResult(ok) {
-  $('#resBalls').innerHTML = Q.results.map(r => `<i class="${r ? 'ok' : 'ng'}">${r ? '⚽' : ''}</i>`).join('');
+function showResult(ok, results, missedHTML) {
+  $('#resBalls').innerHTML = results.map(r => `<i class="${r ? 'ok' : 'ng'}">${r ? '⚽' : ''}</i>`).join('');
   $('#resOk').textContent = ok;
-  $('#resTotal').textContent = Q.list.length;
+  $('#resTotal').textContent = results.length;
   const msg = ok === PASS - 1 ? 'おしい！ あと 1もん！' : ok >= 4 ? 'いいね！ その ちょうし！' : 'がんばったね！';
   $('#resMsg').innerHTML = `${msg}<br><small>${PASS}もん いじょう せいかいで シール ゲット！</small>`;
   // まちがえた もんだいと こたえ
-  $('#resMiss').innerHTML = Q.list.filter((q, i) => !Q.results[i]).map(q => `<span>${q.a} × ${q.b} = <b>${q.ans}</b></span>`).join('');
+  $('#resMiss').innerHTML = missedHTML;
   $('#result').classList.add('show');
   SFX.cheer();
   if (ok >= PASS - 1) FX.confetti(innerWidth / 2, innerHeight * 0.55, 60, 13);
@@ -1287,6 +1430,8 @@ function closeModal() { $('#modal').classList.remove('show'); }
 function goHome() {
   Q.active = false;
   Q.token++;
+  K.active = false;
+  K.token++;
   Speech.stop();
   closeOverlays();
   renderHome();
@@ -1298,6 +1443,267 @@ function applyMemo() {
   requestAnimationFrame(() => Memo.size());
 }
 
+// ---------- かんじテスト ----------
+const KDATA = window.KANJI_Q || {};
+const KLEVELS = [3, 4, 5, 6];
+const KLV_EX = { 3: 'れい：〔イソ〕ぐ → 急', 4: 'れい：〔ヨソウ〕 → 予想', 5: 'れい：〔ケンサ〕 → 検査', 6: 'れい：〔ワス〕れる → 忘' };
+const HW_URL = 'https://inputtools.google.com/request?ime=handwriting&app=mobilesearch&cs=1&oe=UTF-8';
+const K = { lv: 3, list: [], idx: 0, tries: 0, results: [], combo: 0, lock: true, token: 0, active: false, canSkip: false, mode: 'hand', offline: false, pads: [], choices: [], sel: -1, wrongSel: [] };
+const kcur = () => K.list[K.idx];
+const kparts = q => { const m = q.s.match(/^(.*)〔(.+?)〕(.*)$/); return { pre: m[1], kana: m[2], post: m[3] }; };
+const ksay = q => { const p = kparts(q); return p.pre + p.kana + p.post; };
+const kstat = lv => (D.kstats[lv] = D.kstats[lv] || { play: 0, perfect: 0, q: 0, ok: 0 });
+
+function renderLevels() {
+  const cnt = lv => D.stickers.filter(s => themeOf(s) === 'kanji' && s.lv === lv).length;
+  const stars = c => c ? '⭐'.repeat(Math.min(c, 3)) + (c > 3 ? `+${c - 3}` : '') : '';
+  $('#lvGrid').innerHTML = KLEVELS.map(lv => {
+    const n = (KDATA[lv] || []).length;
+    return `<button class="lvb" data-act="startLv" data-lv="${lv}"><b>${lv}年</b><span>レベル</span><small>${KLV_EX[lv].replace(/〔(.+?)〕/, '<u>$1</u>')}<br>${n}もん</small><em>${stars(cnt(lv))}</em></button>`;
+  }).join('');
+}
+
+function makeKanjiQuestions(lv) {
+  const pool = KDATA[lv] || [];
+  const out = [], used = new Set();
+  // まちがえた もんだいを すこし まぜる
+  for (const a of shuffle((D.kmiss[lv] || []).slice()).slice(0, MISS_PER_SET)) {
+    const q = pool.find(x => x.a === a);
+    if (q && !used.has(a)) { out.push({ ...q, again: true }); used.add(a); }
+  }
+  const rest = shuffle(pool.filter(q => !used.has(q.a)));
+  while (out.length < QUESTIONS && rest.length) out.push({ ...rest.pop() });
+  return shuffle(out);
+}
+function kUpdateMiss(q, ok) {
+  const lv = K.lv, list = (D.kmiss[lv] || []).filter(a => a !== q.a);
+  if (!ok) list.push(q.a);
+  D.kmiss[lv] = list.slice(-MISS_KEEP);
+}
+
+function startKanji(lv) {
+  SFX.unlock();
+  closeOverlays();
+  Game = { kind: 'kanji', lv };
+  Object.assign(K, { lv, list: makeKanjiQuestions(lv), idx: 0, results: [], combo: 0, active: true, offline: false });
+  if (!K.list.length) return;
+  $('#kTheme').textContent = `かんじ ${lv}年`;
+  show('kquiz');
+  kShowQuestion();
+  SFX.start();
+}
+
+function kRenderSentence(state) {
+  const q = kcur(), p = kparts(q);
+  const mid = state ? `<span class="tg ${state}"><ruby>${q.a}<rt>${p.kana}</rt></ruby></span>` : `<span class="tg">${p.kana}</span>`;
+  $('#ksent').innerHTML = `${p.pre}${mid}${p.post}`;
+}
+function kNote(t) { $('#knote').textContent = t; }
+function kSetOk(next) {
+  const b = $('#kok');
+  b.classList.toggle('next', next);
+  b.classList.remove('busy');
+  b.textContent = next ? 'つぎへ ▶' : '⚽ けってい';
+}
+
+function kShowQuestion() {
+  const q = kcur();
+  Object.assign(K, { tries: 0, lock: false, canSkip: false, sel: -1, wrongSel: [] });
+  K.token++;
+  K.mode = S().hand && !K.offline ? 'hand' : 'choice';
+  kRenderSentence('');
+  kNote(q.again ? '🔁 まえに まちがえた もんだい' : '');
+  kSetOk(false);
+  kRenderAnswer();
+  kRenderProgress();
+  Speech.speak(ksay(q));
+}
+
+function kRenderAnswer() {
+  const q = kcur(), hand = K.mode === 'hand';
+  $('#kboxes').hidden = !hand;
+  $('#kchoices').hidden = hand;
+  $('#kclearAll').hidden = !hand;
+  $('#kmodeTxt').textContent = hand ? 'マスに かんじを かいてね' : '4つから えらんでね';
+  if (hand) {
+    const n = [...q.a].length;
+    $('#kboxes').innerHTML = Array.from({ length: n }, (_, i) =>
+      `<div class="kbox" data-i="${i}"><canvas></canvas><button class="kclr" data-act="kclr" data-i="${i}" aria-label="このマスを けす">✕</button><span class="kread"></span></div>`).join('');
+    K.pads = $$('#kboxes .kbox').map(box => makePad(box, box.querySelector('canvas'), { color: '#111', width: W => Math.max(5, W / 26) }));
+  } else {
+    K.pads = [];
+    K.choices = shuffle((q.c && q.c.length ? q.c : [q.a]).slice());
+    if (!K.choices.includes(q.a)) K.choices[0] = q.a;
+    kRenderChoices();
+  }
+}
+function kRenderChoices() {
+  $('#kchoices').innerHTML = K.choices.map((c, i) =>
+    `<button class="kch${i === K.sel ? ' sel' : ''}${K.wrongSel.includes(i) ? ' wrong' : ''}" data-act="kch" data-i="${i}">${c}</button>`).join('');
+}
+
+function kRenderProgress() {
+  $('#kpg').innerHTML = K.list.map((q, i) => {
+    const r = K.results[i];
+    const cls = r === true ? 'ok' : r === false ? 'ng' : i === K.idx ? 'cur' : '';
+    return `<i class="${cls}">${r === true ? '⚽' : ''}</i>`;
+  }).join('');
+  const c = $('#kcombo');
+  c.textContent = K.combo >= 2 ? `🔥 ${K.combo}れんぞく` : '';
+  c.classList.toggle('on', K.combo >= 2);
+}
+
+// てがきの もじを よみとる（Google の 手書き文字認識。かいた 線の ざひょう だけを おくる）
+async function recognize(pad) {
+  const ink = pad.strokes().map(st => [st.map(p => Math.round(p.x)), st.map(p => Math.round(p.y)), st.map(p => p.t)]);
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const r = await fetch(HW_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ options: 'enable_pre_space', requests: [{ writing_guide: { writing_area_width: Math.round(pad.w()), writing_area_height: Math.round(pad.h()) }, ink, language: 'ja', max_num_results: 10, max_completions: 0 }] }),
+      signal: ctl.signal,
+    });
+    const j = await r.json();
+    if (j[0] !== 'SUCCESS') throw new Error('recognize failed');
+    return (j[1] && j[1][0] && j[1][0][1]) || [];
+  } finally { clearTimeout(timer); }
+}
+// 3ばんめ までに こたえが あり、それより うえに ほかの かんじが ないとき せいかい
+// （「口」を「ロ」と よんだ ような、かな・きごう との とりちがえは ゆるす）
+function judgeChar(ch, cands) {
+  for (const c of cands.slice(0, 3)) {
+    if (c === ch) return true;
+    if (/[㐀-鿿]/.test(c)) return false;
+  }
+  return false;
+}
+
+async function kCheck() {
+  if (!K.active) return;
+  if (K.canSkip) return kSkip();
+  if (K.lock) return;
+  const q = kcur();
+  if (K.mode === 'choice') {
+    if (K.sel < 0) { kNote('こたえを 1つ えらんでから「けってい」を おしてね'); return; }
+    return K.choices[K.sel] === q.a ? kCorrect() : kWrong(K.choices[K.sel]);
+  }
+  const boxes = $$('#kboxes .kbox');
+  const empty = K.pads.map((p, i) => p.empty() ? i : -1).filter(i => i >= 0);
+  if (empty.length) {
+    empty.forEach(i => { const b = boxes[i]; b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); });
+    kNote('ぜんぶの マスに かいてから「けってい」を おしてね');
+    return;
+  }
+  K.lock = true;
+  const tk = ++K.token;
+  $('#kok').classList.add('busy');
+  kNote('よみとり中…');
+  let res;
+  try {
+    res = await Promise.all(K.pads.map(recognize));
+  } catch (e) {
+    if (tk !== K.token) return;
+    // ネットに つながらない など：このあとは 4たくに する
+    K.offline = true;
+    K.mode = 'choice';
+    K.lock = false;
+    kSetOk(false);
+    kRenderAnswer();
+    kNote('てがきの はんていが つかえないので、えらぶ もんだいに したよ');
+    return;
+  }
+  if (tk !== K.token) return;
+  $('#kok').classList.remove('busy');
+  const chars = [...q.a];
+  const oks = chars.map((ch, i) => judgeChar(ch, res[i] || []));
+  boxes.forEach((b, i) => {
+    b.classList.remove('ok', 'ng');
+    b.classList.add(oks[i] ? 'ok' : 'ng');
+    b.querySelector('.kread').textContent = `よめた字：${(res[i] && res[i][0]) || '？'}`;
+  });
+  K.lock = false;
+  if (oks.every(Boolean)) kCorrect();
+  else kWrong(res.map(c => (c && c[0]) || '？').join(''));
+}
+
+async function kCorrect() {
+  const q = kcur(), tk = ++K.token, first = K.tries === 0;
+  K.lock = true;
+  K.results.push(first);
+  K.combo = first ? K.combo + 1 : 0;
+  kUpdateMiss(q, first);
+  save();
+  kRenderSentence('done');
+  if (K.mode === 'choice') { K.sel = K.choices.indexOf(q.a); kRenderChoices(); $$('#kchoices .kch')[K.sel].classList.add('right'); }
+  kRenderProgress();
+  const [txt, say] = pick(PRAISE);
+  showGoal(txt, `${q.a}（${kparts(q).kana}）`, K.combo >= 5);
+  SFX.goal(K.combo);
+  K.canSkip = true;
+  let line = say;
+  if ([3, 5, 7].includes(K.combo)) line += `。 ${K.combo}れんぞく！`;
+  await Promise.all([Speech.speak(line), sleep(1300)]);
+  if (tk === K.token) kNext();
+}
+
+async function kWrong(read) {
+  const q = kcur();
+  K.tries++;
+  SFX.wrong();
+  const tk = ++K.token;
+  if (K.mode === 'choice') { K.wrongSel.push(K.sel); K.sel = -1; kRenderChoices(); }
+  if (K.tries === 1) {
+    kNote(K.mode === 'hand'
+      ? `「${read}」と よめたよ。もう一回 かいてみよう（2回目の せいかいは かぞえないよ）`
+      : 'ちがうよ。もう一回 えらんでね（2回目の せいかいは かぞえないよ）');
+    Speech.speak(K.mode === 'hand' ? 'おしい！ もう一回 かいてみよう' : 'ちがうよ。もう一回');
+    return;
+  }
+  // 2かい まちがえたら こたえを みせて、「つぎへ」を おすまで まつ
+  K.lock = true;
+  K.results.push(false);
+  K.combo = 0;
+  kUpdateMiss(q, false);
+  save();
+  kRenderProgress();
+  await sleep(350);
+  if (tk !== K.token) return;
+  kRenderSentence('rev');
+  if (K.mode === 'choice') { const i = K.choices.indexOf(q.a); $$('#kchoices .kch')[i].classList.add('right'); }
+  kNote(`こたえは「${q.a}」。たしかめたら「つぎへ」を おしてね`);
+  kSetOk(true);
+  K.canSkip = true;
+  Speech.speak('答えは この かんじだよ');
+}
+
+function kSkip() {
+  K.canSkip = false;
+  K.token++;
+  Speech.stop();
+  kNext();
+}
+function kNext() {
+  K.canSkip = false;
+  $('#goal').classList.remove('show');
+  K.idx++;
+  if (K.idx >= K.list.length) kFinish(); else kShowQuestion();
+}
+function kFinish() {
+  K.active = false;
+  K.lock = true;
+  const ok = K.results.filter(Boolean).length;
+  const st = kstat(K.lv);
+  st.play++; st.q += K.list.length; st.ok += ok;
+  if (ok === K.list.length) st.perfect++;
+  const missed = K.list.filter((q, i) => !K.results[i]).map(q => {
+    const p = kparts(q);
+    return `<span>${p.kana} → <b>${q.a}</b></span>`;
+  }).join('');
+  endRound(ok, K.results, missed);
+}
+
 // ---------- シールちょう ----------
 let bookFilter = 'all', bookNew = -1;
 function renderBook() {
@@ -1305,9 +1711,9 @@ function renderBook() {
   const owned = new Set(st.map(s => s.d));
   $('#zkCount').textContent = `しゅるい ${owned.size} / ${DESIGNS.length}`;
   $$('#bookTabs [data-f]').forEach(b => {
-    const cnt = b.querySelector('b');
-    b.classList.toggle('on', b.dataset.f === bookFilter);
-    if (cnt) cnt.textContent = st.length;
+    const cnt = b.querySelector('b'), f = b.dataset.f;
+    b.classList.toggle('on', f === bookFilter);
+    if (cnt) cnt.textContent = f === 'all' ? st.length : themeCount(f);
   });
   const body = $('#bookBody');
   if (bookFilter === 'zukan') {
@@ -1318,11 +1724,12 @@ function renderBook() {
     }).join('') + '</div>';
     return;
   }
-  if (!st.length) {
+  const list = st.map((s, i) => ({ s, i })).filter(x => bookFilter === 'all' || themeOf(x.s) === bookFilter);
+  if (!list.length) {
     body.innerHTML = `<div class="empty">まだ シールが ないよ。<br>${QUESTIONS}もん ちゅう ${PASS}もん いじょう せいかいで シール ゲット！</div>`;
     return;
   }
-  body.innerHTML = '<div class="board-stk">' + st.map((s, i) =>
+  body.innerHTML = '<div class="board-stk">' + list.map(({ s, i }) =>
     `<button class="slot-stk${i === bookNew ? ' new' : ''}" data-act="stk" data-sid="${i}" style="--rot:${((i * 37) % 21) - 10}deg">${stickerHTML(s, 'md')}</button>`
   ).join('') + '</div>';
   const nw = body.querySelector('.new');
@@ -1389,7 +1796,12 @@ function renderSettings() {
   const weak = D.miss.slice().reverse().map(m => `${m.a}×${m.b}`).join('、');
   $('#stats').innerHTML = `<table class="st"><thead><tr><th>あそんだ</th><th>全問正解</th><th>シール</th><th>ランク</th><th>2けた×2けた<br>1回目の正解率</th><th>3けた×2けた<br>1回目の正解率</th></tr></thead>
     <tbody><tr><td>${s.play}回</td><td>${s.perfect}回</td><td>${n}枚</td><td>${rk[2]} ${rk[1]}</td><td>${pct(s.ok22, s.q22)}</td><td>${pct(s.ok32, s.q32)}</td></tr></tbody></table>
-    <p class="note">まちがえた問題（新しい順・次の回に出やすくなります）：${weak || 'まだ ありません'}</p>`;
+    <p class="note">まちがえた問題（新しい順・次の回に出やすくなります）：${weak || 'まだ ありません'}</p>
+    <table class="st"><thead><tr><th>かんじテスト</th><th>あそんだ</th><th>全問正解</th><th>シール</th><th>1回目の正解率</th><th>まちがえた問題</th></tr></thead><tbody>${
+      KLEVELS.map(lv => {
+        const k = kstat(lv), c = D.stickers.filter(x => themeOf(x) === 'kanji' && x.lv === lv).length;
+        return `<tr><th>${lv}年</th><td>${k.play}回</td><td>${k.perfect}回</td><td>${c}枚</td><td>${pct(k.ok, k.q)}</td><td>${(D.kmiss[lv] || []).slice().reverse().join('、') || '−'}</td></tr>`;
+      }).join('')}</tbody></table>`;
 }
 
 // ---------- できごと ----------
@@ -1401,7 +1813,15 @@ document.addEventListener('click', e => {
   const act = b.dataset.act;
   if (act !== 'key') SFX.tap();
   switch (act) {
-    case 'start': case 'again': startQuiz(); break;
+    case 'start': startQuiz(); break;
+    case 'again': if (Game.kind === 'kanji') startKanji(Game.lv); else startQuiz(); break;
+    case 'kanji': closeOverlays(); Speech.stop(); renderLevels(); show('klevel'); break;
+    case 'startLv': startKanji(+b.dataset.lv); break;
+    case 'kok': kCheck(); break;
+    case 'kclr': if (K.pads[+b.dataset.i] && !K.lock) { K.pads[+b.dataset.i].clear(); $$('#kboxes .kbox')[+b.dataset.i].classList.remove('ok', 'ng'); } break;
+    case 'kclearAll': if (!K.lock) { K.pads.forEach(p => p.clear()); $$('#kboxes .kbox').forEach(x => x.classList.remove('ok', 'ng')); } break;
+    case 'kch': if (!K.lock && !K.wrongSel.includes(+b.dataset.i)) { K.sel = +b.dataset.i; kRenderChoices(); } break;
+    case 'krepeat': if (kcur()) Speech.speak(ksay(kcur())); break;
     case 'home': goHome(); break;
     case 'key': padKey(b.dataset.k); break;
     case 'repeat': if (cur()) Speech.speak(questionText(cur())); break;
@@ -1417,7 +1837,8 @@ document.addEventListener('click', e => {
     case 'stk': {
       const s = D.stickers[+b.dataset.sid];
       const dt = new Date(s.at);
-      stickerDetail(s, `${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
+      const where = themeOf(s) === 'kanji' ? `かんじ ${s.lv}年` : 'かけざん';
+      stickerDetail(s, `${where} ・ ${dt.getMonth() + 1}がつ ${dt.getDate()}にち に ゲット` + (s.ok ? ` ・ ${s.of || 10}もん ちゅう ${s.ok}もん せいかい` : ''));
       break;
     }
     case 'zukanItem': {
@@ -1470,9 +1891,10 @@ function sayRank() {
 }
 
 // ゴールの えんしゅつ中に タップすると すぐ つぎへ
-$('#goal').addEventListener('click', () => { if (Q.canSkip) skip(); });
+$('#goal').addEventListener('click', () => { if (screen === 'kquiz') { if (K.canSkip) kSkip(); } else if (Q.canSkip) skip(); });
 // ハードウェアキーボード：すうじ・Backspace・Enter（Enter が「けってい」）
 document.addEventListener('keydown', e => {
+  if (screen === 'kquiz' && K.active && !$('#modal').classList.contains('show') && e.key === 'Enter') { e.preventDefault(); kCheck(); return; }
   if (screen !== 'quiz' || !Q.active || $('#modal').classList.contains('show')) return;
   if (/^[0-9]$/.test(e.key)) padKey(e.key);
   else if (e.key === 'Backspace') padKey('del');
