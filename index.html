@@ -926,7 +926,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     <div class="setbody">
       <div class="set-card">
         <h3>🎨 デザイン</h3>
-        <div class="row"><span class="grow">テーマ<small>画面の色・もようや、正解のときの演出・効果音・ランクの名前が変わります。集めたシールや記録はそのままです</small></span>
+        <div class="row"><span class="grow">テーマ<small>画面の色・もようや、正解のときの演出・効果音・ランクの名前が変わります。「かわいい」では、もらえるシールも女の子向けの100種類になります（ずかんもテーマごと）。集めたシールや記録はそのままです</small></span>
           <select data-set="skin"><option value="soccer">⚽ サッカー</option><option value="normal">⭐ ノーマル</option><option value="cute">🎀 かわいい</option></select></div>
       </div>
       <div class="set-card">
@@ -1134,11 +1134,51 @@ const DESIGNS = [
   ['cake', '🍰', 'ショートケーキ', '#fff0f0'], ['watermelon', '🍉', 'スイカ', '#d8f5c8'], ['sushi', '🍣', 'おすし', '#ffe6d6'],
   ['ghost', '👻', 'おばけ', '#e8e8ff'], ['wizard', '🧙', 'まほうつかい', '#e0d4ff'], ['castle', '🏰', 'おしろ', '#e4e8f0'],
 ].map(([id, e, name, bg]) => ({ id, e, name, bg }));
-const DMAP = Object.fromEntries(DESIGNS.map(d => [d.id, d]));
+// かわいい テーマの シール 100しゅるい（id は c- で はじまる）
+const CUTE_DESIGNS = [
+  ['c-cake', '🍰', 'ショートケーキ', '#ffe3ec'], ['c-cupcake', '🧁', 'カップケーキ', '#ffd6f0'], ['c-donut', '🍩', 'ドーナツ', '#ffd9e6'],
+  ['c-lollipop', '🍭', 'ペロペロキャンディ', '#f6d6ff'], ['c-candy', '🍬', 'キャンディ', '#ffe0f4'], ['c-choco', '🍫', 'チョコレート', '#f3dccc'],
+  ['c-cookie', '🍪', 'クッキー', '#fbe6cc'], ['c-pudding', '🍮', 'プリン', '#fff0bf'], ['c-softcream', '🍦', 'ソフトクリーム', '#fff3e0'],
+  ['c-icecream', '🍨', 'アイスクリーム', '#e6ecff'], ['c-kakigori', '🍧', 'かきごおり', '#dff3ff'], ['c-birthday', '🎂', 'バースデーケーキ', '#ffe6f2'],
+  ['c-pancake', '🥞', 'パンケーキ', '#fff0cc'], ['c-waffle', '🧇', 'ワッフル', '#ffeac2'], ['c-dango', '🍡', 'おだんご', '#e8f7dc'],
+  ['c-strawberry', '🍓', 'いちご', '#ffd4dc'], ['c-cherry', '🍒', 'さくらんぼ', '#ffdada'], ['c-peach', '🍑', 'もも', '#ffe0d2'],
+  ['c-grape', '🍇', 'ぶどう', '#eadcff'], ['c-honey', '🍯', 'はちみつ', '#fff1b8'], ['c-sakura', '🌸', 'さくら', '#ffe0ec'],
+  ['c-tulip', '🌷', 'チューリップ', '#ffd9e4'], ['c-rose', '🌹', 'バラ', '#ffd6d9'], ['c-hibiscus', '🌺', 'ハイビスカス', '#ffdcd6'],
+  ['c-blossom', '🌼', 'おはな', '#fff4c2'], ['c-sunflower', '🌻', 'ひまわり', '#fff0a0'], ['c-bouquet', '💐', 'はなたば', '#f2e0ff'],
+  ['c-lotus', '🪷', 'はすの はな', '#ffe2f0'], ['c-clover', '🍀', 'よつばの クローバー', '#d8f5cf'], ['c-mushroom', '🍄', 'キノコ', '#ffdcd6'],
+  ['c-rainbow', '🌈', 'にじ', '#e6f4ff'], ['c-moon', '🌙', 'おつきさま', '#fff6c8'], ['c-star', '⭐', 'おほしさま', '#fff3b0'],
+  ['c-glowstar', '🌟', 'きらきら ぼし', '#fff0c0'], ['c-snow', '❄️', 'ゆきの けっしょう', '#e2f3ff'], ['c-rabbit', '🐰', 'ウサギ', '#f9e0ff'],
+  ['c-cat', '🐱', 'ネコ', '#ffe0ec'], ['c-dog', '🐶', 'イヌ', '#ffe8c8'], ['c-hamster', '🐹', 'ハムスター', '#ffe6cc'],
+  ['c-mouse', '🐭', 'ネズミ', '#eceaf6'], ['c-panda', '🐼', 'パンダ', '#e0f4ea'], ['c-koala', '🐨', 'コアラ', '#e2e6f0'],
+  ['c-bear', '🐻', 'クマ', '#f3dcc6'], ['c-fox', '🦊', 'キツネ', '#ffe0cc'], ['c-penguin', '🐧', 'ペンギン', '#d8ecff'],
+  ['c-chick', '🐥', 'ひよこ', '#fff6b8'], ['c-swan', '🦢', 'ハクチョウ', '#e6f0ff'], ['c-flamingo', '🦩', 'フラミンゴ', '#ffd6ea'],
+  ['c-butterfly', '🦋', 'チョウ', '#dce8ff'], ['c-ladybug', '🐞', 'テントウムシ', '#ffdada'], ['c-bee', '🐝', 'ミツバチ', '#fff2b0'],
+  ['c-dolphin', '🐬', 'イルカ', '#d2eeff'], ['c-whale', '🐳', 'クジラ', '#d0e8ff'], ['c-fish', '🐠', 'ねったいぎょ', '#ffe6cc'],
+  ['c-seal', '🦭', 'アザラシ', '#e2e8f2'], ['c-squirrel', '🐿️', 'リス', '#f6dcc2'], ['c-hedgehog', '🦔', 'ハリネズミ', '#efe0d0'],
+  ['c-otter', '🦦', 'カワウソ', '#f0dcc8'], ['c-sheep', '🐑', 'ヒツジ', '#f2f0fa'], ['c-llama', '🦙', 'アルパカ', '#fbefe0'],
+  ['c-unicorn', '🦄', 'ユニコーン', '#f5d6ff'], ['c-fairy', '🧚', 'ようせい', '#e2f7e8'], ['c-mermaid', '🧜‍♀️', 'にんぎょひめ', '#d4f0ff'],
+  ['c-princess', '👸', 'おひめさま', '#ffe0f0'], ['c-crown', '👑', 'ティアラ', '#fff0b8'], ['c-castle', '🏰', 'おしろ', '#ece4ff'],
+  ['c-wand', '🪄', 'まほうの ステッキ', '#f0e0ff'], ['c-crystal', '🔮', 'すいしょうだま', '#e6dcff'], ['c-teddy', '🧸', 'テディベア', '#f6e0c8'],
+  ['c-carousel', '🎠', 'メリーゴーランド', '#ffe4f2'], ['c-ribbon', '🎀', 'リボン', '#ffd6e8'], ['c-dress', '👗', 'ドレス', '#d8f0ff'],
+  ['c-kimono', '👘', 'きもの', '#ffe0e6'], ['c-hat', '👒', 'むぎわら ぼうし', '#fff2cc'], ['c-ballet', '🩰', 'バレエシューズ', '#ffe4ee'],
+  ['c-purse', '👛', 'おさいふ', '#f6dcff'], ['c-handbag', '👜', 'ハンドバッグ', '#f8e6d6'], ['c-ring', '💍', 'ゆびわ', '#e8f4ff'],
+  ['c-gem', '💎', 'ほうせき', '#d6f4ff'], ['c-sunglasses', '🕶️', 'サングラス', '#e4ecf6'], ['c-scarf', '🧣', 'マフラー', '#ffe0dc'],
+  ['c-mirror', '🪞', 'かがみ', '#e8f2ff'], ['c-bubbles', '🫧', 'シャボンだま', '#e0f6ff'], ['c-boots', '👢', 'ブーツ', '#f4e2d4'],
+  ['c-blouse', '👚', 'ブラウス', '#ffe0f0'], ['c-sparkheart', '💖', 'キラキラ ハート', '#ffdcef'], ['c-beatheart', '💗', 'ドキドキ ハート', '#ffe0ee'],
+  ['c-giftheart', '💝', 'ハートの プレゼント', '#ffe4f0'], ['c-letter', '💌', 'おてがみ', '#fff0f4'], ['c-present', '🎁', 'プレゼント', '#ffe8e0'],
+  ['c-balloon', '🎈', 'ふうせん', '#ffe0e0'], ['c-party', '🎉', 'クラッカー', '#fff0cc'], ['c-note', '🎵', 'おんぷ', '#e6e8ff'],
+  ['c-piano', '🎹', 'ピアノ', '#eeeef6'], ['c-palette', '🎨', 'えのぐ', '#fff0d8'], ['c-sparkles', '✨', 'キラキラ', '#fff6cc'],
+  ['c-camera', '📷', 'カメラ', '#e6ecf4'], ['c-teapot', '🫖', 'ティーポット', '#e2f4ea'], ['c-skate', '🛼', 'ローラースケート', '#ffe0ec'],
+  ['c-chime', '🎐', 'ふうりん', '#dff4ff']
+].map(([id, e, name, bg]) => ({ id, e, name, bg }));
+const DMAP = Object.fromEntries([...DESIGNS, ...CUTE_DESIGNS].map(d => [d.id, d]));
+// いまの テーマで あつめる シール（かわいい テーマだけ べつの 100しゅるい）
+const POOL = () => SK().cuteStk ? CUTE_DESIGNS : DESIGNS;
 // グレード：ノーマル・レア・スーパーレア（でやすさが ちがう）＋ キラキラ（どの シールでも SHINY_RATE で キラキラに なる）
 const GRADES = {
-  sr: { name: 'スーパーレア', short: 'SR', w: 0.12, ids: ['crown', 'gem', 'dragon', 'unicorn', 'ufo', 'castle'] },
-  r: { name: 'レア', short: 'R', w: 0.4, ids: ['trophy', 'saturn', 'medal', 'rocket', 'trex', 'shinkansen', 'whale', 'owl', 'flamingo', 'rainbow', 'earth', 'clover', 'wizard', 'comet', 'racecar', 'volcano'] },
+  sr: { name: 'スーパーレア', short: 'SR', w: 0.12, ids: ['crown', 'gem', 'dragon', 'unicorn', 'ufo', 'castle', 'c-unicorn', 'c-mermaid', 'c-crown', 'c-castle', 'c-wand', 'c-gem'] },
+  r: { name: 'レア', short: 'R', w: 0.4, ids: ['trophy', 'saturn', 'medal', 'rocket', 'trex', 'shinkansen', 'whale', 'owl', 'flamingo', 'rainbow', 'earth', 'clover', 'wizard', 'comet', 'racecar', 'volcano',
+    'c-fairy', 'c-princess', 'c-crystal', 'c-carousel', 'c-teddy', 'c-birthday', 'c-ring', 'c-swan', 'c-lotus', 'c-bouquet', 'c-dress', 'c-rainbow', 'c-glowstar', 'c-piano', 'c-skate', 'c-dolphin'] },
   n: { name: 'ノーマル', short: 'N', w: 1, ids: [] },
 };
 const gradeOf = id => GRADES.sr.ids.includes(id) ? 'sr' : GRADES.r.ids.includes(id) ? 'r' : 'n';
@@ -1147,9 +1187,9 @@ const SHINY_RATE = 0.12;
 // いま シールを もらったら、それぞれの シールが でる かくりつ
 function stickerOdds() {
   const owned = new Set(D.stickers.map(s => s.d));
-  const w = DESIGNS.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
+  const P = POOL(), w = P.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
   const sum = w.reduce((a, b) => a + b, 0);
-  return DESIGNS.map((d, i) => ({ d, p: w[i] / sum, owned: owned.has(d.id), g: gradeOf(d.id) }));
+  return P.map((d, i) => ({ d, p: w[i] / sum, owned: owned.has(d.id), g: gradeOf(d.id) }));
 }
 
 // ランク [ひつような まいすう, なまえ, アイコン]
@@ -1167,7 +1207,7 @@ const SKINS = {
     praise: [['せいかい！', '正解！'], ['せいかい！', '正解！'], ['すごい！', 'すごい！'], ['やったね！', 'やったね！'], ['てんさい！', '天才！'], ['ばっちり！', 'ばっちり！'], ['かんぺき！', 'かんぺき！'], ['その ちょうし！', 'その ちょうし！']],
   },
   cute: {
-    name: 'かわいい', ball: '💖', logo: '🎀', shot: '💖', end: 'おつかれさま！', unit: 'せいかい', color: '#d76fb5',
+    name: 'かわいい', cuteStk: true, ball: '💖', logo: '🎀', shot: '💖', end: 'おつかれさま！', unit: 'せいかい', color: '#d76fb5',
     ranks: [['たね', '🌱'], ['つぼみ', '🌷'], ['おはな', '🌸'], ['ようせい', '🧚'], ['おひめさま', '👸'], ['じょおうさま', '👑'], ['ミラクルスター', '💫']],
     praise: [['すてき！', 'すてき！'], ['せいかい！', '正解！'], ['キラキラ！', 'キラキラ！'], ['やったね！', 'やったね！'], ['すごい！', 'すごい！'], ['ばっちり！', 'ばっちり！'], ['かんぺき！', 'かんぺき！'], ['さすが！', 'さすが！']],
   },
@@ -1653,11 +1693,11 @@ const themeCount = t => D.stickers.filter(s => themeOf(s) === t).length;
 function awardSticker(ok, t, lv) {
   const owned = new Set(D.stickers.map(s => s.d));
   // まだ もっていない シールが でやすい・レアは でにくい
-  const w = DESIGNS.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
+  const P = POOL(), w = P.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
   let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
-  for (; i < DESIGNS.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
+  for (; i < P.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
   const before = rankOf(D.stickers.length).r;
-  const s = { d: DESIGNS[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QUESTIONS, t };
+  const s = { d: P[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QUESTIONS, t };
   if (lv) s.lv = lv;
   D.stickers.push(s);
   return { s, isNew: !owned.has(s.d), rankUp: rankOf(D.stickers.length).r !== before };
@@ -3024,8 +3064,8 @@ const inTab = (s, f) => f === 'all' || themeOf(s) === f || (f === 'coin' && ['me
 let bookFilter = 'all', bookNew = -1;
 function renderBook() {
   const st = D.stickers;
-  const owned = new Set(st.map(s => s.d));
-  $('#zkCount').textContent = `しゅるい ${owned.size} / ${DESIGNS.length}`;
+  const P = POOL(), owned = new Set(st.map(s => s.d).filter(id => P.some(d => d.id === id)));
+  $('#zkCount').textContent = `しゅるい ${owned.size} / ${P.length}`;
   $$('#bookTabs [data-f]').forEach(b => {
     const cnt = b.querySelector('b'), f = b.dataset.f;
     b.classList.toggle('on', f === bookFilter);
@@ -3034,7 +3074,7 @@ function renderBook() {
   const body = $('#bookBody');
   if (bookFilter === 'odds') { body.innerHTML = oddsHTML(); return; }
   if (bookFilter === 'zukan') {
-    body.innerHTML = '<div class="zukan">' + DESIGNS.map(d => {
+    body.innerHTML = '<div class="zukan">' + P.map(d => {
       const mine = st.filter(s => s.d === d.id);
       if (!mine.length) { const g = gradeOf(d.id); return `<div class="zk-item none"><span class="stk md unknown"><span class="em">？</span></span><span>？？？</span>${g !== 'n' ? `<i class="gr ${g}">${GRADES[g].short}</i>` : ''}</div>`; }
       const g = gradeOf(d.id);
