@@ -344,8 +344,28 @@ body.nomemo .pad{justify-self:center}
 .stk-title{font-size:clamp(20px,2.6vw,30px);color:var(--navy)}
 .stk-word{font-size:clamp(24px,3vw,34px);color:var(--kan)}
 .stk-word rt{font-size:.45em;color:var(--mute)}
-.stk-boxes{display:flex;gap:14px;--sb:min(calc(var(--vh) * .5),38vw,420px)}
-.stk-boxes.n3{--sb:min(calc(var(--vh) * .42),27vw,300px)}
+.stk-main{display:flex;gap:18px;align-items:flex-start;justify-content:center;max-width:100%}
+.stk-boxes{display:flex;gap:14px;--sb:min(calc(var(--vh) * .48),30vw,400px)}
+.stk-box.sel{box-shadow:inset 0 0 0 4px var(--kan)}
+.stk-info{width:clamp(250px,27vw,360px);max-height:calc(var(--vh) * .56);overflow-y:auto;text-align:left}
+.si-tabs{display:flex;gap:8px;margin-bottom:8px}
+.si-tabs button{min-width:52px;height:52px;border-radius:12px;background:#f1f4f9;font-size:28px;box-shadow:0 3px 0 #c9d2e0}
+.si-tabs button.on{background:#ffe1e6;color:var(--kan);box-shadow:0 3px 0 #e9a4b0}
+.si-t{width:100%;border-collapse:collapse;font-size:clamp(15px,1.7vw,19px);background:#fffdf6;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 2px #eee3c8}
+.si-t th{width:5.2em;white-space:nowrap;color:#8a7a55;font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid #f0e6cc;vertical-align:top;font-size:.85em}
+.si-t td{padding:8px 10px;border-bottom:1px solid #f0e6cc;font-weight:800;line-height:1.5}
+.si-t tr:last-child th,.si-t tr:last-child td{border-bottom:0}
+.si-t small{font-size:.8em;color:var(--mute);font-weight:700}
+.si-c{font-size:2.2em;line-height:1.1;color:var(--ink)}
+.si-b{font-size:1.4em}
+.si-m{font-weight:700 !important}
+.kbtn.hand-back{background:#e8f6ff;box-shadow:0 6px 0 #9cc7e6;font-size:clamp(16px,1.9vw,21px);line-height:1.25}
+.kbtn.hand-back small{display:block;font-size:.7em;color:var(--mute)}
+.kp-tiles button{display:grid;place-items:center;aspect-ratio:1;border-radius:8px;background:#eef1f6;color:#9aa4b5;font-size:clamp(18px,2.2vw,24px)}
+.kp-tiles button.t{background:#fff1b8;color:#7a5600}
+.kp-tiles button.m{background:#22b45a;color:#fff}
+.kp-tiles button:active{transform:scale(.92)}
+.stk-boxes.n3{--sb:min(calc(var(--vh) * .4),20vw,270px)}
 .stk-box{position:relative;width:var(--sb);height:var(--sb);border-radius:16px;background:#fffdf6;box-shadow:inset 0 0 0 3px #e6dcc4;overflow:hidden}
 .stk-box::before{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -361,7 +381,7 @@ body.nomemo .pad{justify-self:center}
 .stk-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:calc(var(--sb) * .7);color:var(--ink)}
 .stk-note{font-size:clamp(15px,1.8vw,20px);color:var(--mute);min-height:1.3em;text-align:center}
 .stk-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-@media (orientation:portrait){ .stk-boxes{--sb:min(42vw,calc(var(--vh) * .34),420px)} .stk-boxes.n3{--sb:min(28vw,calc(var(--vh) * .3),300px)} .kboxes.n3{--bx:min(28vw,calc(var(--vh) * .28),240px)} }
+@media (orientation:portrait){ .stk-main{flex-direction:column;align-items:center} .stk-info{width:min(100%,560px);max-height:none} .stk-boxes{--sb:min(42vw,calc(var(--vh) * .3),420px)} .stk-boxes.n3{--sb:min(28vw,calc(var(--vh) * .3),300px)} .kboxes.n3{--bx:min(28vw,calc(var(--vh) * .28),240px)} }
 
 
 /* ---------- ゲーム ---------- */
@@ -759,7 +779,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <button data-act="kpMode" data-val="yomi">📖 よみ</button>
       </div>
       <p class="kp-all" id="kpAll"></p>
-      <p class="kp-legend"><span class="lg m"></span>おぼえた：ちがう日に 2回、1回目で せいかい（まちがえると また 0から）　<span class="lg t"></span>やった：1回 いじょう こたえた　<span class="lg"></span>まだ</p>
+      <p class="kp-legend">かんじを タップすると、かきじゅんと じょうほうが みられるよ。<br><span class="lg m"></span>おぼえた：ちがう日に 2回、1回目で せいかい（まちがえると また 0から）　<span class="lg t"></span>やった：1回 いじょう こたえた　<span class="lg"></span>まだ</p>
     </div>
     <div class="kp-body" id="kpBody"></div>
   </section>
@@ -786,6 +806,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         </div>
         <div class="kside">
           <button class="kbtn" data-act="kclearAll" id="kclearAll">🧽 ぜんぶ けす</button>
+          <button class="kbtn hand-back" data-act="kHandBack" id="kHandBack" hidden>✍️ てがきに もどす<small>（つぎの もんだいから）</small></button>
           <button class="kbtn give" data-act="kgive" id="kgive">🤔 わからない</button>
           <button class="kbtn ok" data-act="kok" id="kok">⚽ けってい</button>
           <span id="kmodeTxt"></span>
@@ -966,11 +987,14 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     <div class="stk-card">
       <div class="stk-title" id="stkTitle">かきじゅん</div>
       <div class="stk-word" id="stkWord"></div>
-      <div class="stk-boxes" id="stkBoxes"></div>
+      <div class="stk-main">
+        <div class="stk-boxes" id="stkBoxes"></div>
+        <div class="stk-info" id="stkInfo"></div>
+      </div>
       <div class="stk-note" id="stkNote"></div>
       <div class="stk-btns">
         <button class="bigbtn" data-act="stkAgain">🔁 もう一回 みる</button>
-        <button class="bigbtn yellow" data-act="kok">つぎへ ▶</button>
+        <button class="bigbtn yellow" id="stkNext" data-act="kok">つぎへ ▶</button>
       </div>
     </div>
   </div>
@@ -1015,6 +1039,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
 <canvas id="fx"></canvas>
 
 <script src="kanji-data.js"></script>
+<script src="kanji-info.js"></script>
 <script>
 (() => {
 'use strict';
@@ -1969,7 +1994,7 @@ function renderKProg() {
   $$('#kpSeg [data-val]').forEach(b => b.classList.toggle('on', b.dataset.val === kind));
   $('#kpBody').innerHTML = KLEVELS.map(lv => {
     const pr = kLevelProgress(kind, lv), open = kpOpen === lv;
-    const tiles = open ? `<div class="kp-tiles">${[...(KSETS[lv] || '')].map(c => `<span class="${kState(kind, c)}">${c}</span>`).join('')}</div>` : '';
+    const tiles = open ? `<div class="kp-tiles">${[...(KSETS[lv] || '')].map(c => `<button class="${kState(kind, c)}" data-act="kpTile" data-c="${c}">${c}</button>`).join('')}</div>` : '';
     return `<div class="kp-item${open ? ' open' : ''}"><button class="kp-row" data-act="kpRow" data-lv="${lv}">
       <b>${lvName(lv)}</b>${progBar(pr)}
       <span class="kp-num"><em class="m">おぼえた ${pr.mastered}</em><em class="t">やった ${pr.tried}</em><em>ぜんぶ ${pr.total}字</em></span>
@@ -2098,6 +2123,8 @@ function kQuestionSpeech(q) {
   return K.kind === 'yomi' ? 'せんの かんじの よみを ひらがなで こたえてね' : ksay(q);
 }
 
+// でんぱが わるくて 4たくに なったとき、てがきに もどす ボタン
+function kHandBtn() { $('#kHandBack').hidden = !(K.active && K.kind === 'kaki' && K.offline && S().hand); }
 function kShowQuestion() {
   const q = kcur();
   Object.assign(K, { tries: 0, lock: false, canSkip: false, sel: -1, wrongSel: [], val: '' });
@@ -2107,6 +2134,7 @@ function kShowQuestion() {
   kNote(q.again ? '🔁 まえに まちがえた もんだい' : '');
   kSetOk(false);
   kRenderAnswer();
+  kHandBtn();
   kRenderProgress();
   if (K.kind === 'kaki') [...q.a].forEach(ch => kvgStrokes(ch).catch(() => {}));
   Speech.speak(kQuestionSpeech(q));
@@ -2244,23 +2272,59 @@ function kvgStrokes(ch) {
   }
   return kvgCache[ch];
 }
-const Stroke = { token: 0, q: null };
+// かきじゅんの がめん（もんだいの あと・かんじの きろく から）
+//   さいしょは はやく（STROKE_FAST）、「もう一回 みる」は ふつうの はやさ
+const STROKE_FAST = 1 / 3;
+const Stroke = { token: 0, chars: [], ctx: 'quiz', sel: 0, counts: [] };
+const KINFO = () => window.KANJI_INFO || {};
 function showStroke(q, state) {
   if (screen !== 'kquiz') return;  // もう ほかの がめんに うつって いたら ださない
-  Stroke.q = q;
   const p = kparts(q);
-  $('#stkTitle').textContent = state === 'ok' ? '⭕ せいかい！ かきじゅんを たしかめよう' : 'こたえと かきじゅんを おぼえよう';
-  $('#stkWord').innerHTML = `<ruby>${q.a}<rt>${p.mid}</rt></ruby>`;
+  openStroke({
+    chars: [...q.a], ctx: 'quiz',
+    title: state === 'ok' ? '⭕ せいかい！ かきじゅんを たしかめよう' : 'こたえと かきじゅんを おぼえよう',
+    word: `<ruby>${q.a}<rt>${p.mid}</rt></ruby>`,
+  });
+}
+function openKanjiView(c) {
+  openStroke({ chars: [c], ctx: 'view', title: '📖 かんじの じょうほう', word: '' });
+}
+function openStroke(o) {
+  Object.assign(Stroke, { chars: o.chars, ctx: o.ctx, sel: 0, counts: [] });
+  $('#stkTitle').textContent = o.title;
+  $('#stkWord').innerHTML = o.word;
+  const nb = $('#stkNext');
+  nb.dataset.act = o.ctx === 'quiz' ? 'kok' : 'stkClose';
+  nb.textContent = o.ctx === 'quiz' ? 'つぎへ ▶' : 'とじる';
   $('#stroke').classList.add('show');
-  playStroke();
+  renderStkInfo(0);
+  playStroke(STROKE_FAST);
 }
 function hideStroke() { Stroke.token++; $('#stroke').classList.remove('show'); }
-async function playStroke() {
-  const q = Stroke.q, tk = ++Stroke.token, chars = [...q.a];
+const kunFmt = k => { const [a, b] = k.split('-'); return b ? `${a}<small>（${b}）</small>` : a; };
+function renderStkInfo(i) {
+  const chars = Stroke.chars, c = chars[i], inf = KINFO()[c];
+  Stroke.sel = i;
+  const tabs = chars.length > 1 ? `<div class="si-tabs">${chars.map((ch, j) => `<button class="${j === i ? 'on' : ''}" data-act="stkSel" data-i="${j}">${ch}</button>`).join('')}</div>` : '';
+  const cnt = Stroke.counts[i] ? `${Stroke.counts[i]}かく` : '…';
+  const body = inf ? `<table class="si-t">
+      <tr><th>かんじ</th><td class="si-c">${c}</td></tr>
+      <tr><th>ぶしゅ</th><td><span class="si-b">${inf.b}</span>（${inf.bn}）</td></tr>
+      <tr><th>かくすう</th><td>${cnt}</td></tr>
+      <tr><th>おんよみ</th><td>${inf.on.length ? inf.on.join('・') : '−'}</td></tr>
+      <tr><th>くんよみ</th><td>${inf.kun.length ? inf.kun.map(kunFmt).join('・') : '−'}</td></tr>
+      <tr><th>いみ</th><td class="si-m">${inf.m}</td></tr></table>`
+    : `<table class="si-t"><tr><th>かんじ</th><td class="si-c">${c}</td></tr><tr><th>かくすう</th><td>${cnt}</td></tr></table>`;
+  $('#stkInfo').innerHTML = tabs + body;
+  $$('#stkBoxes .stk-box').forEach((b, j) => b.classList.toggle('sel', chars.length > 1 && j === i));
+}
+async function playStroke(speed = 1) {
+  const tk = ++Stroke.token, chars = Stroke.chars;
   const box = $('#stkBoxes');
   box.classList.toggle('n3', chars.length >= 3);
-  box.innerHTML = chars.map(() => `<div class="stk-box"><svg viewBox="0 0 109 109"><g class="ghost"></g><g class="ink"></g></svg><span class="stk-n"></span></div>`).join('');
+  box.innerHTML = chars.map((_, i) => `<div class="stk-box" data-act="stkSel" data-i="${i}"><svg viewBox="0 0 109 109"><g class="ghost"></g><g class="ink"></g></svg><span class="stk-n"></span></div>`).join('');
   const boxes = $$('.stk-box', box);
+  renderStkInfo(Stroke.sel);
   let data;
   try { data = await Promise.all(chars.map(kvgStrokes)); }
   catch (e) {
@@ -2270,7 +2334,9 @@ async function playStroke() {
     return;
   }
   if (tk !== Stroke.token) return;
-  $('#stkNote').textContent = chars.map((c, i) => `${c}：${data[i].length}かく`).join('　');
+  Stroke.counts = data.map(d => d.length);
+  renderStkInfo(Stroke.sel);
+  $('#stkNote').textContent = chars.length > 1 ? 'かんじを タップすると、みぎに その じの じょうほうが でるよ' : '';
   const NS = 'http://www.w3.org/2000/svg';
   // さきに うすい 字を ぜんぶ かいておく
   boxes.forEach((b, i) => {
@@ -2289,12 +2355,12 @@ async function playStroke() {
       el.style.strokeDasharray = len;
       el.style.strokeDashoffset = len;
       n.textContent = k + 1;
-      const dur = 130 + len * 3.5;  // 1かくを かく じかん（まえの 2ばいの はやさ）
+      const dur = (130 + len * 3.5) * speed;  // 1かくを かく じかん
       if (el.animate) await el.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'ease-in-out', fill: 'forwards' }).finished.catch(() => {});
       else await sleep(dur);
       el.style.strokeDashoffset = 0;
       el.setAttribute('class', 'done');
-      await sleep(55);
+      await sleep(55 * speed);
     }
   }
 }
@@ -2377,7 +2443,8 @@ async function kCheck() {
     K.lock = false;
     kSetOk(false);
     kRenderAnswer();
-    kNote('てがきの はんていが つかえないので、えらぶ もんだいに したよ');
+    kHandBtn();
+    kNote('てがきの はんていが つかえないので、えらぶ もんだいに したよ（でんぱが もどったら「てがきに もどす」を おしてね）');
     return;
   }
   if (tk !== K.token) return;
@@ -3039,7 +3106,11 @@ document.addEventListener('click', e => {
     case 'kgive': kGiveUp(); break;
     case 'kana': kanaKey(b.dataset.k); break;
     case 'kySwitch': S().yinput = kyKb() ? 'pad' : 'kb'; save(); kyApplyInput(); if (!kyKb()) $('#kyAns').blur(); break;
-    case 'stkAgain': playStroke(); break;
+    case 'stkAgain': playStroke(1); break;
+    case 'stkSel': renderStkInfo(+b.dataset.i); break;
+    case 'stkClose': hideStroke(); break;
+    case 'kpTile': openKanjiView(b.dataset.c); break;
+    case 'kHandBack': K.offline = false; kHandBtn(); kNote('つぎの もんだいから、てがきの はんていに もどるよ'); break;
     case 'kanji': closeOverlays(); gStop(); Speech.stop(); renderLevels(); show('klevel'); break;
     case 'startLv': closeModal(); chooseKanjiLevel(+b.dataset.lv); break;
     case 'startLvForce': startKanji(+b.dataset.lv); break;
