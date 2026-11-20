@@ -236,6 +236,21 @@ body.nomemo .pad{justify-self:center}
 .lvb .lvpn{font-size:clamp(12px,1.35vw,16px);color:var(--ink)}
 .lvb .lvpn em,.kp-num em.m,.kp-all em.m{font-style:normal;color:#14904a;font-size:inherit;min-height:0}
 .kp-num em.t,.kp-all em.t{font-style:normal;color:#b07a00}
+.mdots{display:inline-flex;gap:4px;vertical-align:middle}
+.mdots i{width:14px;height:14px;border-radius:50%;background:#e6eaf1;border:2px solid #c9d1de}
+.mdots i.on{background:var(--yellow);border-color:#e0a000}
+.win-mission{background:linear-gradient(90deg,#18a050,#46cf7c)}
+.win.tight .stk.xxl{--s:min(24vmin,190px,calc(var(--vh)*.24))}
+.k-mission{margin:0 24px 4px;text-align:center;color:#fff;font-size:clamp(15px,1.8vw,20px);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.k-mission .mdots i{border-color:#fff}
+.lvb{position:relative}
+.lvb.pri{box-shadow:0 0 0 5px var(--yellow),0 8px 0 rgba(0,0,0,.2)}
+.lvlock{position:absolute;top:8px;right:10px;font-style:normal;font-size:clamp(18px,2.2vw,26px)}
+.card-mis{font-size:clamp(12px,1.4vw,16px);color:#a86400;display:flex;align-items:center;gap:4px}
+.card.locked .card-op,.card.locked .card-name,.card.locked .card-ex{opacity:.45}
+.card.locked .card-go{background:#9aa4b5;box-shadow:0 5px 0 #6f7889}
+.game-need{display:flex;flex-direction:column;gap:6px;font-size:clamp(18px,2.2vw,24px)}
+.game-need>span{display:flex;align-items:center;gap:10px;justify-content:center}
 .kp-btn{background:#fff;color:var(--ink);padding:6px 16px;border-radius:999px;font-size:clamp(15px,1.8vw,19px);box-shadow:0 3px 0 rgba(0,0,0,.2);margin-left:8px;text-shadow:none}
 #kprog{background:#eef3f8}
 #kprog .hd h2{color:var(--ink);text-shadow:none}
@@ -628,6 +643,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <span class="card-name">かんじ テスト</span>
         <span class="card-ex">かきとり ・ よみ<br>3年〜6年・チャレンジ<small>れい：<u>イソ</u>いで 行く</small></span>
         <span class="card-go">▶ レベルを えらぶ</span>
+        <span class="card-mis" id="kMisHome"></span>
         <span class="card-cnt">シール<b data-cnt="kanji">0</b>まい</span>
         <span class="card-mini" data-mini="kanji"></span>
       </button>
@@ -698,6 +714,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button data-act="kmodeSel" data-val="kaki">✏️ かきとり</button>
       <button data-act="kmodeSel" data-val="yomi">📖 よみ</button>
     </div>
+    <p class="k-mission" id="kMission"></p>
     <div class="lv-grid" id="lvGrid"></div>
     <p class="lv-note"><span id="lvNote"></span> <button class="kp-btn" data-act="kprog">📊 かんじの きろく</button></p>
   </section>
@@ -844,11 +861,15 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🎮 ゲーム（めいろ・すうどく）</h3>
+        <label class="row"><span class="grow">勉強してから遊ぶ<small>その日に「かけざん」と「かんじ」のシールを5枚ずつ集めるまで、めいろ・すうどくで遊べないようにします</small></span><span class="sw"><input type="checkbox" data-set="gameGate"><i></i></span></label>
         <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>クリア1回でコイン1枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
         <p class="note" id="coinNote"></p>
       </div>
       <div class="set-card">
         <h3>漢 かんじテスト</h3>
+        <div class="row"><span class="grow">優先するレベル<small>このレベルのシールをその日に5枚集めるまで、ほかのレベルではシールがもらえません（練習はできます）。かきとり・よみ どちらのシールも数えます</small></span>
+          <select data-set="kpri" id="kpriSel"><option value="3">3年</option><option value="4">4年</option><option value="5">5年</option><option value="6">6年</option><option value="7">チャレンジ1</option><option value="8">チャレンジ2</option><option value="9">チャレンジ3</option><option value="10">チャレンジ4</option><option value="0">優先しない</option></select></div>
+        <p class="note" id="kpriNote"></p>
         <label class="row"><span class="grow">手書きで答える（自動判定）<small>オフにすると4択になります。手書きの判定には Google の手書き文字認識を使うため、書いた線の形（座標）だけがインターネットで Google に送られます。ネットにつながらないときは、自動で4択に切り替わります。とめ・はね・書き順までは判定できません</small></span><span class="sw"><input type="checkbox" data-set="hand"><i></i></span></label>
       </div>
       <div class="set-card">
@@ -870,6 +891,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         ・かきとりは、答えたあとに正しい書き順をアニメーションで表示します（書き順のデータは KanjiVG〔© Ulrich Apel, CC BY-SA 3.0, kanjivg.tagaini.net〕をインターネットから読み込みます）。<br>
         ・「チャレンジ1〜4」は、小学校で習わない常用漢字（中学で習う1110字）を、新聞でよく使われる順に4つに分けたものです（1がよく使う字、4があまり使わない字）。かきとり・よみとも、1110字がすべてどれかの問題に入っています。難関校の入試で出やすい言葉を優先していますが、実際の過去問と照らし合わせたものではありません。<br>
         ・かんじテストもシールのルールは同じです（7問中5問以上を1回目で正解）。<br>
+        ・かんじテストは、まだ覚えていない漢字（まだやっていない字・やったけれど覚えていない字）が入った問題を優先して出します。<br>
+        ・毎日のミッション：優先するレベルのシールを5枚集めると、ほかのレベルでもシールがもらえます。かけざん・かんじのシールを5枚ずつ集めると、めいろ・すうどくで遊べます（日付が変わるとリセット）。<br>
         ・「めいろ」「すうどく」は、遊ぶたびに新しい問題を自動で作ります（答えは1通りとは限りませんが、ルールどおりなら正解です。すうどくは答えが1通りになるように作っています）。クリアでコインがもらえ、コイン10枚でシール1枚（ランダム）と交換できます。交換はトップ画面の「🪙」ボタンを押したときだけ行います。</p>
       </div>
     </div>
@@ -918,6 +941,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="win-name" id="winName"></div>
       <div class="win-sub" id="winSub"></div>
       <div class="win-rank" id="winRank"></div>
+      <div class="win-rank win-mission" id="winMission"></div>
       <div class="win-btns">
         <button class="bigbtn yellow" data-act="again">⚽ もういっかい</button>
         <button class="bigbtn yellow" data-act="exchange" hidden>🎁 もう1まい こうかん</button>
@@ -1012,7 +1036,7 @@ function defaults() {
   return {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
-    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true },
+    settings: { speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, gameGate: true },
     coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
@@ -1421,6 +1445,15 @@ function renderHome() {
   $('#rankNext').textContent = next ? `あと ${next[0] - n}まいで ${next[1]}` : 'さいこう ランク！';
   $('#rankBar').style.width = next ? ((n - r[0]) / (next[0] - r[0]) * 100) + '%' : '100%';
   $('#todayTxt').textContent = `きょう ${st.filter(s => isToday(s.at)).length}まい`;
+  // ゲームの カギ と 漢字の ミッション
+  const gl = gameLocked(), gn = gameNeed();
+  $$('.card.mz, .card.sd').forEach(c => {
+    c.classList.toggle('locked', gl);
+    c.querySelector('.card-cnt').innerHTML = gl ? `🔒 きょう ×${GAME_NEED - gn.mul}/${GAME_NEED} 漢${GAME_NEED - gn.kanji}/${GAME_NEED}` : '🪙 クリアで コイン';
+    c.querySelector('.card-go').textContent = gl ? '🔒 まだ あそべない' : '▶ あそぶ';
+  });
+  const pri = kPri(), kd = kMissionDone();
+  $('#kMisHome').innerHTML = pri && kd < KMISSION ? `⭐ ${lvName(pri)} <span class="mdots">${dots(kd, KMISSION)}</span>` : pri ? '✅ ミッション クリア' : '';
   const cb = $('#coinBtn'), can = D.coins >= COIN_RATE;
   $('#coinNum').textContent = D.coins;
   $('#coinTxt').textContent = can ? '🎁 シールと こうかん！' : `あと ${COIN_RATE - D.coins}まいで こうかん`;
@@ -1653,7 +1686,7 @@ function finishQuiz() {
 }
 
 function endRound(ok, results, missedHTML) {
-  if (ok >= PASS) {
+  if (ok >= PASS && !Game.noSticker) {
     const res = awardSticker(ok, Game.kind, Game.lv);
     if (Game.m === 'yomi') res.s.m = 'yomi';
     save();
@@ -1676,6 +1709,11 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   $('#winName').innerHTML = `${d.name}${s.k ? ' <span class="kira">✨キラキラ✨</span>' : ''}${isNew ? ' <span class="newb">NEW!</span>' : ''}`;
   $('#winSub').textContent = `シール ${n}まいめ ・ きょう ${D.stickers.filter(x => isToday(x.at)).length}まい`;
   $('#winRank').textContent = rankUp ? `ランクアップ！ ${rk[2]} ${rk[1]} に なった！` : '';
+  const news = [];
+  if (Game.kind === 'kanji' && kPri() && Game.lv === kPri() && kMissionDone() === KMISSION) news.push(`✅ きょうの ミッション クリア！ ほかの レベルでも シールが もらえるよ！`);
+  if ((Game.kind === 'kanji' || Game.kind === 'mul') && S().gameGate !== false && !gameLocked() && todayCount(Game.kind) === GAME_NEED) news.push('🎮 めいろ・すうどくで あそべるように なったよ！');
+  $('#winMission').textContent = news.join('　');
+  $('#win').classList.toggle('tight', rankUp && news.length > 0);
   const w = $('#win');
   w.classList.remove('ready', 'show'); void w.offsetWidth; w.classList.add('show');
   FX.show(4200);
@@ -1683,7 +1721,7 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   setTimeout(() => SFX.sparkle(), 1300);
   if (rankUp) setTimeout(() => SFX.rankup(), 2500);
   const line = `やったー！ ${Game.kind === 'coin' ? 'こうかん！' : top ? 'クリア！' : `${perfect ? '全問' : `${ok}問`} 正解！`} ${d.name}の シール ゲット！${s.k ? ' キラキラだよ！' : ''}`
-    + (rankUp ? ` ランクアップ！ ${rk[1]}に なったよ！` : '');
+    + (rankUp ? ` ランクアップ！ ${rk[1]}に なったよ！` : '') + (news.length ? ' ' + news.join(' ').replace(/[✅🎮]/g, '') : '');
   setTimeout(() => Speech.speak(line), 1000);
   setTimeout(() => w.classList.add('ready'), 2200);
 }
@@ -1692,8 +1730,10 @@ function showResult(ok, results, missedHTML) {
   $('#resBalls').innerHTML = results.map(r => `<i class="${r ? 'ok' : 'ng'}">${r ? '⚽' : ''}</i>`).join('');
   $('#resOk').textContent = ok;
   $('#resTotal').textContent = results.length;
-  const msg = ok === PASS - 1 ? 'おしい！ あと 1もん！' : ok >= 4 ? 'いいね！ その ちょうし！' : 'がんばったね！';
-  $('#resMsg').innerHTML = `${msg}<br><small>${PASS}もん いじょう せいかいで シール ゲット！</small>`;
+  const ns = Game.noSticker;
+  const msg = ns && ok >= PASS ? 'すごい！ れんしゅう ばっちり！' : ok === PASS - 1 && !ns ? 'おしい！ あと 1もん！' : ok >= 4 ? 'いいね！ その ちょうし！' : 'がんばったね！';
+  const note = ns ? `シールは、きょう ${lvName(kPri())}の シールを あと ${kMissionLeft()}まい あつめてから もらえるよ` : `${PASS}もん いじょう せいかいで シール ゲット！`;
+  $('#resMsg').innerHTML = `${msg}<br><small>${note}</small>`;
   // まちがえた もんだいと こたえ
   $('#resMiss').innerHTML = missedHTML;
   $('#result').classList.add('show');
@@ -1815,6 +1855,16 @@ function renderLevels() {
     return `<button class="lvb${lv >= 7 ? ' cha' : ''}" data-act="startLv" data-lv="${lv}"${n ? '' : ' disabled'}><b>${lvName(lv)}</b><span>${sub}</span><small>れい：${ex}</small>${progBar(pr)}<small class="lvpn"><em class="m">おぼえた ${pr.mastered}</em> / ${pr.total}字（やった ${pr.tried}）</small></button>`;
   }).join('');
   $('#lvNote').textContent = M.note;
+  const pri = kPri(), done = kMissionDone();
+  $('#kMission').innerHTML = !pri ? '' : done >= KMISSION
+    ? `✅ きょうの ミッション クリア！（${lvName(pri)}の シール ${KMISSION}まい）どの レベルでも シールが もらえるよ`
+    : `⭐ きょうの ミッション：${lvName(pri)}の シールを ${KMISSION}まい <span class="mdots">${dots(done, KMISSION)}</span> ・ おわるまで ほかの レベルは シールなし`;
+  $$('#lvGrid .lvb').forEach(b => {
+    const lv = +b.dataset.lv;
+    b.classList.toggle('pri', lv === pri && done < KMISSION);
+    if (kLocked(lv)) b.insertAdjacentHTML('beforeend', '<i class="lvlock">🔒</i>');
+    else if (lv === pri && done < KMISSION) b.insertAdjacentHTML('beforeend', '<i class="lvlock">⭐</i>');
+  });
 }
 
 function makeKanjiQuestions(kind, lv) {
@@ -1825,8 +1875,20 @@ function makeKanjiQuestions(kind, lv) {
     const q = pool.find(x => kid(x) === id);
     if (q && !used.has(id)) { out.push({ ...q, again: true }); used.add(id); }
   }
-  const rest = shuffle(pool.filter(q => !used.has(kid(q))));
-  while (out.length < QUESTIONS && rest.length) out.push({ ...rest.pop() });
+  // のこりは、まだ おぼえて いない 漢字が はいった もんだいを 優先（おもみつき くじびき）
+  //   まだ やって いない 字 3 ・ やったけど まだ おぼえて いない 字 2.5 ・ ぜんぶ おぼえた もんだい 0.15
+  const rest = pool.filter(q => !used.has(kid(q)));
+  const w = rest.map(q => {
+    const st = kTargets(q, kind, lv).map(c => kState(kind, c));
+    if (!st.length) return 1;
+    return st.includes('') ? 3 : st.includes('t') ? 2.5 : 0.15;
+  });
+  while (out.length < QUESTIONS && rest.length) {
+    let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
+    for (; i < rest.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
+    out.push({ ...rest[i] });
+    rest.splice(i, 1); w.splice(i, 1);
+  }
   return shuffle(out);
 }
 function kUpdateMiss(q, ok) {
@@ -1835,14 +1897,45 @@ function kUpdateMiss(q, ok) {
   D.kmiss[key] = list.slice(-MISS_KEEP);
 }
 
+// ---------- きょうの ミッション ----------
+// 漢字：優先レベルの シールを きょう KMISSION まい あつめるまで、ほかの レベルでは シールが もらえない
+// ゲーム：きょう かけざん・漢字の シールを GAME_NEED まいずつ あつめるまで、めいろ・すうどくで あそべない
+const KMISSION = 5, GAME_NEED = 5;
+const todayCount = (t, f) => D.stickers.filter(x => themeOf(x) === t && isToday(x.at) && (!f || f(x))).length;
+const kPri = () => { const v = Number(S().kpri ?? 3); return KLEVELS.includes(v) ? v : 0; };  // 0 は「優先なし」
+const kMissionDone = () => kPri() ? todayCount('kanji', x => x.lv === kPri()) : KMISSION;
+const kMissionLeft = () => Math.max(0, KMISSION - kMissionDone());
+const kLocked = lv => !!kPri() && lv !== kPri() && kMissionLeft() > 0;
+const gameNeed = () => ({ mul: Math.max(0, GAME_NEED - todayCount('mul')), kanji: Math.max(0, GAME_NEED - todayCount('kanji')) });
+const gameLocked = () => S().gameGate !== false && (gameNeed().mul > 0 || gameNeed().kanji > 0);
+const dots = (n, max) => Array.from({ length: max }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('');
+
+function chooseKanjiLevel(lv) {
+  if (!kLocked(lv)) return startKanji(lv);
+  const pri = lvName(kPri()), name = lvName(lv);
+  openModal(`<div class="lock-ico">🔒</div><p class="mq">シールは もらえないよ</p>
+    <p class="lock-msg">きょうは まず ${pri}の シールを あと ${kMissionLeft()}まい あつめてね。<br>そのあと ${name}でも シールが もらえるよ。<br>それでも ${name}を やる？</p>
+    <div class="mbtns"><button class="bigbtn yellow" data-act="startLv" data-lv="${kPri()}">⭐ ${pri}に する</button><button class="bigbtn" data-act="startLvForce" data-lv="${lv}">シールなしで やる</button></div>`);
+  Speech.speak(`シールは もらえないよ。きょうは まず ${pri}の シールを あと ${kMissionLeft()}まい あつめてね。`);
+}
+function openGameLock() {
+  const n = gameNeed();
+  const left = [n.mul ? `かけざんの シール あと ${n.mul}まい` : '', n.kanji ? `かんじの シール あと ${n.kanji}まい` : ''].filter(Boolean).join('、');
+  openModal(`<div class="lock-ico">🔒</div><p class="mq">ゲームは まだ あそべないよ</p>
+    <p class="lock-msg">きょう かけざん と かんじの シールを ${GAME_NEED}まいずつ あつめると、めいろ・すうどくで あそべるよ。<br>のこり：${left}</p>
+    <div class="game-need"><span>× かけざん <span class="mdots">${dots(GAME_NEED - n.mul, GAME_NEED)}</span></span><span>漢 かんじ <span class="mdots">${dots(GAME_NEED - n.kanji, GAME_NEED)}</span></span></div>
+    <div class="mbtns">${n.mul ? '<button class="bigbtn yellow" data-act="start">× かけざんを やる</button>' : ''}${n.kanji ? `<button class="bigbtn${n.mul ? '' : ' yellow'}" data-act="kanji">漢 かんじを やる</button>` : ''}<button class="bigbtn" data-act="closeModal">とじる</button></div>`);
+  Speech.speak(`ゲームは まだ あそべないよ。${left.replace(/、/g, ' ')} あつめてね。`);
+}
+
 function startKanji(lv, kind) {
   kind = kind || (S().kmode === 'yomi' ? 'yomi' : 'kaki');
   SFX.unlock();
   closeOverlays();
-  Game = { kind: 'kanji', lv, m: kind };
+  Game = { kind: 'kanji', lv, m: kind, noSticker: kLocked(lv) };
   Object.assign(K, { lv, kind, list: makeKanjiQuestions(kind, lv), idx: 0, results: [], combo: 0, active: true, offline: false });
   if (!K.list.length) return;
-  $('#kTheme').textContent = `${KMODES[kind].icon} ${lvName(lv)} ${KMODES[kind].name}`;
+  $('#kTheme').textContent = `${Game.noSticker ? '🔒 ' : ''}${KMODES[kind].icon} ${lvName(lv)} ${KMODES[kind].name}`;
   show('kquiz');
   kShowQuestion();
   SFX.start();
@@ -2698,6 +2791,7 @@ function renderSettings() {
         const st = gstat(g, lv);
         return `<tr><th>${GAMES[g].name} ${GAMES[g].lv[lv].name}</th><td>${st.play}回</td><td>${st.clear}回</td><td>${st.coins || 0}枚</td><td>${st.best ? fmtTime(st.best) : '−'}</td></tr>`;
       })).join('')}</tbody></table>`;
+  $('#kpriNote').textContent = kPri() ? `今日の${lvName(kPri())}のシール：${kMissionDone()} / ${KMISSION}枚${kMissionLeft() ? '' : '（達成）'}　・　今日のシール：かけざん ${todayCount('mul')}枚、かんじ ${todayCount('kanji')}枚` : `今日のシール：かけざん ${todayCount('mul')}枚、かんじ ${todayCount('kanji')}枚`;
   $('#coinNote').textContent = `いまのコイン：${D.coins}枚（これまでにもらったコイン：${D.coinsTotal}枚、交換したシール：${D.stickers.filter(x => themeOf(x) === 'coin').length}枚）`;
 }
 
@@ -2710,9 +2804,9 @@ document.addEventListener('click', e => {
   const act = b.dataset.act;
   if (act !== 'key') SFX.tap();
   switch (act) {
-    case 'start': startQuiz(); break;
+    case 'start': closeModal(); startQuiz(); break;
     case 'again': if (Game.kind === 'kanji') startKanji(Game.lv, Game.m); else if (GAMES[Game.kind]) startGame(Game.kind, Game.lv); else if (Game.kind === 'coin') goHome(); else startQuiz(); break;
-    case 'gsel': closeOverlays(); Speech.stop(); renderGameSel(b.dataset.g); show('gsel'); break;
+    case 'gsel': closeOverlays(); Speech.stop(); if (gameLocked()) { openGameLock(); break; } renderGameSel(b.dataset.g); show('gsel'); break;
     case 'gstart': startGame(b.dataset.g, +b.dataset.lv); break;
     case 'exchange': closeOverlays(); openExchange(); break;
     case 'exchangeOk': doExchange(); break;
@@ -2732,8 +2826,9 @@ document.addEventListener('click', e => {
     case 'kgive': kGiveUp(); break;
     case 'kana': kanaKey(b.dataset.k); break;
     case 'stkAgain': playStroke(); break;
-    case 'kanji': closeOverlays(); Speech.stop(); renderLevels(); show('klevel'); break;
-    case 'startLv': startKanji(+b.dataset.lv); break;
+    case 'kanji': closeOverlays(); gStop(); Speech.stop(); renderLevels(); show('klevel'); break;
+    case 'startLv': closeModal(); chooseKanjiLevel(+b.dataset.lv); break;
+    case 'startLvForce': startKanji(+b.dataset.lv); break;
     case 'kok': kCheck(); break;
     case 'kclr': if (K.pads[+b.dataset.i] && !K.lock) { K.pads[+b.dataset.i].clear(); $$('#kboxes .kbox')[+b.dataset.i].classList.remove('ok', 'ng'); } break;
     case 'kclearAll': if (!K.lock) { K.pads.forEach(p => p.clear()); $$('#kboxes .kbox').forEach(x => x.classList.remove('ok', 'ng')); } break;
