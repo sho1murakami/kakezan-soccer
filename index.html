@@ -714,7 +714,9 @@ body.nomemo .pad{justify-self:center}
 .odds-item{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;background:#fff;border-radius:12px;padding:5px 10px;font-size:14px}
 .odds-item.new{background:#fffbe6}
 .odds-item .on{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.odds-item b{color:#c27c00}
+.odds-item b{color:#c27c00;text-align:right;line-height:1.2}
+.odds-item b .pf{display:block;font-size:11px;color:#d0457a}
+.odds-t .big.pf{color:#d0457a}
 .empty{text-align:center;font-size:26px;color:#8a7a55;padding:60px 20px;line-height:1.6}
 
 /* ---------- せってい ---------- */
@@ -1378,9 +1380,12 @@ const gradeOf = id => GRADES.sr.ids.includes(id) ? 'sr' : GRADES.r.ids.includes(
 const UNOWNED_BOOST = 2.5;  // まだ もって いない シールは 2.5ばい でやすい
 const SHINY_RATE = 0.12;
 // いま シールを もらったら、それぞれの シールが でる かくりつ
-function stickerOdds() {
+const PERFECT_SR = 1.5;  // ぜんもん せいかいの ときは スーパーレアが 1.5ばい でやすい
+// でやすさ（おもみ）：グレード × まだ もってない ボーナス × ぜんもん せいかい ボーナス
+const stickerW = (d, owned, perfect) => { const g = gradeOf(d.id); return GRADES[g].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST) * (perfect && g === 'sr' ? PERFECT_SR : 1); };
+function stickerOdds(perfect) {
   const owned = new Set(D.stickers.map(s => s.d));
-  const P = POOL(), w = P.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
+  const P = POOL(), w = P.map(d => stickerW(d, owned, perfect));
   const sum = w.reduce((a, b) => a + b, 0);
   return P.map((d, i) => ({ d, p: w[i] / sum, owned: owned.has(d.id), g: gradeOf(d.id) }));
 }
@@ -1895,15 +1900,16 @@ const isToday = ms => new Date(ms).toDateString() === new Date().toDateString();
 
 const themeOf = s => s.t || 'mul';
 const themeCount = t => D.stickers.filter(s => themeOf(s) === t).length;
-function awardSticker(ok, t, lv) {
+function awardSticker(ok, t, lv, perfect) {
   const owned = new Set(D.stickers.map(s => s.d));
-  // まだ もっていない シールが でやすい・レアは でにくい
-  const P = POOL(), w = P.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
+  // まだ もっていない シールが でやすい・レアは でにくい・ぜんもん せいかいなら スーパーレアが でやすい
+  const P = POOL(), w = P.map(d => stickerW(d, owned, perfect));
   let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
   for (; i < P.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
   const before = rankOf(D.stickers.length).r;
   const s = { d: P[i].id, k: Math.random() < SHINY_RATE ? 1 : 0, at: Date.now(), ok, of: QSET[t] ? qN(t) : QUESTIONS, t };
   if (lv) s.lv = lv;
+  if (perfect) s.pf = 1;
   D.stickers.push(s);
   return { s, isNew: !owned.has(s.d), rankUp: rankOf(D.stickers.length).r !== before };
 }
@@ -2230,7 +2236,7 @@ function finishQuiz() {
 
 function endRound(ok, results, missedHTML) {
   if (ok >= qP(Game.kind) && !Game.noSticker) {
-    const res = awardSticker(ok, Game.kind, Game.lv);
+    const res = awardSticker(ok, Game.kind, Game.lv, ok === results.length);
     if (Game.m === 'yomi') res.s.m = 'yomi';
     save();
     showWin(res, ok, results.length);
@@ -2260,6 +2266,7 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
       .map(t => t === 'game' ? 'ゲーム' : lockName(t));
     if (opened.length) news.push(`🔓 ${opened.join('・')}が できるように なったよ！`);
   }
+  if (s.pf && g === 'sr') news.push('🌟 ぜんもん せいかい ボーナスで スーパーレア！');
   if (capped(Game.kind)) news.push('🌙 きょうの シールは これで おしまい！');
   $('#winMission').textContent = news.join('　');
   $('#win').classList.toggle('tight', rankUp && news.length > 0);
@@ -3925,20 +3932,22 @@ function renderBook() {
 }
 // でる かくりつ（いま シールを 1まい もらったら）
 function oddsHTML() {
-  const odds = stickerOdds(), pct = p => (p * 100 >= 1 ? (p * 100).toFixed(1) : (p * 100).toFixed(2)) + '%';
+  const odds = stickerOdds(false), oddsP = stickerOdds(true), pct = p => (p * 100 >= 1 ? (p * 100).toFixed(1) : (p * 100).toFixed(2)) + '%';
   const byG = g => odds.filter(o => o.g === g);
   const sumG = g => byG(g).reduce((a, o) => a + o.p, 0);
+  const sumP = g => oddsP.filter(o => o.g === g).reduce((a, o) => a + o.p, 0);
+  const pOf = id => (oddsP.find(o => o.d.id === id) || {}).p || 0;
   const rows = ['n', 'r', 'sr'].map(g => {
     const list = byG(g), have = list.filter(o => o.owned).length;
-    return `<tr><th><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</th><td>${list.length}しゅるい</td><td>${have}しゅるい</td><td class="big">${pct(sumG(g))}</td></tr>`;
+    return `<tr><th><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</th><td>${list.length}しゅるい</td><td>${have}しゅるい</td><td class="big">${pct(sumG(g))}</td><td class="big pf">${pct(sumP(g))}</td></tr>`;
   }).join('');
   const tiles = ['sr', 'r', 'n'].map(g => `<h4><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</h4><div class="odds-grid">${byG(g).sort((a, b) => b.p - a.p).map(o =>
-    `<div class="odds-item${o.owned ? '' : ' new'}">${o.owned ? stickerHTML({ d: o.d.id }, 'xs') : '<span class="stk xs unknown"><span class="em">？</span></span>'}<span class="on">${o.owned ? o.d.name : '？？？'}</span><b>${pct(o.p)}</b></div>`).join('')}</div>`).join('');
+    `<div class="odds-item${o.owned ? '' : ' new'}">${o.owned ? stickerHTML({ d: o.d.id }, 'xs') : '<span class="stk xs unknown"><span class="em">？</span></span>'}<span class="on">${o.owned ? o.d.name : '？？？'}</span><b>${pct(o.p)}${g === 'sr' ? `<small class="pf">ぜんもん ${pct(pOf(o.d.id))}</small>` : ''}</b></div>`).join('')}</div>`).join('');
   return `<div class="odds">
     <p class="odds-lead">シールを 1まい もらうと、どの シールが でるかは くじびきで きまるよ。いまの かくりつは こうだよ。</p>
-    <table class="odds-t"><thead><tr><th>グレード</th><th>ぜんぶ</th><th>もってる</th><th>でる かくりつ</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="odds-t"><thead><tr><th>グレード</th><th>ぜんぶ</th><th>もってる</th><th>でる かくりつ</th><th>🌟 ぜんもん<br>せいかいの とき</th></tr></thead><tbody>${rows}</tbody></table>
     <p class="odds-kira">✨ キラキラ：どの シールでも <b>${Math.round(SHINY_RATE * 100)}%</b>（100まいに ${Math.round(SHINY_RATE * 100)}まいくらい）で キラキラに なるよ</p>
-    <p class="odds-note">・まだ もって いない シールは、もって いる シールの ${UNOWNED_BOOST}ばい でやすいよ（だから あつめるほど かくりつが かわるよ）<br>・でやすさ：ノーマル 1 ・ レア ${GRADES.r.w} ・ スーパーレア ${GRADES.sr.w}（ノーマルを 1と したとき）</p>
+    <p class="odds-note">・まだ もって いない シールは、もって いる シールの ${UNOWNED_BOOST}ばい でやすいよ（だから あつめるほど かくりつが かわるよ）<br>・でやすさ：ノーマル 1 ・ レア ${GRADES.r.w} ・ スーパーレア ${GRADES.sr.w}（ノーマルを 1と したとき）<br>・🌟 ぜんもん せいかいで シールを もらうと、スーパーレアが ${PERFECT_SR}ばい でやすく なるよ（コインの こうかんは ふつうの かくりつ）</p>
     ${tiles}
   </div>`;
 }
