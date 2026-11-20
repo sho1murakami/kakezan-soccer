@@ -545,6 +545,9 @@ body.nomemo .pad{justify-self:center}
 input[type=range]{flex:1;max-width:280px;accent-color:#34a85f}
 select{font:inherit;font-size:16px;padding:6px 10px;border-radius:10px;border:1px solid #cfd6e2;background:#fff;max-width:60%}
 .mini{background:#34a85f;color:#fff;padding:8px 16px;border-radius:999px;font-size:16px;white-space:nowrap}
+.bk-text{width:100%;height:84px;margin:6px 0;padding:8px 10px;border:1px solid #cfd6e2;border-radius:10px;font:13px/1.4 ui-monospace,Menlo,monospace;color:#5d6880;background:#f7f9fc;resize:vertical;-webkit-user-select:text;user-select:text;font-size:16px}
+.bk-note{font-weight:700;color:#14904a}
+.row .mini+.mini,.row .mini+.danger{margin-left:-6px}
 .danger{background:#ff4d5e;color:#fff;padding:10px 18px;border-radius:999px;font-size:16px;white-space:nowrap}
 table.st{width:100%;border-collapse:collapse;font-size:17px}
 .st th,.st td{padding:8px;border-bottom:1px solid #edf0f5;text-align:center}
@@ -873,6 +876,19 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <label class="row"><span class="grow">手書きで答える（自動判定）<small>オフにすると4択になります。手書きの判定には Google の手書き文字認識を使うため、書いた線の形（座標）だけがインターネットで Google に送られます。ネットにつながらないときは、自動で4択に切り替わります。とめ・はね・書き順までは判定できません</small></span><span class="sw"><input type="checkbox" data-set="hand"><i></i></span></label>
       </div>
       <div class="set-card">
+        <h3>💾 記録のバックアップ（引っこし）</h3>
+        <p class="note">ホーム画面のアイコンは、アイコンごとに記録が別々に保存され、アイコンを削除すると記録も消えます。アイコンを作り直すときは、次の順番で記録を引っこしてください。<br>
+        ① <b>今のアイコン</b>で開き、ここで「コピー」（または「ファイルに保存」）<br>
+        ② Safari でアプリを開き、共有ボタン →「ホーム画面に追加」で<b>新しいアイコン</b>を作る<br>
+        ③ <b>新しいアイコン</b>で開き、ここで「はりつけ」→「読み込む」<br>
+        ④ 新しいアイコンでシールが戻ったのを確かめてから、古いアイコンを削除</p>
+        <div class="row"><span class="grow">記録を書き出す<small>シール・コイン・漢字の記録・設定をまとめて書き出します</small></span><button class="mini" data-act="bkExport">📋 コピー</button><button class="mini" data-act="bkFile">📄 ファイルに保存</button></div>
+        <textarea class="bk-text" id="bkText" placeholder="ここに バックアップの もじが でます（読み込むときは ここに はりつけます）" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+        <div class="row"><span class="grow">記録を読み込む<small>今の記録は、読み込んだ記録に置きかわります</small></span><button class="mini" data-act="bkPaste">📥 はりつけ</button><button class="mini" data-act="bkOpen">📂 ファイルから</button><button class="danger" data-act="bkImport">読み込む</button></div>
+        <input type="file" id="bkFileIn" accept=".json,application/json,text/plain" hidden>
+        <p class="note bk-note" id="bkNote"></p>
+      </div>
+      <div class="set-card">
         <h3>📊 きろく</h3>
         <div id="stats"></div>
         <div class="row"><span class="grow">シールと記録をすべて消す</span><button class="danger" data-act="reset">すべて消す</button></div>
@@ -1061,6 +1077,65 @@ function load() {
   } catch (e) { D = defaults(); }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { /* 保存できなくても あそべる */ } }
+
+// ---------- 記録の バックアップ（ホーム画面の アイコンを 作り直すときの 引っこし用） ----------
+const BK_APP = 'kakezan-soccer';
+const bkNote = t => { $('#bkNote').textContent = t; };
+function bkSummary(d) {
+  const kp = d.kprog || {}, kc = Object.keys(kp.kaki || {}).length + Object.keys(kp.yomi || {}).length;
+  return `シール ${(d.stickers || []).length}枚・コイン ${d.coins || 0}枚・漢字の記録 ${kc}字ぶん`;
+}
+const bkMake = () => JSON.stringify({ app: BK_APP, v: 1, at: new Date().toISOString(), data: D });
+async function bkExport() {
+  const t = bkMake(), el = $('#bkText');
+  el.value = t;
+  try {
+    await navigator.clipboard.writeText(t);
+    bkNote(`✅ コピーしました（${bkSummary(D)}）。新しいアイコンで開いて「はりつけ」→「読み込む」を押してください。`);
+  } catch (e) {
+    el.focus(); el.select();
+    bkNote('自動でコピーできませんでした。上の欄の文字をすべて選んで「コピー」してください。');
+  }
+}
+async function bkFile() {
+  const d = new Date(), name = `gakushu-backup-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.json`;
+  const file = new File([bkMake()], name, { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'がくしゅうアプリ バックアップ' }); bkNote('✅ 共有メニューから保存しました（「ファイルに保存」を選ぶと、ファイル App に残せます）。'); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  bkNote(`✅ ${name} を保存しました。`);
+}
+async function bkPaste() {
+  try {
+    $('#bkText').value = await navigator.clipboard.readText();
+    bkNote('はりつけました。「読み込む」を押してください。');
+  } catch (e) {
+    $('#bkText').focus();
+    bkNote('自動ではりつけできませんでした。上の欄を長押しして「ペースト」してから、「読み込む」を押してください。');
+  }
+}
+function bkImport() {
+  const raw = $('#bkText').value.trim();
+  if (!raw) { bkNote('上の欄に バックアップの文字を はりつけてください。'); return; }
+  let obj;
+  try { obj = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1)); } catch (e) { obj = null; }
+  if (!obj || obj.app !== BK_APP || !obj.data || !Array.isArray(obj.data.stickers)) {
+    bkNote('⚠️ このアプリの バックアップでは ないようです。コピーした文字が ぜんぶ はりつけられているか 確かめてください。');
+    return;
+  }
+  const when = obj.at ? new Date(obj.at).toLocaleString('ja-JP') : '';
+  if (!confirm(`この記録を読み込みますか？\n\n読み込む記録：${bkSummary(obj.data)}${when ? `（${when} に書き出し）` : ''}\n今の記録：${bkSummary(D)}\n\n今の記録は、読み込んだ記録に置きかわります。`)) return;
+  try { localStorage.setItem(KEY, JSON.stringify(obj.data)); } catch (e) { bkNote('⚠️ 保存できませんでした。'); return; }
+  load();
+  renderSettings();
+  $('#bkText').value = '';
+  bkNote(`✅ 読み込みました（${bkSummary(D)}）。トップに もどって シールを 確かめてください。`);
+}
 const S = () => D.settings;
 
 // ---------- よみあげ ----------
@@ -2876,6 +2951,11 @@ document.addEventListener('click', e => {
     case 'settings': openGate(); break;
     case 'gateKey': gateKey(b.dataset.k); break;
     case 'testVoice': Speech.speak('347 かける 28 わ？ ゴール！ 347 かける 28 わ 9716'); break;
+    case 'bkExport': bkExport(); break;
+    case 'bkFile': bkFile(); break;
+    case 'bkPaste': bkPaste(); break;
+    case 'bkOpen': $('#bkFileIn').click(); break;
+    case 'bkImport': bkImport(); break;
     case 'reset':
       if (confirm('シールと記録をすべて消します。よろしいですか？') && confirm('本当に消しますか？（元に戻せません）')) {
         const keep = D.settings;
@@ -2903,6 +2983,13 @@ function sayRank() {
   Speech.speak(`ランクは ${r[1]}！` + (next ? ` あと ${next[0] - n}まいで ${next[1]}！` : ''));
 }
 
+$('#bkFileIn').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  $('#bkText').value = await f.text();
+  e.target.value = '';
+  bkNote(`${f.name} を ひらきました。「読み込む」を押してください。`);
+});
 // ゴールの えんしゅつ中に タップすると すぐ つぎへ
 {
   const ky = $('#kyAns');
