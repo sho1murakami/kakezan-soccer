@@ -2289,12 +2289,12 @@ async function playStroke() {
       el.style.strokeDasharray = len;
       el.style.strokeDashoffset = len;
       n.textContent = k + 1;
-      const dur = 260 + len * 7;
+      const dur = 130 + len * 3.5;  // 1かくを かく じかん（まえの 2ばいの はやさ）
       if (el.animate) await el.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'ease-in-out', fill: 'forwards' }).finished.catch(() => {});
       else await sleep(dur);
       el.style.strokeDashoffset = 0;
       el.setAttribute('class', 'done');
-      await sleep(110);
+      await sleep(55);
     }
   }
 }
