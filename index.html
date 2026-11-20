@@ -526,6 +526,29 @@ body.nomemo .pad{justify-self:center}
 .zk-item{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:16px}
 .zk-item em{position:absolute;top:0;right:6px;background:var(--t32);color:#fff;font-style:normal;font-size:14px;padding:2px 8px;border-radius:999px;z-index:2}
 .zk-item.none>span:last-child{color:#b0b7c4}
+.zk-item.none>span:nth-last-child(2){color:#b0b7c4}
+.gr{display:inline-block;font-style:normal;font-weight:900;font-size:12px;line-height:1;padding:3px 6px;border-radius:6px;color:#fff;vertical-align:middle}
+.gr.r{background:linear-gradient(#5aa8ff,#2f6fd8)}
+.gr.sr{background:linear-gradient(#ffb02e,#e0461b)}
+.gr.n{background:#9aa4b5}
+.zk-item .gr{position:absolute;top:0;left:8px;z-index:2}
+.win-name .gr{font-size:.55em;padding:.2em .45em}
+.gr-line{margin:0;font-size:18px}
+.odds{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.odds-lead{margin:0;font-size:clamp(16px,1.9vw,20px);text-align:center}
+.odds-t{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);font-size:clamp(15px,1.8vw,19px)}
+.odds-t th,.odds-t td{padding:10px 12px;text-align:center;border-bottom:1px solid #f0e6cc}
+.odds-t thead th{font-size:14px;color:#8a7a55;font-weight:500}
+.odds-t tbody th{text-align:left}
+.odds-t .big{font-size:1.3em;color:#c27c00;font-weight:900}
+.odds-kira{margin:0;background:linear-gradient(90deg,#fff6c8,#ffe3f3,#dff4ff);border-radius:14px;padding:10px 14px;font-size:clamp(15px,1.8vw,19px);text-align:center}
+.odds-note{margin:0;color:#8a7a55;font-size:clamp(13px,1.5vw,16px);line-height:1.6;font-weight:500}
+.odds h4{margin:6px 0 0;font-size:18px}
+.odds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.odds-item{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;background:#fff;border-radius:12px;padding:5px 10px;font-size:14px}
+.odds-item.new{background:#fffbe6}
+.odds-item .on{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.odds-item b{color:#c27c00}
 .empty{text-align:center;font-size:26px;color:#8a7a55;padding:60px 20px;line-height:1.6}
 
 /* ---------- せってい ---------- */
@@ -838,6 +861,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button data-act="bookTab" data-f="kanji">かんじ<b></b></button>
       <button data-act="bookTab" data-f="coin">🪙 こうかん<b></b></button>
       <button data-act="bookTab" data-f="zukan">🔍 ずかん</button>
+      <button data-act="bookTab" data-f="odds">🎲 でる かくりつ</button>
     </div>
     <div class="bookbody" id="bookBody"></div>
   </section>
@@ -1031,13 +1055,46 @@ const DESIGNS = [
   ['sun', '🌞', 'おひさま', '#ffe590'], ['volcano', '🌋', 'かざん', '#ffc8b0'], ['saturn', '🪐', 'どせい', '#e6d8ff'],
   ['onigiri', '🍙', 'おにぎり', '#e9f6e2'], ['strawberry', '🍓', 'いちご', '#ffd4dc'], ['icecream', '🍦', 'ソフトクリーム', '#fff1d9'],
   ['crown', '👑', 'おうかん', '#ffe794'], ['gem', '💎', 'ほうせき', '#ccf2ff'],
+  // ここから 54しゅるい ふやした（ぜんぶで 100しゅるい）
+  ['monkey', '🐵', 'サル', '#f2d4b0'], ['giraffe', '🦒', 'キリン', '#ffe3a3'], ['elephant', '🐘', 'ゾウ', '#d6dde8'],
+  ['zebra', '🦓', 'シマウマ', '#e8e8f0'], ['hippo', '🦛', 'カバ', '#dcd0f0'], ['rhino', '🦏', 'サイ', '#d9dfe6'],
+  ['kangaroo', '🦘', 'カンガルー', '#f5d2a8'], ['squirrel', '🐿️', 'リス', '#f3cfa6'], ['hedgehog', '🦔', 'ハリネズミ', '#e8d6c2'],
+  ['owl', '🦉', 'フクロウ', '#e2cfb4'], ['parrot', '🦜', 'オウム', '#c6f0b0'], ['whale', '🐳', 'クジラ', '#b5dcff'],
+  ['tropicalfish', '🐠', 'ねったいぎょ', '#ffd9a8'], ['crab', '🦀', 'カニ', '#ffc4b8'], ['ladybug', '🐞', 'テントウムシ', '#ffc9c9'],
+  ['butterfly', '🦋', 'チョウ', '#cfe2ff'], ['bee', '🐝', 'ミツバチ', '#fff0a6'], ['crocodile', '🐊', 'ワニ', '#c4ecb0'],
+  ['flamingo', '🦩', 'フラミンゴ', '#ffd1e6'], ['hamster', '🐹', 'ハムスター', '#ffe4c4'], ['horse', '🐴', 'ウマ', '#ecd6bc'],
+  ['cow', '🐮', 'ウシ', '#ececf4'], ['pig', '🐷', 'ブタ', '#ffd6e2'], ['chick', '🐥', 'ひよこ', '#fff4a8'],
+  ['train', '🚂', 'きかんしゃ', '#d8dde6'], ['bus', '🚌', 'バス', '#ffeab0'], ['tractor', '🚜', 'トラクター', '#d6efc2'],
+  ['ship', '🚢', 'ふね', '#cfe6ff'], ['ufo', '🛸', 'ユーフォー', '#d8d2ff'], ['racecar', '🏎️', 'レーシングカー', '#ffc6c6'],
+  ['bicycle', '🚲', 'じてんしゃ', '#d2f0e6'], ['baseball', '⚾', 'やきゅう', '#f0f0f0'], ['basketball', '🏀', 'バスケットボール', '#ffd2a8'],
+  ['tennis', '🎾', 'テニス', '#e6f7b0'], ['pingpong', '🏓', 'たっきゅう', '#ffd0d0'], ['target', '🎯', 'まと', '#ffe0e0'],
+  ['moon', '🌙', 'おつきさま', '#fff6c2'], ['comet', '☄️', 'ほうきぼし', '#ffd8b8'], ['earth', '🌍', 'ちきゅう', '#c8e8ff'],
+  ['sunflower', '🌻', 'ひまわり', '#fff0a0'], ['sakura', '🌸', 'さくら', '#ffe0ec'], ['clover', '🍀', 'よつばの クローバー', '#d2f5c8'],
+  ['mushroom', '🍄', 'キノコ', '#ffd6cc'], ['cactus', '🌵', 'サボテン', '#d6f0c4'], ['snowflake', '❄️', 'ゆきの けっしょう', '#dff2ff'],
+  ['pizza', '🍕', 'ピザ', '#ffe0b0'], ['burger', '🍔', 'ハンバーガー', '#ffdcb0'], ['donut', '🍩', 'ドーナツ', '#ffd6e4'],
+  ['cake', '🍰', 'ショートケーキ', '#fff0f0'], ['watermelon', '🍉', 'スイカ', '#d8f5c8'], ['sushi', '🍣', 'おすし', '#ffe6d6'],
+  ['ghost', '👻', 'おばけ', '#e8e8ff'], ['wizard', '🧙', 'まほうつかい', '#e0d4ff'], ['castle', '🏰', 'おしろ', '#e4e8f0'],
 ].map(([id, e, name, bg]) => ({ id, e, name, bg }));
 const DMAP = Object.fromEntries(DESIGNS.map(d => [d.id, d]));
-const RARE = new Set(['trophy', 'crown', 'gem', 'dragon', 'unicorn', 'saturn']);
+// グレード：ノーマル・レア・スーパーレア（でやすさが ちがう）＋ キラキラ（どの シールでも SHINY_RATE で キラキラに なる）
+const GRADES = {
+  sr: { name: 'スーパーレア', short: 'SR', w: 0.12, ids: ['crown', 'gem', 'dragon', 'unicorn', 'ufo', 'castle'] },
+  r: { name: 'レア', short: 'R', w: 0.4, ids: ['trophy', 'saturn', 'medal', 'rocket', 'trex', 'shinkansen', 'whale', 'owl', 'flamingo', 'rainbow', 'earth', 'clover', 'wizard', 'comet', 'racecar', 'volcano'] },
+  n: { name: 'ノーマル', short: 'N', w: 1, ids: [] },
+};
+const gradeOf = id => GRADES.sr.ids.includes(id) ? 'sr' : GRADES.r.ids.includes(id) ? 'r' : 'n';
+const UNOWNED_BOOST = 2.5;  // まだ もって いない シールは 2.5ばい でやすい
 const SHINY_RATE = 0.12;
+// いま シールを もらったら、それぞれの シールが でる かくりつ
+function stickerOdds() {
+  const owned = new Set(D.stickers.map(s => s.d));
+  const w = DESIGNS.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
+  const sum = w.reduce((a, b) => a + b, 0);
+  return DESIGNS.map((d, i) => ({ d, p: w[i] / sum, owned: owned.has(d.id), g: gradeOf(d.id) }));
+}
 
 // ランク [ひつような まいすう, なまえ, アイコン]
-const RANKS = [[0, 'ルーキー', '🌱'], [15, 'レギュラー', '⚽'], [40, 'エース', '🔥'], [80, 'キャプテン', '🎖️'], [130, 'スター', '⭐'], [200, 'レジェンド', '👑'], [300, 'ワールドクラス', '🌏']];
+const RANKS = [[0, 'ルーキー', '🌱'], [45, 'レギュラー', '⚽'], [120, 'エース', '🔥'], [240, 'キャプテン', '🎖️'], [390, 'スター', '⭐'], [600, 'レジェンド', '👑'], [900, 'ワールドクラス', '🌏']];
 
 const QUESTIONS = 7;  // 1かいの もんだい数
 const PASS = 5;       // シールが もらえる せいかい数（7もん ちゅう）
@@ -1505,7 +1562,7 @@ const themeCount = t => D.stickers.filter(s => themeOf(s) === t).length;
 function awardSticker(ok, t, lv) {
   const owned = new Set(D.stickers.map(s => s.d));
   // まだ もっていない シールが でやすい・レアは でにくい
-  const w = DESIGNS.map(d => (RARE.has(d.id) ? 0.35 : 1) * (owned.has(d.id) ? 1 : 2.5));
+  const w = DESIGNS.map(d => GRADES[gradeOf(d.id)].w * (owned.has(d.id) ? 1 : UNOWNED_BOOST));
   let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
   for (; i < DESIGNS.length - 1; i++) { r -= w[i]; if (r <= 0) break; }
   const before = rankOf(D.stickers.length).r;
@@ -1785,7 +1842,8 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   $('#win [data-act="again"]').hidden = Game.kind === 'coin';
   $('#win [data-act="exchange"]').hidden = !(Game.kind === 'coin' && D.coins >= COIN_RATE);
   $('#winStk').innerHTML = stickerHTML(s, 'xxl');
-  $('#winName').innerHTML = `${d.name}${s.k ? ' <span class="kira">✨キラキラ✨</span>' : ''}${isNew ? ' <span class="newb">NEW!</span>' : ''}`;
+  const g = gradeOf(s.d);
+  $('#winName').innerHTML = `${g !== 'n' ? `<i class="gr ${g}">${GRADES[g].short}</i> ` : ''}${d.name}${s.k ? ' <span class="kira">✨キラキラ✨</span>' : ''}${isNew ? ' <span class="newb">NEW!</span>' : ''}`;
   $('#winSub').textContent = `シール ${n}まいめ ・ きょう ${D.stickers.filter(x => isToday(x.at)).length}まい`;
   $('#winRank').textContent = rankUp ? `ランクアップ！ ${rk[2]} ${rk[1]} に なった！` : '';
   const news = [];
@@ -2831,11 +2889,13 @@ function renderBook() {
     if (cnt) cnt.textContent = st.filter(x => inTab(x, f)).length;
   });
   const body = $('#bookBody');
+  if (bookFilter === 'odds') { body.innerHTML = oddsHTML(); return; }
   if (bookFilter === 'zukan') {
     body.innerHTML = '<div class="zukan">' + DESIGNS.map(d => {
       const mine = st.filter(s => s.d === d.id);
-      if (!mine.length) return '<div class="zk-item none"><span class="stk md unknown"><span class="em">？</span></span><span>？？？</span></div>';
-      return `<button class="zk-item" data-act="zukanItem" data-did="${d.id}">${stickerHTML({ d: d.id, k: mine.some(s => s.k) }, 'md')}<span>${d.name}</span><em>×${mine.length}</em></button>`;
+      if (!mine.length) { const g = gradeOf(d.id); return `<div class="zk-item none"><span class="stk md unknown"><span class="em">？</span></span><span>？？？</span>${g !== 'n' ? `<i class="gr ${g}">${GRADES[g].short}</i>` : ''}</div>`; }
+      const g = gradeOf(d.id);
+      return `<button class="zk-item" data-act="zukanItem" data-did="${d.id}">${stickerHTML({ d: d.id, k: mine.some(s => s.k) }, 'md')}<span>${d.name}</span><em>×${mine.length}</em>${g !== 'n' ? `<i class="gr ${g}">${GRADES[g].short}</i>` : ''}</button>`;
     }).join('') + '</div>';
     return;
   }
@@ -2850,9 +2910,29 @@ function renderBook() {
   const nw = body.querySelector('.new');
   if (nw) nw.scrollIntoView({ block: 'center' });
 }
+// でる かくりつ（いま シールを 1まい もらったら）
+function oddsHTML() {
+  const odds = stickerOdds(), pct = p => (p * 100 >= 1 ? (p * 100).toFixed(1) : (p * 100).toFixed(2)) + '%';
+  const byG = g => odds.filter(o => o.g === g);
+  const sumG = g => byG(g).reduce((a, o) => a + o.p, 0);
+  const rows = ['n', 'r', 'sr'].map(g => {
+    const list = byG(g), have = list.filter(o => o.owned).length;
+    return `<tr><th><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</th><td>${list.length}しゅるい</td><td>${have}しゅるい</td><td class="big">${pct(sumG(g))}</td></tr>`;
+  }).join('');
+  const tiles = ['sr', 'r', 'n'].map(g => `<h4><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}</h4><div class="odds-grid">${byG(g).sort((a, b) => b.p - a.p).map(o =>
+    `<div class="odds-item${o.owned ? '' : ' new'}">${o.owned ? stickerHTML({ d: o.d.id }, 'xs') : '<span class="stk xs unknown"><span class="em">？</span></span>'}<span class="on">${o.owned ? o.d.name : '？？？'}</span><b>${pct(o.p)}</b></div>`).join('')}</div>`).join('');
+  return `<div class="odds">
+    <p class="odds-lead">シールを 1まい もらうと、どの シールが でるかは くじびきで きまるよ。いまの かくりつは こうだよ。</p>
+    <table class="odds-t"><thead><tr><th>グレード</th><th>ぜんぶ</th><th>もってる</th><th>でる かくりつ</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="odds-kira">✨ キラキラ：どの シールでも <b>${Math.round(SHINY_RATE * 100)}%</b>（100まいに ${Math.round(SHINY_RATE * 100)}まいくらい）で キラキラに なるよ</p>
+    <p class="odds-note">・まだ もって いない シールは、もって いる シールの ${UNOWNED_BOOST}ばい でやすいよ（だから あつめるほど かくりつが かわるよ）<br>・でやすさ：ノーマル 1 ・ レア ${GRADES.r.w} ・ スーパーレア ${GRADES.sr.w}（ノーマルを 1と したとき）</p>
+    ${tiles}
+  </div>`;
+}
 function stickerDetail(s, sub) {
   const d = DMAP[s.d];
-  openModal(`${stickerHTML(s, 'xl')}<p class="mname">${d.name}${s.k ? ' ✨' : ''}</p><p class="msub">${sub}</p><button class="bigbtn yellow" data-act="closeModal">とじる</button>`);
+  const g = gradeOf(s.d);
+  openModal(`${stickerHTML(s, 'xl')}<p class="mname">${d.name}${s.k ? ' ✨' : ''}</p><p class="gr-line"><i class="gr ${g}">${GRADES[g].short}</i> ${GRADES[g].name}${s.k ? ' ・ ✨キラキラ' : ''}</p><p class="msub">${sub}</p><button class="bigbtn yellow" data-act="closeModal">とじる</button>`);
   SFX.pop(5);
   Speech.speak(d.name + (s.k ? ' キラキラ' : ''));
 }
