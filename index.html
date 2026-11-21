@@ -739,6 +739,7 @@ body.nomemo .pad{justify-self:center}
 .row .grow{flex:1}
 .lockset.child .row{padding-left:26px;font-size:17px}
 .lockset.child .lock-need{padding-left:40px}
+.lock-rep{flex-basis:100%;display:flex;align-items:center;gap:8px;color:#4a5670}
 .lock-need{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:0 0 12px 14px;font-size:16px;color:#4a5670}
 .lock-need span{display:flex;align-items:center;gap:6px}
 .lock-need em{font-style:normal;color:#8792a6}
@@ -1106,7 +1107,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🔒 カギの設定</h3>
-        <p class="note">教科・項目・ゲームのそれぞれにカギをかけられます。カギをかけると、その日にほかの項目のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の項目は条件にしません）。教科にカギをかけると、その中の項目もすべて開けなくなります。その日のシールが1日の上限に達した項目は、条件を満たしたことにします。おたがいにカギをかけ合うと開かなくなるので注意してください。</p>
+        <p class="note">教科・項目・ゲームのそれぞれにカギをかけられます。カギをかけると、その日にほかの項目のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の項目は条件にしません）。教科にカギをかけると、その中の項目もすべて開けなくなります。その日のシールが1日の上限に達した項目は、条件を満たしたことにします。おたがいにカギをかけ合うと開かなくなるので注意してください。<br>「開いたあと ○枚もらったら また カギ」にすると、開いた先でシールを○枚もらうたびにまたカギがかかり、条件の項目をもう一度同じ枚数集めると開きます（例：かんじ よみ に「✏️ かんじ かきとり 5枚」「開いたあと 5枚もらったら また カギ」→ かきとり5枚でよみが開き、よみを5枚もらうとまたカギ。かきとりを合計10枚にするとまた開く）。</p>
         <div id="lockSet"></div>
       </div>
       <div class="set-card">
@@ -2270,6 +2271,9 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
     const opened = LOCK_T.filter(t => (t === 'game' || (SUBJ[t] ? subjItems(t).length : itemOn(t))) && lockOn(t) && !isLocked(t) && isLocked(t, gotItem))
       .map(t => t === 'game' ? 'ゲーム' : lockName(t));
     if (opened.length) news.push(`🔓 ${opened.join('・')}が できるように なったよ！`);
+    const relocked = LOCK_T.filter(t => t !== 'game' && (SUBJ[t] ? subjItems(t).length : itemOn(t)) && lockOn(t) && lockRep(t) && isLocked(t) && !isLocked(t, gotItem))
+      .map(lockName);
+    if (relocked.length) news.push(`🔒 ${relocked.join('・')}は また カギが かかったよ`);
   }
   if (s.pf && g === 'sr') news.push('🌟 ぜんもん せいかい ボーナスで スーパーレア！');
   if (capped(Game.kind)) news.push('🌙 きょうの シールは これで おしまい！');
@@ -2488,14 +2492,22 @@ function lockNeed(t, src) {
   return v > 0 ? v : 0;
 }
 // minus：いま もらった シールの こうもく（それを ひいて かんがえる。「ひらいた！」の おしらせ用）
+// くりかえしの カギ：ひらいた あと、そこで lr_<t> まい（ゲームは かい）つかったら また カギ。
+// つぎに ひらくには じょうけんの こうもくを もう いちど おなじ まいすう あつめる（2かいめは 2ばい、3かいめは 3ばい…）
+const lockRep = t => { const v = parseInt(S()['lr_' + t], 10); return v > 0 ? v : 0; };
+function lockUsed(t, minus) {
+  if (t === 'game') return ['meiro', 'sudoku', 'iq'].reduce((a, g) => a + gPlays(g), 0);
+  return (SUBJ[t] ? SUBJ[t].items : [t]).reduce((a, id) => a + Math.max(0, itemToday(id, minus)), 0);
+}
 function lockList(t, minus) {
+  const rep = lockRep(t), round = rep ? Math.floor(lockUsed(t, minus) / rep) + 1 : 1;
   return LOCK_SRC.map(src => {
-    const need = lockNeed(t, src), th = ITEMS[src].t;
+    const need = lockNeed(t, src) * round, th = ITEMS[src].t;
     let have = itemToday(src, minus);
     // 1日の 上限まで もらったら、それ いじょうは もらえないので じょうけんを みたした ことに する
     const thCnt = todayCount(th) - (minus && ITEMS[minus].t === th ? 1 : 0);
     if (dayMax(th) && thCnt >= dayMax(th)) have = Math.max(have, need);
-    return { src, need, have };
+    return { src, need, have, round };
   }).filter(x => x.need > 0);
 }
 const isLocked = (t, minus) => lockList(t, minus).some(x => x.have < x.need);
@@ -2520,8 +2532,10 @@ function openLock(t) {
   const L = lockList(t), rest = L.filter(x => x.have < x.need), game = t === 'game';
   const left = rest.map(x => `${ITEMS[x.src].name}の シール あと ${x.need - x.have}まい`).join('、');
   const title = game ? 'ゲームは まだ あそべないよ' : `${lockName(t)}は まだ できないよ`;
+  const rep = lockRep(t), base = L.map(x => `${ITEMS[x.src].name} ${x.need / x.round}まい`).join('、');
+  const repNote = rep ? `<br><small>（${base}の シールを あつめる ごとに、${game ? `${rep}かい あそべるよ` : `${lockName(t)}で ${rep}まい もらえるよ`}）</small>` : '';
   openModal(`<div class="lock-ico">🔒</div><p class="mq">${title}</p>
-    <p class="lock-msg">きょう ${L.map(x => `${ITEMS[x.src].name} ${x.need}まい`).join('、')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}</p>
+    <p class="lock-msg">きょう ${L.map(x => `${ITEMS[x.src].name} ${x.need}まい`).join('、')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}${repNote}</p>
     <div class="game-need">${L.map(x => `<span>${ITEMS[x.src].ico} ${ITEMS[x.src].name} <span class="mdots">${dots(Math.min(x.have, x.need), x.need)}</span></span>`).join('')}</div>
     <div class="mbtns">${rest.map((x, i) => `<button class="bigbtn${i ? '' : ' yellow'}" data-act="item" data-it="${x.src}">${ITEMS[x.src].ico} ${ITEMS[x.src].name}を やる</button>`).join('')}<button class="bigbtn" data-act="closeModal">とじる</button></div>`);
   Speech.speak(`${title}。${left.replace(/、/g, ' ')} あつめてね。`);
@@ -4062,7 +4076,9 @@ function renderLockSet() {
     }).join('');
     return `<div class="lockset${sub ? '' : ' child'}" data-lt="${t}">
       <label class="row"><span class="grow">${label}にカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_${t}"${lockOn(t) ? ' checked' : ''}><i></i></span></label>
-      <div class="lock-need"${lockOn(t) ? '' : ' hidden'}>${sel}<em>のシールを集めたら開く</em></div>
+      <div class="lock-need"${lockOn(t) ? '' : ' hidden'}>${sel}<em>のシールを集めたら開く</em>
+        <span class="lock-rep">開いたあと<select data-set="lr_${t}">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 10].concat(lockRep(t)).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b)
+          .map(x => `<option value="${x}"${x === lockRep(t) ? ' selected' : ''}>${x ? `${x}${t === 'game' ? '回遊んだら' : '枚もらったら'} また カギ` : 'その日はずっと開いたまま'}</option>`).join('')}</select></span></div>
     </div>`;
   }).join('');
 }
@@ -4232,7 +4248,7 @@ document.addEventListener('input', e => {
   if (k === 'voice') Speech.choose();
   if (k === 'skin') { applySkin(); renderHome(); renderSettings(); }
   if (k.startsWith('lk_')) renderLockSet();
-  if (k.startsWith('ln_') || k.startsWith('gmax_')) S()[k] = parseInt(inp.value, 10) || 0;
+  if (k.startsWith('ln_') || k.startsWith('gmax_') || k.startsWith('lr_')) S()[k] = parseInt(inp.value, 10) || 0;
   if (Object.values(QSET).some(c => c[0] === k || c[1] === k || c[4] === k)) { S()[k] = parseInt(inp.value, 10); renderSettings(); }
   save();
 });
