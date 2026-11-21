@@ -458,6 +458,9 @@ body.nomemo .pad{justify-self:center}
 .gsb b{font-size:clamp(34px,min(4.4vw,8vh),60px)}
 .gs-grid.two{grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);row-gap:8px;overflow-y:auto}
 .gsb.iq{border-color:#7a3cf0}.gsb.iq b{color:#7a3cf0}
+.gs-left{background:#fff;color:#137a58;border-radius:999px;padding:2px 12px;font-size:.62em;text-shadow:none}
+.gs-left.none{background:#ffe1e4;color:#c0392b}
+.gsb.done{filter:grayscale(1);opacity:.55}
 .gs-head{grid-column:1/-1;color:#fff;font-size:clamp(22px,2.8vw,32px);text-shadow:0 3px 0 rgba(0,0,0,.25);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .gs-head small{font-size:clamp(13px,1.5vw,17px);font-weight:500;opacity:.95}
 .gs-grid.two .gsb{gap:4px;padding:8px}
@@ -730,6 +733,8 @@ body.nomemo .pad{justify-self:center}
 .set-card h3+.row{border-top:0}
 .row small{display:block;color:#8792a6;font-size:14px}
 .row .grow{flex:1}
+.lockset.child .row{padding-left:26px;font-size:17px}
+.lockset.child .lock-need{padding-left:40px}
 .lock-need{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:0 0 12px 14px;font-size:16px;color:#4a5670}
 .lock-need span{display:flex;align-items:center;gap:6px}
 .lock-need em{font-style:normal;color:#8792a6}
@@ -1097,27 +1102,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🔒 カギの設定</h3>
-        <p class="note">カギをかけると、その日にほかの教科のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の教科は条件にしません）。1日の上限が条件より少ないときは、上限の枚数で開きます。おたがいにカギをかけ合うと開かなくなるので注意してください。</p>
-        <div class="lockset" data-lt="sansu">
-          <label class="row"><span class="grow">算 さんすうにカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_sansu"><i></i></span></label>
-          <div class="lock-need"><span>国 こくご<select data-set="ln_sansu_kokugo"></select></span><span>社 しゃかい<select data-set="ln_sansu_shakai"></select></span><em>のシールを集めたら開く</em></div>
-        </div>
-        <div class="lockset" data-lt="kokugo">
-          <label class="row"><span class="grow">国 こくごにカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_kokugo"><i></i></span></label>
-          <div class="lock-need"><span>算 さんすう<select data-set="ln_kokugo_sansu"></select></span><span>社 しゃかい<select data-set="ln_kokugo_shakai"></select></span><em>のシールを集めたら開く</em></div>
-        </div>
-        <div class="lockset" data-lt="rika">
-          <label class="row"><span class="grow">理 りかにカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_rika"><i></i></span></label>
-          <div class="lock-need"><span>算 さんすう<select data-set="ln_rika_sansu"></select></span><span>国 こくご<select data-set="ln_rika_kokugo"></select></span><span>社 しゃかい<select data-set="ln_rika_shakai"></select></span><em>のシールを集めたら開く</em></div>
-        </div>
-        <div class="lockset" data-lt="shakai">
-          <label class="row"><span class="grow">社 しゃかい（とどうふけん）にカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_shakai"><i></i></span></label>
-          <div class="lock-need"><span>算 さんすう<select data-set="ln_shakai_sansu"></select></span><span>国 こくご<select data-set="ln_shakai_kokugo"></select></span><em>のシールを集めたら開く</em></div>
-        </div>
-        <div class="lockset" data-lt="game">
-          <label class="row"><span class="grow">🎮 ゲーム（めいろ・すうどく・IQテスト）にカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_game"><i></i></span></label>
-          <div class="lock-need"><span>算 さんすう<select data-set="ln_game_sansu"></select></span><span>国 こくご<select data-set="ln_game_kokugo"></select></span><span>社 しゃかい<select data-set="ln_game_shakai"></select></span><em>のシールを集めたら開く</em></div>
-        </div>
+        <p class="note">教科・項目・ゲームのそれぞれにカギをかけられます。カギをかけると、その日にほかの項目のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の項目は条件にしません）。教科にカギをかけると、その中の項目もすべて開けなくなります。その日のシールが1日の上限に達した項目は、条件を満たしたことにします。おたがいにカギをかけ合うと開かなくなるので注意してください。</p>
+        <div id="lockSet"></div>
       </div>
       <div class="set-card">
         <h3>📝 出題数とシールの基準</h3>
@@ -1143,6 +1129,8 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <div class="set-card">
         <h3>🎮 ゲーム（めいろ・すうどく・IQテスト）</h3>
         <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>クリア1回でコイン1枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
+        <div class="row qset"><span class="grow">1日に遊べる回数<small>始めた回数で数えます（とちゅうでやめても1回）。日付が変わるとリセットされます</small></span>
+          <span>🧩 めいろ</span><select data-set="gmax_meiro"></select><span>🔢 すうどく</span><select data-set="gmax_sudoku"></select><span>🧠 IQテスト</span><select data-set="gmax_iq"></select></div>
         <p class="note" id="coinNote"></p>
       </div>
       <div class="set-card">
@@ -1438,10 +1426,10 @@ function defaults() {
     v: 1, stickers: [], miss: [], stats: blankStats(),
     kmiss: {}, kstats: {},  // かんじテスト：レベルごとの まちがえた もんだい（こたえ）と きろく
     settings: { skin: 'soccer', speech: true, rate: 1.0, voice: '', sfx: true, memo: true, hand: true, kmode: 'kaki', gameCoin: true, kpri: 3, yinput: 'kb',
-      // カギ：lk_<かける ところ> と ln_<かける ところ>_<きょうか>（きょう その きょうかの シールが なんまい いるか）
-      lk_sansu: false, lk_kokugo: false, lk_rika: false, lk_shakai: false, lk_game: true,
-      ln_sansu_kokugo: 5, ln_sansu_shakai: 0, ln_kokugo_sansu: 5, ln_kokugo_shakai: 0, ln_rika_sansu: 5, ln_rika_kokugo: 5, ln_rika_shakai: 0,
-      ln_shakai_sansu: 5, ln_shakai_kokugo: 5, ln_game_sansu: 5, ln_game_kokugo: 5, ln_game_shakai: 0, mulN: 7, mulP: 5, kanN: 7, kanP: 5, chiN: 7, chiP: 4, mulMax: 0, kanMax: 0, chiMax: 5, showMul: true, showKaki: true, showYomi: true, showChiri: true },
+      // カギ：lk_<かける ところ> と ln_<かける ところ>_<こうもく>（きょう その こうもくの シールが なんまい いるか）
+      lk_game: true, ln_game_mul: 5, ln_game_kaki: 5, ln_game_yomi: 5,
+      // ゲームの 1日の かいすう（0 は せいげん なし）
+      gmax_meiro: 3, gmax_sudoku: 3, gmax_iq: 3, mulN: 7, mulP: 5, kanN: 7, kanP: 5, chiN: 7, chiP: 4, mulMax: 0, kanMax: 0, chiMax: 5, showMul: true, showKaki: true, showYomi: true, showChiri: true },
     coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
@@ -1465,6 +1453,12 @@ function load() {
     };
     // まえの「勉強してから遊ぶ」が オフ だった ときは ゲームの カギも オフ
     if (d.settings && d.settings.lk_game === undefined && d.settings.gameGate === false) D.settings.lk_game = false;
+    // まえの カギ（きょうか たんい）を こうもく たんいに うつす：さんすう→かけざん、こくご→かきとり・よみ、しゃかい→とどうふけん
+    const old = d.settings || {}, MAP = { sansu: ['mul'], kokugo: ['kaki', 'yomi'], shakai: ['chiri'] };
+    for (const t of ['sansu', 'kokugo', 'rika', 'shakai', 'game']) for (const o in MAP) {
+      const v = old[`ln_${t}_${o}`];
+      if (v !== undefined) for (const n of MAP[o]) if (old[`ln_${t}_${n}`] === undefined) D.settings[`ln_${t}_${n}`] = v;
+    }
   } catch (e) { D = defaults(); }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { /* 保存できなくても あそべる */ } }
@@ -1943,7 +1937,7 @@ const itemOn = id => S()[ITEMS[id].key] !== false;
 const subjItems = k => SUBJ[k].items.filter(itemOn);
 const themeShown = t => Object.keys(ITEMS).some(id => ITEMS[id].t === t && itemOn(id));
 const itemStickers = id => D.stickers.filter(s => themeOf(s) === ITEMS[id].t && (ITEMS[id].t !== 'kanji' || kmodeOf(s) === id));
-const lockLine = t => '🔒 きょう ' + lockList(t).map(x => `${SUBJ[x.src].op}${Math.min(x.have, x.need)}/${x.need}`).join(' ');
+const lockLine = t => '🔒 きょう ' + lockList(t).map(x => `${ITEMS[x.src].ico}${Math.min(x.have, x.need)}/${x.need}`).join(' ');
 const kMisLine = () => { const pri = kPri(), kd = kMissionDone(); return !pri ? '' : kd < kMis() ? `⭐ ${lvName(pri)} <span class="mdots">${dots(kd, kMis())}</span>` : '✅ ミッション クリア'; };
 const homeRuleText = () => 'べんきょうで せいかいすると シールが もらえるよ';
 function subjCardHTML(k) {
@@ -1965,8 +1959,8 @@ function subjCardHTML(k) {
   </button>`;
 }
 function itemHTML(k, id) {
-  const I = ITEMS[id], t = I.t, mx = dayMax(t), lock = false;
-  const mis = id === 'chiri' ? `🗾 おぼえた ${cProgressAll().mastered} / ${CH.p.length}` : t === 'kanji' ? kMisLine() : '';
+  const I = ITEMS[id], t = I.t, mx = dayMax(t), lock = isLocked(id);
+  const mis = lock ? lockLine(id) : id === 'chiri' ? `🗾 おぼえた ${cProgressAll().mastered} / ${CH.p.length}` : t === 'kanji' ? kMisLine() : '';
   return `<button class="sbi sub-${k}${lock ? ' locked' : ''}" data-act="item" data-it="${id}">
     <span class="sbi-ico">${I.ico}</span>
     <b>${I.name}</b>
@@ -1989,6 +1983,9 @@ function openSubj(k) {
 }
 function openItem(id) {
   closeModal();
+  const sb = subjOf(id);
+  if (sb && isLocked(sb)) return openLock(sb);
+  if (isLocked(id)) return openLock(id);
   if (id === 'mul') { if (capped('mul')) openCapNote('mul', 'startForce'); else startQuiz(); return; }
   if (id === 'kaki' || id === 'yomi') {
     S().kmode = id; save();
@@ -2263,8 +2260,9 @@ function showWin({ s, isNew, rankUp }, ok, total, top) {
   $('#winRank').textContent = rankUp ? `ランクアップ！ ${rk[2]} ${rk[1]} に なった！` : '';
   const news = [];
   if (Game.kind === 'kanji' && kPri() && Game.lv === kPri() && kMissionDone() === kMis() && !capped('kanji')) news.push(`✅ きょうの ミッション クリア！ ほかの レベルでも シールが もらえるよ！`);
-  if (Object.values(LOCK_SRC).includes(Game.kind)) {
-    const opened = LOCK_T.filter(t => (t === 'game' || subjItems(t).length) && lockOn(t) && !isLocked(t) && isLocked(t, Game.kind))
+  const gotItem = Game.kind === 'kanji' ? (Game.m === 'yomi' ? 'yomi' : 'kaki') : Game.kind;
+  if (LOCK_SRC.includes(gotItem)) {
+    const opened = LOCK_T.filter(t => (t === 'game' || (SUBJ[t] ? subjItems(t).length : itemOn(t))) && lockOn(t) && !isLocked(t) && isLocked(t, gotItem))
       .map(t => t === 'game' ? 'ゲーム' : lockName(t));
     if (opened.length) news.push(`🔓 ${opened.join('・')}が できるように なったよ！`);
   }
@@ -2469,17 +2467,32 @@ const KMISSION = 5, GAME_NEED = 5;
 const dayMax = t => { const c = QSET[t], v = c ? parseInt(S()[c[4]], 10) : 0; return v > 0 ? v : 0; };
 const capped = t => !!dayMax(t) && todayCount(t) >= dayMax(t);
 // カギ：4きょうか と ゲーム に かけられる。ほかの きょうかの シールを きょう なんまい あつめたら ひらくか
-const LOCK_T = ['sansu', 'kokugo', 'rika', 'shakai', 'game'];
-const LOCK_SRC = { sansu: 'mul', kokugo: 'kanji', shakai: 'chiri' };  // シールが もらえる きょうか と その しゅるい
-const lockName = t => t === 'game' ? 'ゲーム' : SUBJ[t].name;
+// カギを かけられる ところ：4きょうか・その なかの こうもく・ゲーム
+const LOCK_T = ['sansu', 'mul', 'kokugo', 'kaki', 'yomi', 'rika', 'shakai', 'chiri', 'game'];
+// カギを あける じょうけんに できる こうもく（シールが もらえる もの）
+const LOCK_SRC = ['mul', 'kaki', 'yomi', 'chiri'];
+const subjOf = id => Object.keys(SUBJ).find(k => SUBJ[k].items.includes(id));
+const lockName = t => t === 'game' ? 'ゲーム' : SUBJ[t] ? SUBJ[t].name : ITEMS[t].name;
 const lockOn = t => S()['lk_' + t] === true;
+// その こうもくで きょう もらった シール（かんじは かきとり・よみ べつに かぞえる）
+const itemToday = (id, minus) => todayCount(ITEMS[id].t, ITEMS[id].t === 'kanji' ? (x => kmodeOf(x) === id) : null) - (minus === id ? 1 : 0);
 function lockNeed(t, src) {
-  if (src === t || !lockOn(t) || !subjItems(src).length) return 0;  // かくした きょうかは かぞえない
-  const v = parseInt(S()[`ln_${t}_${src}`], 10) || 0, mx = dayMax(LOCK_SRC[src]);
-  return v > 0 ? (mx ? Math.min(v, mx) : v) : 0;  // 1日の 上限が すくない ときは 上限まで
+  // じぶん・じぶんの なかの こうもく・かくした こうもくは じょうけんに しない
+  if (src === t || !lockOn(t) || !itemOn(src) || (SUBJ[t] && SUBJ[t].items.includes(src))) return 0;
+  const v = parseInt(S()[`ln_${t}_${src}`], 10) || 0;
+  return v > 0 ? v : 0;
 }
-// minus：いま もらった シールを ひいて かんがえる（「ひらいた！」の おしらせ用）
-const lockList = (t, minus) => Object.keys(LOCK_SRC).map(src => ({ src, need: lockNeed(t, src), have: todayCount(LOCK_SRC[src]) - (minus === LOCK_SRC[src] ? 1 : 0) })).filter(x => x.need > 0);
+// minus：いま もらった シールの こうもく（それを ひいて かんがえる。「ひらいた！」の おしらせ用）
+function lockList(t, minus) {
+  return LOCK_SRC.map(src => {
+    const need = lockNeed(t, src), th = ITEMS[src].t;
+    let have = itemToday(src, minus);
+    // 1日の 上限まで もらったら、それ いじょうは もらえないので じょうけんを みたした ことに する
+    const thCnt = todayCount(th) - (minus && ITEMS[minus].t === th ? 1 : 0);
+    if (dayMax(th) && thCnt >= dayMax(th)) have = Math.max(have, need);
+    return { src, need, have };
+  }).filter(x => x.need > 0);
+}
 const isLocked = (t, minus) => lockList(t, minus).some(x => x.have < x.need);
 const kMis = () => Math.min(KMISSION, dayMax('kanji') || KMISSION);
 const todayCount = (t, f) => D.stickers.filter(x => themeOf(x) === t && isToday(x.at) && (!f || f(x))).length;
@@ -2500,12 +2513,12 @@ function chooseKanjiLevel(lv) {
 }
 function openLock(t) {
   const L = lockList(t), rest = L.filter(x => x.have < x.need), game = t === 'game';
-  const left = rest.map(x => `${SUBJ[x.src].name}の シール あと ${x.need - x.have}まい`).join('、');
+  const left = rest.map(x => `${ITEMS[x.src].name}の シール あと ${x.need - x.have}まい`).join('、');
   const title = game ? 'ゲームは まだ あそべないよ' : `${lockName(t)}は まだ できないよ`;
   openModal(`<div class="lock-ico">🔒</div><p class="mq">${title}</p>
-    <p class="lock-msg">きょう ${L.map(x => `${SUBJ[x.src].name} ${x.need}まい`).join(' と ')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}</p>
-    <div class="game-need">${L.map(x => `<span>${SUBJ[x.src].op} ${SUBJ[x.src].name} <span class="mdots">${dots(Math.min(x.have, x.need), x.need)}</span></span>`).join('')}</div>
-    <div class="mbtns">${rest.map((x, i) => `<button class="bigbtn${i ? '' : ' yellow'}" data-act="subj" data-s="${x.src}">${SUBJ[x.src].op} ${SUBJ[x.src].name}を やる</button>`).join('')}<button class="bigbtn" data-act="closeModal">とじる</button></div>`);
+    <p class="lock-msg">きょう ${L.map(x => `${ITEMS[x.src].name} ${x.need}まい`).join('、')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}</p>
+    <div class="game-need">${L.map(x => `<span>${ITEMS[x.src].ico} ${ITEMS[x.src].name} <span class="mdots">${dots(Math.min(x.have, x.need), x.need)}</span></span>`).join('')}</div>
+    <div class="mbtns">${rest.map((x, i) => `<button class="bigbtn${i ? '' : ' yellow'}" data-act="item" data-it="${x.src}">${ITEMS[x.src].ico} ${ITEMS[x.src].name}を やる</button>`).join('')}<button class="bigbtn" data-act="closeModal">とじる</button></div>`);
   Speech.speak(`${title}。${left.replace(/、/g, ' ')} あつめてね。`);
 }
 // きょうの シールが 上限に なった とき
@@ -3538,14 +3551,27 @@ function renderGameSel() {
   $('#gselTitle').innerHTML = `ゲーム<small style="display:block;font-size:.6em;color:var(--yellow)">どれで あそぶ？</small>`;
   const g2 = $('#gsGrid');
   g2.classList.add('two');
-  g2.innerHTML = ['meiro', 'sudoku', 'iq'].map(g => `<div class="gs-head">${{ meiro: '🧩', sudoku: '🔢', iq: '🧠' }[g]} ${GAMES[g].name}<small>${GAME_RULE[g]}</small></div>` + [1, 2, 3].map(lv => {
+  g2.innerHTML = ['meiro', 'sudoku', 'iq'].map(g => `<div class="gs-head">${{ meiro: '🧩', sudoku: '🔢', iq: '🧠' }[g]} ${GAMES[g].name}${gMax(g) ? `<span class="gs-left${gLeft(g) ? '' : ' none'}">きょう あと ${gLeft(g)}かい</span>` : ''}<small>${GAME_RULE[g]}</small></div>` + [1, 2, 3].map(lv => {
     const L = GAMES[g].lv[lv], st = gstat(g, lv);
-    return `<button class="lvb gsb ${g}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${L.name}</b><small>${gameDesc(g, L)}</small><span class="gbest">${g === 'iq' ? (st.hi ? `🏅 さいこう ${st.hi}/${IQ_N}もん` : 'まだ ちょうせん なし') : st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em class="gcoin">クリアで 🪙 ${L.coin}まい</em></button>`;
+    return `<button class="lvb gsb ${g}${gLeft(g) ? '' : ' done'}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${L.name}</b><small>${gameDesc(g, L)}</small><span class="gbest">${g === 'iq' ? (st.hi ? `🏅 さいこう ${st.hi}/${IQ_N}もん` : 'まだ ちょうせん なし') : st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em class="gcoin">クリアで 🪙 ${L.coin}まい</em></button>`;
   }).join('')).join('');
   $('#gsNote').textContent = 'クリアすると コインが もらえるよ（コイン 10まいで シール 1まいと こうかん）';
 }
 
+// ゲームの 1日の かいすう（はじめた かいすうで かぞえる）
+const gMax = g => { const v = parseInt(S()['gmax_' + g], 10); return v > 0 ? v : 0; };
+const gPlays = g => D.gday && D.gday.d === dayKey() ? (D.gday[g] || 0) : 0;
+const gLeft = g => gMax(g) ? Math.max(0, gMax(g) - gPlays(g)) : Infinity;
+function openGameLimit(g) {
+  openModal(`<div class="lock-ico">🌙</div><p class="mq">${GAMES[g].name}は きょうは おしまい</p>
+    <p class="lock-msg">${GAMES[g].name}は 1日 ${gMax(g)}かい までだよ。<br>また あした あそぼうね！</p>
+    <div class="mbtns"><button class="bigbtn yellow" data-act="gsel">🎮 ほかの ゲームを みる</button><button class="bigbtn" data-act="home">🏠 トップ</button></div>`);
+  Speech.speak(`${GAMES[g].name}は きょうは おしまい。また あした あそぼうね`);
+}
 function startGame(g, lv) {
+  if (gLeft(g) <= 0) { closeOverlays(); return openGameLimit(g); }
+  if (!D.gday || D.gday.d !== dayKey()) D.gday = { d: dayKey() };
+  D.gday[g] = (D.gday[g] || 0) + 1;
   SFX.unlock();
   closeOverlays();
   Speech.stop();
@@ -4018,20 +4044,34 @@ function renderQSet() {
   }
 }
 function renderLockSet() {
-  for (const t of LOCK_T) {
-    const box = $(`.lockset[data-lt="${t}"]`);
-    box.querySelector('.lock-need').hidden = !lockOn(t);
-    box.querySelectorAll('select').forEach(sel => {
-      const k = sel.dataset.set, v = Math.max(0, parseInt(S()[k], 10) || 0);
+  const opt = v => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].concat(v).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b)
+    .map(x => `<option value="${x}"${x === v ? ' selected' : ''}>${x}枚</option>`).join('');
+  $('#lockSet').innerHTML = LOCK_T.map(t => {
+    const sub = !!SUBJ[t] || t === 'game';
+    const label = t === 'game' ? '🎮 ゲーム（めいろ・すうどく・IQテスト）' : SUBJ[t] ? `${SUBJ[t].op} ${SUBJ[t].name}` : `${ITEMS[t].ico} ${ITEMS[t].name}${itemOn(t) ? '' : '（非表示中）'}`;
+    const srcs = LOCK_SRC.filter(src => src !== t && !(SUBJ[t] && SUBJ[t].items.includes(src)));
+    const sel = srcs.map(src => {
+      const k = `ln_${t}_${src}`, v = Math.max(0, parseInt(S()[k], 10) || 0);
       S()[k] = v;
-      sel.innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].concat(v).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b)
-        .map(x => `<option value="${x}">${x}枚</option>`).join('');
-      sel.value = v;
-    });
+      return `<span>${ITEMS[src].ico} ${ITEMS[src].name}<select data-set="${k}">${opt(v)}</select></span>`;
+    }).join('');
+    return `<div class="lockset${sub ? '' : ' child'}" data-lt="${t}">
+      <label class="row"><span class="grow">${label}にカギをかける</span><span class="sw"><input type="checkbox" data-set="lk_${t}"${lockOn(t) ? ' checked' : ''}><i></i></span></label>
+      <div class="lock-need"${lockOn(t) ? '' : ' hidden'}>${sel}<em>のシールを集めたら開く</em></div>
+    </div>`;
+  }).join('');
+}
+function renderGMaxSet() {
+  for (const g of ['meiro', 'sudoku', 'iq']) {
+    const v = gMax(g);
+    S()['gmax_' + g] = v;
+    $(`[data-set="gmax_${g}"]`).innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10].concat(v).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b)
+      .map(x => `<option value="${x}">${x ? x + '回まで' : '制限なし'}</option>`).join('');
   }
 }
 function renderSettings() {
   renderQSet();
+  renderGMaxSet();
   renderLockSet();
   $$('[data-set]').forEach(inp => {
     const v = S()[inp.dataset.set];
@@ -4187,7 +4227,7 @@ document.addEventListener('input', e => {
   if (k === 'voice') Speech.choose();
   if (k === 'skin') { applySkin(); renderHome(); renderSettings(); }
   if (k.startsWith('lk_')) renderLockSet();
-  if (k.startsWith('ln_')) S()[k] = parseInt(inp.value, 10) || 0;
+  if (k.startsWith('ln_') || k.startsWith('gmax_')) S()[k] = parseInt(inp.value, 10) || 0;
   if (Object.values(QSET).some(c => c[0] === k || c[1] === k || c[4] === k)) { S()[k] = parseInt(inp.value, 10); renderSettings(); }
   save();
 });
