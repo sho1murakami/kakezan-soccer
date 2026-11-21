@@ -1107,7 +1107,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       </div>
       <div class="set-card">
         <h3>🔒 カギの設定</h3>
-        <p class="note">教科・項目・ゲームのそれぞれにカギをかけられます。カギをかけると、その日にほかの項目のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の項目は条件にしません）。教科にカギをかけると、その中の項目もすべて開けなくなります。その日のシールが1日の上限に達した項目は、条件を満たしたことにします。おたがいにカギをかけ合うと開かなくなるので注意してください。<br>「開いたあと ○枚もらったら また カギ」にすると、開いた先でシールを○枚もらうたびにまたカギがかかり、条件の項目をもう一度同じ枚数集めると開きます（例：かんじ よみ に「✏️ かんじ かきとり 5枚」「開いたあと 5枚もらったら また カギ」→ かきとり5枚でよみが開き、よみを5枚もらうとまたカギ。かきとりを合計10枚にするとまた開く）。</p>
+        <p class="note">教科・項目・ゲームのそれぞれにカギをかけられます。カギをかけると、その日にほかの項目のシールを決めた枚数ずつ集めるまで、そこを開けなくなります（「0枚」の項目は条件にしません）。教科にカギをかけると、その中の項目もすべて開けなくなります。その日のシールが1日の上限に達した項目は、条件を満たしたことにします。おたがいにカギをかけ合うと開かなくなるので注意してください。<br>「開いたあと ○枚もらったら また カギ」にすると、開いた先でシールを○枚もらうたびにまたカギがかかり、条件の項目をあと同じ枚数集めると開きます（例：かんじ よみ に「✏️ かんじ かきとり 5枚」「開いたあと 5枚もらったら また カギ」→ かきとり5枚でよみが開き、よみを5枚もらうとまたカギ、かきとりをさらに5枚でまた開く）。カギがかかっている間にもらったシール（設定する前の分も）は数えません。</p>
         <div id="lockSet"></div>
       </div>
       <div class="set-card">
@@ -2493,22 +2493,37 @@ function lockNeed(t, src) {
 }
 // minus：いま もらった シールの こうもく（それを ひいて かんがえる。「ひらいた！」の おしらせ用）
 // くりかえしの カギ：ひらいた あと、そこで lr_<t> まい（ゲームは かい）つかったら また カギ。
-// つぎに ひらくには じょうけんの こうもくを もう いちど おなじ まいすう あつめる（2かいめは 2ばい、3かいめは 3ばい…）
+// その日の できごとを じゅんばんに たどって きめる：
+//   カギが かかっている あいだに あつめた じょうけんの シールが きまった まいすうに なると ひらく（あまりは つぎに もちこし）。
+//   ひらいている あいだに lr まい つかうと また カギ。カギが かかっている あいだの シール（せってい まえの ぶんも）は つかった ぶんに かぞえない。
 const lockRep = t => { const v = parseInt(S()['lr_' + t], 10); return v > 0 ? v : 0; };
-function lockUsed(t, minus) {
-  if (t === 'game') return ['meiro', 'sudoku', 'iq'].reduce((a, g) => a + gPlays(g), 0);
-  return (SUBJ[t] ? SUBJ[t].items : [t]).reduce((a, id) => a + Math.max(0, itemToday(id, minus)), 0);
-}
+const stickerItem = x => { const th = themeOf(x); return th === 'kanji' ? kmodeOf(x) : th; };
 function lockList(t, minus) {
-  const rep = lockRep(t), round = rep ? Math.floor(lockUsed(t, minus) / rep) + 1 : 1;
-  return LOCK_SRC.map(src => {
-    const need = lockNeed(t, src) * round, th = ITEMS[src].t;
-    let have = itemToday(src, minus);
-    // 1日の 上限まで もらったら、それ いじょうは もらえないので じょうけんを みたした ことに する
-    const thCnt = todayCount(th) - (minus && ITEMS[minus].t === th ? 1 : 0);
-    if (dayMax(th) && thCnt >= dayMax(th)) have = Math.max(have, need);
-    return { src, need, have, round };
-  }).filter(x => x.need > 0);
+  const base = LOCK_SRC.map(src => ({ src, need: lockNeed(t, src) })).filter(x => x.need > 0);
+  if (!base.length) return [];
+  let today = D.stickers.filter(x => isToday(x.at));
+  if (minus) today = today.slice(0, -1);  // いま もらった シールの まえの ようす
+  // 1日の 上限まで もらったら、それ いじょうは もらえないので じょうけんを みたした ことに する
+  const full = src => { const th = ITEMS[src].t; return !!dayMax(th) && today.filter(x => themeOf(x) === th).length >= dayMax(th); };
+  const rep = lockRep(t);
+  if (!rep) return base.map(x => ({ ...x, have: full(x.src) ? x.need : today.filter(y => stickerItem(y) === x.src).length }));
+  const mine = id => t !== 'game' && (SUBJ[t] ? SUBJ[t].items.includes(id) : id === t);
+  const ev = today.map(x => ({ at: x.at, id: stickerItem(x) }));
+  if (t === 'game' && D.gday && D.gday.d === dayKey()) (D.gday.log || []).forEach(at => ev.push({ at, use: true }));
+  ev.sort((p, q) => p.at - q.at);
+  const cnt = Object.fromEntries(base.map(x => [x.src, 0]));
+  let open = false, used = 0;
+  const tryOpen = () => {
+    if (open || !base.every(x => cnt[x.src] >= x.need || full(x.src))) return;
+    open = true; used = 0;
+    base.forEach(x => { cnt[x.src] = Math.max(0, cnt[x.src] - x.need); });
+  };
+  tryOpen();
+  for (const e of ev) {
+    if (e.use || mine(e.id)) { if (open && ++used >= rep) { open = false; tryOpen(); } }
+    else if (e.id in cnt) { cnt[e.id]++; tryOpen(); }
+  }
+  return base.map(x => ({ ...x, have: open || full(x.src) ? x.need : cnt[x.src] }));
 }
 const isLocked = (t, minus) => lockList(t, minus).some(x => x.have < x.need);
 const kMis = () => Math.min(KMISSION, dayMax('kanji') || KMISSION);
@@ -2532,10 +2547,10 @@ function openLock(t) {
   const L = lockList(t), rest = L.filter(x => x.have < x.need), game = t === 'game';
   const left = rest.map(x => `${ITEMS[x.src].name}の シール あと ${x.need - x.have}まい`).join('、');
   const title = game ? 'ゲームは まだ あそべないよ' : `${lockName(t)}は まだ できないよ`;
-  const rep = lockRep(t), base = L.map(x => `${ITEMS[x.src].name} ${x.need / x.round}まい`).join('、');
+  const rep = lockRep(t), base = L.map(x => `${ITEMS[x.src].name} ${x.need}まい`).join('、');
   const repNote = rep ? `<br><small>（${base}の シールを あつめる ごとに、${game ? `${rep}かい あそべるよ` : `${lockName(t)}で ${rep}まい もらえるよ`}）</small>` : '';
   openModal(`<div class="lock-ico">🔒</div><p class="mq">${title}</p>
-    <p class="lock-msg">きょう ${L.map(x => `${ITEMS[x.src].name} ${x.need}まい`).join('、')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}${repNote}</p>
+    <p class="lock-msg">${rep ? 'あと' : 'きょう'} ${L.map(x => `${ITEMS[x.src].name} ${rep ? x.need - Math.min(x.have, x.need) : x.need}まい`).join('、')}の シールを あつめると、${game ? 'ゲームで あそべるよ' : `${lockName(t)}が できるよ`}。<br>のこり：${left}${repNote}</p>
     <div class="game-need">${L.map(x => `<span>${ITEMS[x.src].ico} ${ITEMS[x.src].name} <span class="mdots">${dots(Math.min(x.have, x.need), x.need)}</span></span>`).join('')}</div>
     <div class="mbtns">${rest.map((x, i) => `<button class="bigbtn${i ? '' : ' yellow'}" data-act="item" data-it="${x.src}">${ITEMS[x.src].ico} ${ITEMS[x.src].name}を やる</button>`).join('')}<button class="bigbtn" data-act="closeModal">とじる</button></div>`);
   Speech.speak(`${title}。${left.replace(/、/g, ' ')} あつめてね。`);
@@ -3591,6 +3606,7 @@ function startGame(g, lv) {
   if (gLeft(g) <= 0) { closeOverlays(); return openGameLimit(g); }
   if (!D.gday || D.gday.d !== dayKey()) D.gday = { d: dayKey() };
   D.gday[g] = (D.gday[g] || 0) + 1;
+  D.gday.log = (D.gday.log || []).concat(Date.now());
   SFX.unlock();
   closeOverlays();
   Speech.stop();
