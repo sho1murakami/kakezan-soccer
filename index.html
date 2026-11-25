@@ -460,15 +460,53 @@ body.nomemo .pad{justify-self:center}
 .gsb.meiro{border-color:#1fa67a}.gsb.meiro b{color:#1fa67a}
 .gsb.sudoku{border-color:#2f8cff}.gsb.sudoku b{color:#2f8cff}
 .gsb b{font-size:clamp(34px,min(4.4vw,8vh),60px)}
-.gs-grid.two{grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);row-gap:8px;overflow-y:auto}
+.gs-grid.two{grid-template-rows:repeat(4,auto minmax(96px,1fr));row-gap:6px;overflow-y:auto}
 .gsb.iq{border-color:#7a3cf0}.gsb.iq b{color:#7a3cf0}
 .gs-left{background:#fff;color:#137a58;border-radius:999px;padding:2px 12px;font-size:.62em;text-shadow:none}
 .gs-left.none{background:#ffe1e4;color:#c0392b}
 .gsb.done{filter:grayscale(1);opacity:.55}
 .gs-head{grid-column:1/-1;color:#fff;font-size:clamp(22px,2.8vw,32px);text-shadow:0 3px 0 rgba(0,0,0,.25);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .gs-head small{font-size:clamp(13px,1.5vw,17px);font-weight:500;opacity:.95}
-.gs-grid.two .gsb{gap:4px;padding:8px}
-.gs-grid.two .gsb b{font-size:clamp(28px,min(3.6vw,6vh),48px)}
+.gs-grid.two .gsb{gap:2px;padding:6px}
+.gs-grid.two .gsb b{font-size:clamp(24px,min(3.2vw,4.6vh),42px)}
+
+/* しんけいすいじゃく（どうぶつ カード） */
+.mmwrap{flex:1;min-width:0;min-height:0;align-self:stretch;display:grid;place-items:center;padding:10px}
+.mmboard{display:grid;--cw:120px}
+.mc{position:relative;width:var(--cw);height:var(--ch,calc(var(--cw) * 1.2));border-radius:calc(var(--cw) * .12);perspective:900px}
+.mc-in{position:absolute;inset:0;transition:transform .38s cubic-bezier(.3,.7,.4,1);-webkit-transform-style:preserve-3d;transform-style:preserve-3d}
+.mc.up .mc-in,.mc.got .mc-in,.mmboard.peek .mc-in{transform:rotateY(180deg)}
+.mc-back,.mc-face{position:absolute;inset:0;border-radius:calc(var(--cw) * .12);border:calc(var(--cw) * .045) solid #fff;-webkit-backface-visibility:hidden;backface-visibility:hidden;box-shadow:0 5px 0 rgba(0,0,0,.25);overflow:hidden}
+.mc-back{display:grid;place-items:center;background:radial-gradient(circle,transparent 0 29%,rgba(255,255,255,.5) 29% 32%,transparent 32%),linear-gradient(transparent 49%,rgba(255,255,255,.5) 49% 51%,transparent 51%),repeating-linear-gradient(#249a50 0 12.5%,#2fae5f 12.5% 25%)}
+.mc-back::after{content:"⚽";font-size:calc(var(--cw) * .34);filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+.mc:active .mc-back{filter:brightness(1.1)}
+.mc-face{transform:rotateY(180deg);display:flex;flex-direction:column;background:var(--sc,#fff)}
+.mc-face i{flex:1;min-height:0;display:grid;place-items:center;font-style:normal;font-size:calc(var(--cw) * .55);line-height:1;padding-top:6%}
+.mc-face b{flex:none;background:#fff;color:var(--ink);font-size:calc(var(--cw) * .15);line-height:1.45;text-align:center;white-space:nowrap;font-weight:900}
+.mc.up .mc-face{box-shadow:0 0 0 calc(var(--cw) * .035) #ffd23f,0 5px 0 rgba(0,0,0,.25)}
+.mc.got{animation:mmGot .5s}
+.mc.got .mc-face{box-shadow:0 0 0 calc(var(--cw) * .035) #2fd067,0 5px 0 rgba(0,0,0,.25)}
+.mc.got::after{content:"⭐";position:absolute;right:calc(var(--cw) * -.07);top:calc(var(--cw) * -.09);font-size:calc(var(--cw) * .25);line-height:1;z-index:3;animation:pop .45s}
+@keyframes mmGot{0%,100%{transform:none}45%{transform:scale(1.1)}}
+.hb-home{--sc:linear-gradient(#fff3d1 0 62%,#efcd97 62%)}
+.hb-farm{--sc:linear-gradient(#cdeeff 0 60%,#9ed874 60%)}
+.hb-forest{--sc:linear-gradient(#e2f5cf 0 60%,#7cc35a 60%)}
+.hb-savanna{--sc:linear-gradient(#ffe7b0 0 60%,#e0b866 60%)}
+.hb-pond{--sc:linear-gradient(#d8f2ff 0 58%,#6fc2e6 58%)}
+.hb-sea{--sc:linear-gradient(#b4e1ff,#4aa6e4)}
+.hb-ice{--sc:linear-gradient(#d9edff 0 60%,#fbfdff 60%)}
+.mmstat{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 10px;background:rgba(0,0,0,.22);color:#fff;border-radius:16px;padding:8px 16px}
+.mmstat b{font-size:clamp(24px,3vw,36px);white-space:nowrap}
+.mmstat small{font-size:clamp(14px,1.6vw,18px);opacity:.92;white-space:nowrap}
+.mmtray{display:flex;flex-wrap:wrap;align-content:flex-start;gap:0 4px;min-height:calc(1.3em + 12px);font-size:clamp(22px,2.6vw,30px);line-height:1.3;background:rgba(255,255,255,.16);border-radius:14px;padding:6px 10px}
+.mmtray:empty::before{content:"みつけた どうぶつが ここに ならぶよ";align-self:center;font-size:clamp(13px,1.4vw,16px);color:rgba(255,255,255,.88)}
+.mmtray i{font-style:normal;animation:pop .45s}
+.mmtray.many{font-size:clamp(18px,2vw,22px);gap:0 2px}
+.gsb.memory{border-color:#f0801e}.gsb.memory b{color:#f0801e}
+body[data-skin="normal"] .mc-back{background:radial-gradient(circle,transparent 0 29%,rgba(255,255,255,.45) 29% 32%,transparent 32%),repeating-linear-gradient(45deg,#3a6fd8 0 10px,#2f60c4 10px 20px)}
+body[data-skin="normal"] .mc-back::after{content:"⭐"}
+body[data-skin="cute"] .mc-back{background:radial-gradient(rgba(255,255,255,.35) 18%,transparent 20%) 0 0/24% 20%,linear-gradient(160deg,#ff9cc8,#c77dff)}
+body[data-skin="cute"] .mc-back::after{content:"💖"}
 
 /* ---------- IQテスト ---------- */
 .iqmain{flex:1;min-height:0;display:flex;gap:clamp(12px,2vw,28px);padding:4px 18px 14px}
@@ -658,6 +696,9 @@ body.nomemo .pad{justify-self:center}
 .gate-q{display:flex;align-items:center;gap:.3em;font-size:clamp(30px,4.4vw,44px);font-weight:900;font-variant-numeric:tabular-nums}
 .gate-val{min-width:2.6em;height:1.25em;line-height:1.25em;background:#eef2f8;border-radius:.2em;text-align:center}
 .gate-val.ng{animation:shake .4s;background:#ffe1e4;color:#e0283c}
+.gate-val.pin{min-width:5.2em;letter-spacing:.12em;font-size:.8em;height:1.55em;line-height:1.55em}
+.gate-sub{max-width:min(520px,80vw);line-height:1.5;font-size:16px}
+.gate-msg{margin:-4px 0;min-height:1.4em;color:#e0283c;font-weight:800;font-size:16px}
 .gate-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(330px,70vw)}
 .gkey{height:clamp(46px,calc((var(--vh) - 390px)/4.3),68px);border-radius:14px;background:#f1f4f9;font-size:clamp(20px,2.6vw,28px);box-shadow:0 4px 0 #c9d2e0}
 .gkey:active{transform:translateY(3px);box-shadow:0 1px 0 #c9d2e0}
@@ -843,7 +884,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
       <button class="bookbtn" data-act="book"><span>📒</span>シールちょう<small id="todayTxt">ぜんぶで 0まい</small></button>
     </div>
     <div class="cards" id="subjCards"></div>
-    <button class="gamebar" data-act="gsel" id="gameBar"><span class="gb-ico">🎮</span><b>ゲーム</b><span class="gb-sub">めいろ ・ すうどく ・ IQテスト</span><span class="gb-state" id="gameState">🪙 クリアで コイン</span></button>
+    <button class="gamebar" data-act="gsel" id="gameBar"><span class="gb-ico">🎮</span><b>ゲーム</b><span class="gb-sub">めいろ ・ すうどく ・ しんけいすいじゃく ・ IQテスト</span><span class="gb-state" id="gameState">🪙 クリアで コイン</span></button>
   </section>
 
   <!-- もんだい -->
@@ -979,6 +1020,26 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
           <button class="kbtn give" data-act="cgive" id="cgive">🤔 わからない</button>
           <button class="kbtn ok" data-act="cok" id="cok"><span data-ic="ball">⚽</span> けってい</button>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- しんけいすいじゃく -->
+  <section class="screen pitch" id="memory">
+    <div class="qbar">
+      <button class="qquit" data-act="quit" aria-label="やめる">✕</button>
+      <span class="qtheme" id="mmTheme" style="--tc:#f0801e">しんけいすいじゃく</span>
+      <span class="gtime" id="mmTime">⏱ 0:00</span>
+      <span class="gsp"></span>
+    </div>
+    <div class="gmain">
+      <div class="mmwrap" id="mmWrap"><div class="mmboard" id="mmBoard"></div></div>
+      <div class="gside">
+        <p class="grule">カードを 2まい めくって、おなじ どうぶつを みつけよう。ぜんぶの ペアを みつけたら クリア！</p>
+        <div class="mmstat" id="mmStat"><b id="mmPairs">ペア 0 / 6</b><small id="mmTries">ちょうせん 0かい</small></div>
+        <div class="mmtray" id="mmTray"></div>
+        <p class="gnote" id="mmNote"></p>
+        <button class="kbtn give" data-act="mmHint" id="mmHint">👀 ちらっと みる</button>
       </div>
     </div>
   </section>
@@ -1132,10 +1193,12 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <label class="row"><span class="grow">問題画面に手書きのメモ欄を出す<small>指や Apple Pencil で筆算を書けます。次の問題に進むと自動で消えます</small></span><span class="sw"><input type="checkbox" data-set="memo"><i></i></span></label>
       </div>
       <div class="set-card">
-        <h3>🎮 ゲーム（めいろ・すうどく・IQテスト）</h3>
+        <h3>🎮 ゲーム（めいろ・すうどく・しんけいすいじゃく・IQテスト）</h3>
         <label class="row"><span class="grow">ゲームをクリアしたらコインをもらえる<small>クリア1回でコイン1枚。コイン10枚で、トップ画面の「🪙」ボタンからシール1枚（ランダム）と交換できます（自動では交換しません）。オフにすると、ゲームはコインなしで遊べます。ヒントは1回3つまでです</small></span><span class="sw"><input type="checkbox" data-set="gameCoin"><i></i></span></label>
         <div class="row qset"><span class="grow">1日に遊べる回数<small>始めた回数で数えます（とちゅうでやめても1回）。日付が変わるとリセットされます</small></span>
-          <span>🧩 めいろ</span><select data-set="gmax_meiro"></select><span>🔢 すうどく</span><select data-set="gmax_sudoku"></select><span>🧠 IQテスト</span><select data-set="gmax_iq"></select></div>
+          <span>🧩 めいろ</span><select data-set="gmax_meiro"></select><span>🔢 すうどく</span><select data-set="gmax_sudoku"></select><span>🐾 しんけいすいじゃく</span><select data-set="gmax_memory"></select><span>🧠 IQテスト</span><select data-set="gmax_iq"></select></div>
+        <div class="row qset"><span class="grow">🐾 しんけいすいじゃくのカードの枚数<small>ゲーム画面の「やさしい・ふつう・むずかしい」で出るカードの枚数です。動物は48種類の中から毎回ランダムに選びます</small></span>
+          <span>やさしい</span><select data-set="mem1"><option value="6">12枚（6ペア）</option><option value="8">16枚（8ペア）</option><option value="12">24枚（12ペア）</option><option value="18">36枚（18ペア）</option><option value="24">48枚（24ペア）</option></select><span>ふつう</span><select data-set="mem2"><option value="6">12枚（6ペア）</option><option value="8">16枚（8ペア）</option><option value="12">24枚（12ペア）</option><option value="18">36枚（18ペア）</option><option value="24">48枚（24ペア）</option></select><span>むずかしい</span><select data-set="mem3"><option value="6">12枚（6ペア）</option><option value="8">16枚（8ペア）</option><option value="12">24枚（12ペア）</option><option value="18">36枚（18ペア）</option><option value="24">48枚（24ペア）</option></select></div>
         <p class="note" id="coinNote"></p>
       </div>
       <div class="set-card">
@@ -1146,6 +1209,11 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
         <div class="row"><span class="grow">「よみ」の答え方<small>キーボード：問題が出たときから答えの欄に入力できる状態になります（iPad のキーボードやローマ字で入力）。50音ボタン：画面の あいうえお ボタンで答えます。問題の画面でも切り替えられます。<br>iPad の日本語キーボードで勝手に漢字に変わるときは、iPad の「設定」→「一般」→「キーボード」→「ライブ変換」をオフにしてください（アプリからは変更できません）</small></span>
           <select data-set="yinput"><option value="kb">キーボード</option><option value="pad">50音ボタン</option></select></div>
         <label class="row"><span class="grow">手書きで答える（自動判定）<small>オフにすると4択になります。手書きの判定には Google の手書き文字認識を使うため、書いた線の形（座標）だけがインターネットで Google に送られます。ネットにつながらないときは、自動で4択に切り替わります。とめ・はね・書き順までは判定できません</small></span><span class="sw"><input type="checkbox" data-set="hand"><i></i></span></label>
+      </div>
+      <div class="set-card">
+        <h3>🔒 おうちの方へ画面のパスワード</h3>
+        <div class="row"><span class="grow">パスワードを変更する<small>数字4〜8けた。<b>忘れると、この画面を開けなくなります</b>（決め直す方法はありません）。メモしておいてください。お子さんの遊び・シールの記録はそのまま使えます</small></span><button class="mini" data-act="pinChange">変更する</button></div>
+        <p class="note bk-note" id="pinNote"></p>
       </div>
       <div class="set-card">
         <h3>💾 記録のバックアップ（引っこし）</h3>
@@ -1434,7 +1502,7 @@ function defaults() {
       // カギ：lk_<かける ところ> と ln_<かける ところ>_<こうもく>（きょう その こうもくの シールが なんまい いるか）
       lk_game: true, ln_game_mul: 5, ln_game_kaki: 5, ln_game_yomi: 5,
       // ゲームの 1日の かいすう（0 は せいげん なし）
-      gmax_meiro: 3, gmax_sudoku: 3, gmax_iq: 3, mulN: 7, mulP: 5, kanN: 7, kanP: 5, chiN: 7, chiP: 4, mulMax: 0, kanMax: 0, chiMax: 5, showMul: true, showKaki: true, showYomi: true, showChiri: true },
+      gmax_meiro: 3, gmax_sudoku: 3, gmax_memory: 3, gmax_iq: 3, mem1: 8, mem2: 12, mem3: 18, pin: '', mulN: 7, mulP: 5, kanN: 7, kanP: 5, chiN: 7, chiP: 4, mulMax: 0, kanMax: 0, chiMax: 5, showMul: true, showKaki: true, showYomi: true, showChiri: true },
     coins: 0, coinsTotal: 0,  // ゲームの コイン（10まいで シール1まいと こうかん）
   };
 }
@@ -1458,6 +1526,7 @@ function load() {
     };
     // まえの「勉強してから遊ぶ」が オフ だった ときは ゲームの カギも オフ
     if (d.settings && d.settings.lk_game === undefined && d.settings.gameGate === false) D.settings.lk_game = false;
+    if (typeof D.settings.pin !== 'string') D.settings.pin = '';
     // まえの カギ（きょうか たんい）を こうもく たんいに うつす：さんすう→かけざん、こくご→かきとり・よみ、しゃかい→とどうふけん
     const old = d.settings || {}, MAP = { sansu: ['mul'], kokugo: ['kaki', 'yomi'], shakai: ['chiri'] };
     for (const t of ['sansu', 'kokugo', 'rika', 'shakai', 'game']) for (const o in MAP) {
@@ -2325,6 +2394,7 @@ function closeModal() { $('#modal').classList.remove('show'); }
 
 function goHome() {
   gStop();
+  mmStop();
   MZ.drawing = false;
   Q.active = false;
   Q.token++;
@@ -3235,6 +3305,135 @@ function cFinish() {
   endRound(ok, C.results, missed);
 }
 
+// ===== しんけいすいじゃく（どうぶつ カード。1人で ペアを ぜんぶ さがす） =====
+// [え, なまえ, ばしょ（カードの はいけいの いろ）, よみあげ（かなの まま だと よみにくい もの）]
+const ANIMALS = [
+  ['🐕', 'いぬ', 'home'], ['🐈', 'ねこ', 'home'], ['🐹', 'ハムスター', 'home'], ['🐇', 'うさぎ', 'farm'],
+  ['🐄', 'うし', 'farm'], ['🐖', 'ぶた', 'farm'], ['🐎', 'うま', 'farm'], ['🐑', 'ひつじ', 'farm'], ['🐓', 'にわとり', 'farm'],
+  ['🐻', 'くま', 'forest'], ['🦊', 'きつね', 'forest'], ['🐿️', 'りす', 'forest'], ['🦉', 'ふくろう', 'forest'], ['🦔', 'ハリネズミ', 'forest'],
+  ['🐒', 'さる', 'forest'], ['🐼', 'パンダ', 'forest'], ['🐨', 'コアラ', 'forest'], ['🐅', 'とら', 'forest'],
+  ['🦁', 'ライオン', 'savanna'], ['🐘', 'ぞう', 'savanna'], ['🦒', 'キリン', 'savanna'], ['🦓', 'しまうま', 'savanna'], ['🦘', 'カンガルー', 'savanna'], ['🦏', 'さい', 'savanna', 'サイ'],
+  ['🦆', 'あひる', 'pond'], ['🐸', 'かえる', 'pond'], ['🦛', 'かば', 'pond', 'カバ'], ['🐊', 'わに', 'pond', 'ワニ'], ['🦩', 'フラミンゴ', 'pond'],
+  ['🐬', 'いるか', 'sea', 'イルカ'], ['🐳', 'くじら', 'sea'], ['🦀', 'かに', 'sea', 'カニ'], ['🐙', 'たこ', 'sea', 'タコ'], ['🐢', 'かめ', 'sea'],
+  ['🐧', 'ペンギン', 'ice'], ['🦭', 'アザラシ', 'ice'],
+  ['🐁', 'ねずみ', 'home'], ['🐐', 'やぎ', 'farm'], ['🦌', 'しか', 'forest', 'シカ'], ['🦍', 'ゴリラ', 'forest'], ['🦥', 'ナマケモノ', 'forest'], ['🦜', 'オウム', 'forest'],
+  ['🐫', 'らくだ', 'savanna'], ['🦢', 'はくちょう', 'pond'], ['🦈', 'サメ', 'sea'], ['🐠', 'さかな', 'sea'], ['🦦', 'ラッコ', 'sea'], ['🐻‍❄️', 'しろくま', 'ice'],
+];
+const mmRatio = n => n > 24 ? 1.05 : 1.2;  // カードの たて ÷ よこ（36まい いじょうは すこし ひくく）
+const MM = { cards: [], open: [], found: [], got: 0, pairs: 6, tries: 0, peek: false, timer: 0, token: 0 };
+const mmSay = a => a[3] || a[1];
+const mmEl = i => $(`#mmBoard [data-i="${i}"]`);
+const mmNote = t => { $('#mmNote').textContent = t; };
+function mmNew(pairs) {
+  mmStop();
+  const pick = shuffle(ANIMALS.slice()).slice(0, pairs);
+  MM.cards = shuffle(pick.flatMap((a, k) => [{ a, k, up: false, got: false }, { a, k, up: false, got: false }]));
+  Object.assign(MM, { open: [], found: [], got: 0, pairs, tries: 0 });
+  $('#mmBoard').innerHTML = MM.cards.map((c, i) =>
+    `<button class="mc" data-act="mm" data-i="${i}" aria-label="カード"><span class="mc-in"><span class="mc-back"></span><span class="mc-face hb-${c.a[2]}"><i>${c.a[0]}</i><b>${c.a[1]}</b></span></span></button>`).join('');
+  $('#mmTray').innerHTML = '';
+  $('#mmTray').classList.toggle('many', pairs > 12);
+  mmNote('すきな カードを タッチしてね');
+  mmStatus();
+}
+function mmStop() {
+  MM.token++;
+  clearTimeout(MM.timer);
+  MM.peek = false;
+  $('#mmBoard').classList.remove('peek');
+}
+function mmStatus() {
+  $('#mmPairs').textContent = `ペア ${MM.got} / ${MM.pairs}`;
+  $('#mmTries').textContent = `ちょうせん ${MM.tries}かい`;
+}
+// がめんの ひろさに あわせて、いちばん カードが おおきく なる ならべかたを えらぶ
+function mmLayout() {
+  const wrap = $('#mmWrap'), bd = $('#mmBoard'), n = MM.cards.length;
+  if (!n || !wrap.clientWidth) return;
+  const W = wrap.clientWidth - 20, H = wrap.clientHeight - 26;  // ほし・かげの ぶん すこし あける
+  const gap = Math.round(Math.max(n > 24 ? 6 : 8, Math.min(16, Math.min(W, H) * (n > 24 ? 0.014 : 0.02))));
+  const ratio = mmRatio(n);
+  let best = { w: 0, cols: n };
+  for (let cols = 2; cols <= n; cols++) {
+    if (n % cols) continue;
+    const rows = n / cols;
+    const w = Math.min((W - gap * (cols - 1)) / cols, (H - gap * (rows - 1)) / rows / ratio);
+    if (w > best.w) best = { w, cols };
+  }
+  const w = Math.max(40, Math.floor(Math.min(best.w, 230)));
+  bd.style.gap = `${gap}px`;
+  bd.style.gridTemplateColumns = `repeat(${best.cols}, ${w}px)`;
+  bd.style.setProperty('--cw', `${w}px`);
+  bd.style.setProperty('--ch', `${Math.floor(w * ratio)}px`);
+}
+addEventListener('resize', () => { if (screen === 'memory') mmLayout(); });
+if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (screen === 'memory') mmLayout(); });
+function mmHideOpen() {
+  clearTimeout(MM.timer);
+  for (const k of MM.open) { MM.cards[k].up = false; mmEl(k).classList.remove('up'); }
+  MM.open = [];
+}
+function mmFlip(i) {
+  if (!Gm.active || Gm.kind !== 'memory' || MM.peek) return;
+  const c = MM.cards[i];
+  if (!c || c.up || c.got) return;
+  if (MM.open.length >= 2) mmHideOpen();  // ちがった 2まいが まだ ひらいて いたら すぐ ふせる
+  c.up = true;
+  mmEl(i).classList.add('up');
+  MM.open.push(i);
+  SFX.pop(MM.open.length * 5);
+  if (MM.open.length === 1) { Speech.speak(mmSay(c.a)); mmNote('もう 1まい めくろう'); return; }
+  MM.tries++;
+  const [i1, i2] = MM.open, a = MM.cards[i1], b = MM.cards[i2];
+  mmStatus();
+  if (a.k !== b.k) {
+    Speech.speak(mmSay(b.a));
+    mmNote('ちがう どうぶつ だったね。どこに あったか おぼえておこう');
+    MM.timer = setTimeout(mmHideOpen, 1300);
+    return;
+  }
+  // ペア！
+  a.got = b.got = true;
+  MM.open = [];
+  MM.got++;
+  MM.found.push(a.a[0]);
+  const tk = MM.token, all = MM.got === MM.pairs;
+  if (all) { gTick(); clearInterval(Gm.timer); }  // タイムは ここで とめる
+  Speech.speak(`${mmSay(a.a)}！ ペア！`);
+  mmNote(all ? '🎉 ぜんぶ みつけた！' : `${a.a[1]}の ペア！`);
+  setTimeout(() => {
+    if (tk !== MM.token) return;
+    for (const k of [i1, i2]) {
+      const el = mmEl(k);
+      el.classList.add('got');
+      const r = el.getBoundingClientRect();
+      FX.confetti(r.left + r.width / 2, r.top + r.height / 2, 22, 8);
+    }
+    SFX.rankup();
+    $('#mmTray').insertAdjacentHTML('beforeend', `<i>${a.a[0]}</i>`);
+    mmStatus();
+    if (all) setTimeout(() => { if (tk === MM.token) gameClear(); }, 900);
+  }, 380);
+}
+// ヒント：のこりの カードを ぜんぶ ちらっと みせる
+function mmHint() {
+  if (!Gm.active || Gm.kind !== 'memory' || Gm.hints >= HINTS || MM.peek) return;
+  Gm.hints++;
+  gHintLabel();
+  mmHideOpen();
+  MM.peek = true;
+  const tk = MM.token;
+  $('#mmBoard').classList.add('peek');
+  mmNote('👀 よく みて おぼえてね！');
+  Speech.speak('よく みて おぼえてね');
+  setTimeout(() => {
+    if (tk !== MM.token) return;
+    MM.peek = false;
+    $('#mmBoard').classList.remove('peek');
+    mmNote('');
+  }, 2000);
+}
+
 // ---------- IQテスト（いろいろな もんだい 7もん：4もん いじょう せいかいで コイン） ----------
 const IQ_N = 7, IQ_PASS = 4;
 const IQ = { list: [], idx: 0, results: [], combo: 0, sel: -1, right: -1, wrong: -1, lock: false, canSkip: false, active: false, token: 0, lv: 1 };
@@ -3567,8 +3766,15 @@ const GAMES = {
   meiro: { name: 'めいろ', lv: { 1: { name: 'やさしい', n: 5, k: 7, walls: 0, coin: 1 }, 2: { name: 'ふつう', n: 6, k: 9, walls: 3, coin: 1 }, 3: { name: 'むずかしい', n: 7, k: 10, walls: 6, coin: 1 } } },
   sudoku: { name: 'すうどく', lv: { 1: { name: 'やさしい', givens: 18, coin: 1 }, 2: { name: 'ふつう', givens: 14, coin: 1 }, 3: { name: 'むずかしい', givens: 11, coin: 1 } } },
   iq: { name: 'IQテスト', lv: { 1: { name: 'やさしい', coin: 1 }, 2: { name: 'ふつう', coin: 1 }, 3: { name: 'むずかしい', coin: 1 } } },
+  // しんけいすいじゃくの lv は ペアの かず（やさしい・ふつう・むずかしい ごとの まいすうは おうちの方へ画面で きめる）
+  memory: { name: 'しんけいすいじゃく', lv: Object.fromEntries([6, 8, 12, 18, 24].map(p => [p, { name: `${p * 2}まい`, pairs: p, coin: 1 }])) },
 };
+const GKINDS = ['meiro', 'sudoku', 'memory', 'iq'];
+const MEM_OPTS = [6, 8, 12, 18, 24];
+const MEM_DEF = { 1: 8, 2: 12, 3: 18 };          // はじめの せってい：やさしい 16まい・ふつう 24まい・むずかしい 36まい
+const memPairs = d => MEM_OPTS.includes(+S()[`mem${d}`]) ? +S()[`mem${d}`] : MEM_DEF[d];
 const GAME_RULE = {
+  memory: 'カードを 2まい めくって、おなじ どうぶつの ペアを ぜんぶ みつけよう。',
   iq: 'すうれつ・ならび・なかまはずれ・かたち・パズル などの もんだいが 7もん。4もん いじょう せいかいで コイン！',
   meiro: '1 → 2 → 3 … の じゅんに、ぜんぶの マスを 1かいずつ とおって、さいごの すうじまで つなごう。ゆびで なぞってね。',
   sudoku: 'たて・よこ・ふとい わくの 中に、1〜6が 1つずつ はいるように すうじを 入れよう。',
@@ -3585,9 +3791,9 @@ function renderGameSel() {
   $('#gselTitle').innerHTML = `ゲーム<small style="display:block;font-size:.6em;color:var(--yellow)">どれで あそぶ？</small>`;
   const g2 = $('#gsGrid');
   g2.classList.add('two');
-  g2.innerHTML = ['meiro', 'sudoku', 'iq'].map(g => `<div class="gs-head">${{ meiro: '🧩', sudoku: '🔢', iq: '🧠' }[g]} ${GAMES[g].name}${gMax(g) ? `<span class="gs-left${gLeft(g) ? '' : ' none'}">きょう あと ${gLeft(g)}かい</span>` : ''}<small>${GAME_RULE[g]}</small></div>` + [1, 2, 3].map(lv => {
-    const L = GAMES[g].lv[lv], st = gstat(g, lv);
-    return `<button class="lvb gsb ${g}${gLeft(g) ? '' : ' done'}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${L.name}</b><small>${gameDesc(g, L)}</small><span class="gbest">${g === 'iq' ? (st.hi ? `🏅 さいこう ${st.hi}/${IQ_N}もん` : 'まだ ちょうせん なし') : st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em class="gcoin">クリアで 🪙 ${L.coin}まい</em></button>`;
+  g2.innerHTML = GKINDS.map(g => `<div class="gs-head">${{ meiro: '🧩', sudoku: '🔢', memory: '🐾', iq: '🧠' }[g]} ${GAMES[g].name}${gMax(g) ? `<span class="gs-left${gLeft(g) ? '' : ' none'}">きょう あと ${gLeft(g)}かい</span>` : ''}<small>${GAME_RULE[g]}</small></div>` + [1, 2, 3].map(d => {
+    const lv = g === 'memory' ? memPairs(d) : d, L = GAMES[g].lv[lv], st = gstat(g, lv);
+    return `<button class="lvb gsb ${g}${gLeft(g) ? '' : ' done'}" data-act="gstart" data-g="${g}" data-lv="${lv}"><b>${['', 'やさしい', 'ふつう', 'むずかしい'][d]}</b><small>${g === 'memory' ? `カード ${L.name}（${L.pairs}ペア）` : gameDesc(g, L)}</small><span class="gbest">${g === 'iq' ? (st.hi ? `🏅 さいこう ${st.hi}/${IQ_N}もん` : 'まだ ちょうせん なし') : st.best ? '🏅 ベスト ' + fmtTime(st.best) : 'まだ クリア なし'}</span><em class="gcoin">クリアで 🪙 ${L.coin}まい</em></button>`;
   }).join('')).join('');
   $('#gsNote').textContent = 'クリアすると コインが もらえるよ（コイン 10まいで シール 1まいと こうかん）';
 }
@@ -3617,6 +3823,7 @@ function startGame(g, lv) {
   const name = `${GAMES[g].name} ${GAMES[g].lv[lv].name}`;
   if (g === 'iq') { Gm.active = false; iqStart(lv, name); return; }
   if (g === 'meiro') { mzNew(GAMES.meiro.lv[lv]); $('#mzTheme').textContent = name; show('meiro'); }
+  else if (g === 'memory') { mmNew(GAMES.memory.lv[lv].pairs); $('#mmTheme').textContent = name; show('memory'); mmLayout(); requestAnimationFrame(mmLayout); }
   else { sdNew(GAMES.sudoku.lv[lv]); $('#sdTheme').textContent = name; show('sudoku'); }
   gHintLabel();
   gTick();
@@ -3626,14 +3833,14 @@ function startGame(g, lv) {
 function gTick() {
   if (!Gm.active) return;
   Gm.sec = Math.floor((Date.now() - Gm.t0) / 1000);
-  const el = Gm.kind === 'meiro' ? $('#mzTime') : $('#sdTime');
+  const el = $({ meiro: '#mzTime', sudoku: '#sdTime', memory: '#mmTime' }[Gm.kind] || '#sdTime');
   el.textContent = '⏱ ' + fmtTime(Gm.sec);
 }
 function gStop() { Gm.active = false; clearInterval(Gm.timer); }
 function gHintLabel() {
-  const left = HINTS - Gm.hints;
-  const b = Gm.kind === 'meiro' ? $('#mzHint') : $('#sdHint');
-  b.textContent = `💡 ヒント（のこり ${left}）`;
+  const left = HINTS - Gm.hints, mm = Gm.kind === 'memory';
+  const b = $({ meiro: '#mzHint', sudoku: '#sdHint', memory: '#mmHint' }[Gm.kind] || '#sdHint');
+  b.textContent = `${mm ? '👀 ちらっと みる' : '💡 ヒント'}（のこり ${left}）`;
   b.disabled = left <= 0;
 }
 function gameClear() {
@@ -3644,6 +3851,12 @@ function gameClear() {
   const best = !st.best || Gm.sec < st.best;
   if (best) st.best = Gm.sec;
   const top = `クリア！ タイム ${fmtTime(Gm.sec)}${best ? '（ベスト きろく！）' : ''}`;
+  let extra = '';
+  if (g === 'memory') {
+    const fewest = !st.minTry || MM.tries < st.minTry;
+    if (fewest) st.minTry = MM.tries;
+    extra = `<p class="msub">${MM.tries}かいの ちょうせんで ${MM.pairs}ペア ぜんぶ みつけたよ！${fewest && st.clear > 1 ? '<br>いちばん すくない かいすう！' : ''}</p>`;
+  }
   const coin = S().gameCoin !== false ? GAMES[g].lv[lv].coin : 0;
   D.coins += coin;
   D.coinsTotal += coin;
@@ -3653,7 +3866,7 @@ function gameClear() {
     SFX.cheer();
     FX.confetti(innerWidth / 2, innerHeight * 0.55, 90, 14);
     const can = D.coins >= COIN_RATE;
-    openModal(`<div class="lock-ico">🎉</div><p class="mq">${top}</p>
+    openModal(`<div class="lock-ico">🎉</div><p class="mq">${top}</p>${extra}
       ${coin ? `<div class="coin-get">${'<i class="coin">🪙</i>'.repeat(coin)}<b>コイン +${coin}まい ゲット！</b></div>${coinMeter()}` : ''}
       <div class="mbtns">${can ? '<button class="bigbtn yellow" data-act="exchange">🎁 シールと こうかん</button>' : ''}<button class="bigbtn${can ? '' : ' yellow'}" data-act="again">もういっかい</button><button class="bigbtn" data-act="home">🏠 トップ</button></div>`);
     Speech.speak(coin ? `クリア！ コインを ${coin}まい ゲット！${can ? ' シールと こうかん できるよ！' : ''}` : 'クリア！ すごいね！');
@@ -3960,7 +4173,7 @@ function sdHint() {
 
 // ---------- シールちょう ----------
 // 「こうかん」タブには、まえに ゲームで もらった シールも いれる
-const inTab = (s, f) => f === 'all' || themeOf(s) === f || (f === 'coin' && ['meiro', 'sudoku', 'iq'].includes(themeOf(s)));
+const inTab = (s, f) => f === 'all' || themeOf(s) === f || (f === 'coin' && GKINDS.includes(themeOf(s)));
 let bookFilter = 'all', bookNew = -1;
 function renderBook() {
   const st = D.stickers;
@@ -4025,38 +4238,97 @@ function stickerDetail(s, sub) {
 }
 
 // ---------- おうちの方へ の ロック（9さいが まだ ならわない「わりあい」で おとなを かくにん） ----------
-const Gate = { ans: 0, val: '' };
+// おうちの方へ の ロック（パスワード：すうじ 4〜8けた）。パスワードは そのまま しまわず、ハッシュに して しまう
+const PIN_MIN = 4, PIN_MAX = 8, PIN_TRY = 5, PIN_WAIT = 60;
+function pinHash(str) {
+  let h1 = 0xdeadbeef ^ 31, h2 = 0x41c6ce57 ^ 31;
+  for (const ch of 'kakezan-soccer:' + str) {
+    const c = ch.charCodeAt(0);
+    h1 = Math.imul(h1 ^ c, 2654435761);
+    h2 = Math.imul(h2 ^ c, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+// mode：enter（入れる）・new1（きめる）・new2（もう いちど）。after：settings（せっていを ひらく）・changed（へんこう）
+// わすれたときに きめなおす ほうほうは つくらない（けいさんなどは こどもが とけて しまう ため）
+const Gate = { mode: 'enter', after: 'settings', val: '', first: '', miss: 0, until: 0 };
+const GATE_TXT = {
+  enter: ['🔒 おうちの方の確認', 'パスワードを入れて OK を押してください'],
+  new1: ['🔒 パスワードを決める', 'おうちの方へ画面を開くときのパスワードを決めてください（数字4〜8けた）。<br><b>忘れると開けなくなります。</b>メモしておいてください'],
+  new2: ['🔒 パスワードを決める', '確認のため、同じパスワードをもう一度入れてください'],
+};
 function openGate() {
   Speech.stop();
-  const base = (2 + rand(18)) * 100;          // 200 〜 1900
-  const pct = pick([15, 25, 35, 45, 55, 65, 75, 85]);
-  Object.assign(Gate, { ans: base * pct / 100, val: '' });
+  gateMode(S().pin ? 'enter' : 'new1', 'settings');
+}
+function gateMode(mode, after, msg) {
+  Object.assign(Gate, { mode, val: '' });
+  if (after) Gate.after = after;
+  if (mode === 'new1') Gate.first = '';
+  const [title, sub] = GATE_TXT[mode];
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'].map(k =>
     `<button class="gkey${k === 'ok' ? ' ok' : ''}" data-act="gateKey" data-k="${k}">${k === 'del' ? 'けす' : k === 'ok' ? 'OK' : k}</button>`).join('');
-  openModal(`<p class="mq">おうちの方の確認</p>
-    <p class="msub">次の計算の答えを入れて OK を押してください</p>
-    <div class="gate-q">${base} の ${pct}% = <span class="gate-val" id="gateVal"></span></div>
+  openModal(`<p class="mq">${title}</p>
+    <p class="msub gate-sub">${sub}</p>
+    <div class="gate-q"><span class="gate-val pin" id="gateVal"></span></div>
+    <p class="gate-msg" id="gateMsg">${msg || ''}</p>
     <div class="gate-pad">${keys}</div>
     <button class="bigbtn" data-act="closeModal">もどる</button>`, 'tight');
+  gateShow();
+}
+function gateShow() {
+  const v = $('#gateVal');
+  if (v) v.textContent = '●'.repeat(Gate.val.length);
+}
+function gateNg(msg) {
+  SFX.wrong();
+  const v = $('#gateVal');
+  Gate.val = '';
+  gateShow();
+  $('#gateMsg').textContent = msg;
+  v.classList.remove('ng'); void v.offsetWidth; v.classList.add('ng');
 }
 function gateKey(k) {
-  const v = $('#gateVal');
+  if (!$('#gateVal')) return;
+  if (Gate.mode === 'enter' && Date.now() < Gate.until) {
+    $('#gateMsg').textContent = `${PIN_TRY}回まちがえたので、あと ${Math.ceil((Gate.until - Date.now()) / 1000)}秒 まってください`;
+    return;
+  }
   if (k !== 'ok') {
-    Gate.val = k === 'del' ? Gate.val.slice(0, -1) : (Gate.val + k).slice(0, 4);
-    v.textContent = Gate.val;
+    Gate.val = k === 'del' ? Gate.val.slice(0, -1) : (Gate.val + k).slice(0, PIN_MAX);
+    $('#gateMsg').textContent = '';
+    gateShow();
     return;
   }
-  if (!Gate.val) return;
-  if (+Gate.val === Gate.ans) {
-    closeModal();
-    renderSettings();
-    show('settings');
+  const v = Gate.val;
+  if (!v) return;
+  if (Gate.mode === 'enter') {
+    if (pinHash(v) === S().pin) { Gate.miss = 0; closeModal(); gateOpenSettings(); return; }
+    Gate.miss++;
+    if (Gate.miss >= PIN_TRY) { Gate.miss = 0; Gate.until = Date.now() + PIN_WAIT * 1000; gateNg(`${PIN_TRY}回まちがえたので、${PIN_WAIT}秒 まってからもう一度入れてください`); }
+    else gateNg('パスワードがちがいます');
     return;
   }
-  // まちがえたら べつの もんだいに かえる
-  SFX.wrong();
-  v.classList.remove('ng'); void v.offsetWidth; v.classList.add('ng');
-  setTimeout(() => { if ($('#modal').classList.contains('show') && $('#gateVal') === v) openGate(); }, 500);
+  if (Gate.mode === 'new1') {
+    if (v.length < PIN_MIN) { gateNg(`${PIN_MIN}けた以上の数字にしてください`); return; }
+    Gate.first = v;
+    gateMode('new2');
+    return;
+  }
+  // new2：2かい おなじなら きめる
+  if (v !== Gate.first) { gateMode('new1', null, '2回の入力がちがいました。もう一度決めてください'); SFX.wrong(); return; }
+  S().pin = pinHash(v);
+  save();
+  closeModal();
+  if (Gate.after === 'changed') { renderSettings(); $('#pinNote').textContent = '✅ パスワードを変更しました'; }
+  else gateOpenSettings();
+}
+function gateOpenSettings() {
+  renderSettings();
+  $('#pinNote').textContent = '';
+  show('settings');
 }
 
 // ---------- せってい ----------
@@ -4083,7 +4355,7 @@ function renderLockSet() {
     .map(x => `<option value="${x}"${x === v ? ' selected' : ''}>${x}枚</option>`).join('');
   $('#lockSet').innerHTML = LOCK_T.map(t => {
     const sub = !!SUBJ[t] || t === 'game';
-    const label = t === 'game' ? '🎮 ゲーム（めいろ・すうどく・IQテスト）' : SUBJ[t] ? `${SUBJ[t].op} ${SUBJ[t].name}` : `${ITEMS[t].ico} ${ITEMS[t].name}${itemOn(t) ? '' : '（非表示中）'}`;
+    const label = t === 'game' ? '🎮 ゲーム（めいろ・すうどく・しんけいすいじゃく・IQテスト）' : SUBJ[t] ? `${SUBJ[t].op} ${SUBJ[t].name}` : `${ITEMS[t].ico} ${ITEMS[t].name}${itemOn(t) ? '' : '（非表示中）'}`;
     const srcs = LOCK_SRC.filter(src => src !== t && !(SUBJ[t] && SUBJ[t].items.includes(src)));
     const sel = srcs.map(src => {
       const k = `ln_${t}_${src}`, v = Math.max(0, parseInt(S()[k], 10) || 0);
@@ -4099,7 +4371,7 @@ function renderLockSet() {
   }).join('');
 }
 function renderGMaxSet() {
-  for (const g of ['meiro', 'sudoku', 'iq']) {
+  for (const g of GKINDS) {
     const v = gMax(g);
     S()['gmax_' + g] = v;
     $(`[data-set="gmax_${g}"]`).innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10].concat(v).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b)
@@ -4131,7 +4403,7 @@ function renderSettings() {
       })).join('')}</tbody></table>
     <table class="st"><thead><tr><th>とどうふけん</th><th>あそんだ</th><th>全問正解</th><th>シール</th><th>1回目の正解率</th><th>覚えた都道府県</th><th>まちがえた都道府県</th></tr></thead><tbody><tr><th>47都道府県</th><td>${cstat().play}回</td><td>${cstat().perfect}回</td><td>${D.stickers.filter(x => themeOf(x) === 'chiri').length}枚</td><td>${pct(cstat().ok, cstat().q)}</td><td>${cProgressAll().mastered} / 47</td><td>${(D.cmiss || []).slice().reverse().map(i => CH.p[i] ? CH.p[i].n : '').join('、') || '−'}</td></tr></tbody></table>
     <table class="st"><thead><tr><th>ゲーム</th><th>あそんだ</th><th>クリア</th><th>もらったコイン</th><th>ベストタイム</th></tr></thead><tbody>${
-      ['meiro', 'sudoku', 'iq'].flatMap(g => [1, 2, 3].map(lv => {
+      GKINDS.flatMap(g => [1, 2, 3].map(d => { const lv = g === 'memory' ? memPairs(d) : d;
         const st = gstat(g, lv);
         return `<tr><th>${GAMES[g].name} ${GAMES[g].lv[lv].name}</th><td>${st.play}回</td><td>${st.clear}回</td><td>${st.coins || 0}枚</td><td>${g === 'iq' ? (st.hi ? `さいこう ${st.hi}/${IQ_N}問` : '−') : st.best ? fmtTime(st.best) : '−'}</td></tr>`;
       })).join('')}</tbody></table>`;
@@ -4183,6 +4455,8 @@ document.addEventListener('click', e => {
     case 'startLvForce': startKanji(+b.dataset.lv); break;
     case 'kok': kCheck(); break;
     case 'iqok': iqCheck(); break;
+    case 'mm': mmFlip(+b.dataset.i); break;
+    case 'mmHint': mmHint(); break;
     case 'iqgive': if (IQ.active && !IQ.lock && !IQ.canSkip) { SFX.tap(); iqReveal(true); } break;
     case 'iqch': { const i = +b.dataset.i; if (IQ.active && !IQ.lock) { IQ.sel = i; iqRenderChoices(); SFX.tap(); } break; }
     case 'iqrepeat': if (IQ.active) Speech.speak(iqSay(iqCur())); break;
@@ -4237,6 +4511,7 @@ document.addEventListener('click', e => {
     }
     case 'settings': openGate(); break;
     case 'gateKey': gateKey(b.dataset.k); break;
+    case 'pinChange': gateMode('new1', 'changed'); break;
     case 'testVoice': Speech.speak(`347 かける 28 わ？ ${SK().praise[0][1]} 347 かける 28 わ 9716`); break;
     case 'bkExport': bkExport(); break;
     case 'bkFile': bkFile(); break;
