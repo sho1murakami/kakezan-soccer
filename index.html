@@ -1156,7 +1156,7 @@ table.st{width:100%;border-collapse:collapse;font-size:17px}
     <div class="setbody">
       <div class="set-card">
         <h3>🎨 デザイン</h3>
-        <div class="row"><span class="grow">テーマ<small>画面の色・もようや、正解のときの演出・効果音・ランクの名前が変わります。「かわいい」では、もらえるシールも女の子向けの100種類になります（ずかんもテーマごと）。集めたシールや記録はそのままです</small></span>
+        <div class="row"><span class="grow">テーマ<small>画面の色・もようや、正解のときの演出・効果音・ランクの名前が変わります。「かわいい」では、もらえるシールも女の子向けの200種類になります（ずかんもテーマごと）。集めたシールや記録はそのままです</small></span>
           <select data-set="skin"><option value="soccer">⚽ サッカー</option><option value="normal">⭐ ノーマル</option><option value="cute">🎀 かわいい</option></select></div>
       </div>
       <div class="set-card">
@@ -1421,7 +1421,7 @@ const DESIGNS = [
   ['telescope', '🔭', 'ぼうえんきょう', '#dcdcf4'], ['magicwand', '🪄', 'まほうの ステッキ', '#ecdcff'], ['superhero', '🦸', 'ヒーロー', '#d8e4ff'], ['fairy', '🧚', 'ようせい', '#f6dcff'],
   ['mermaid', '🧜', 'にんぎょ', '#cdeef0'], ['shootingstar', '🌠', 'ながれぼし', '#d6dcff'], ['fireworks', '🎆', 'はなび', '#dcd4ff'], ['crystalball', '🔮', 'すいしょうだま', '#e8d8ff'],
 ].map(([id, e, name, bg]) => ({ id, e, name, bg }));
-// かわいい テーマの シール 100しゅるい（id は c- で はじまる）
+// かわいい テーマの シール 200しゅるい（id は c- で はじまる）
 const CUTE_DESIGNS = [
   ['c-cake', '🍰', 'ショートケーキ', '#ffe3ec'], ['c-cupcake', '🧁', 'カップケーキ', '#ffd6f0'], ['c-donut', '🍩', 'ドーナツ', '#ffd9e6'],
   ['c-lollipop', '🍭', 'ペロペロキャンディ', '#f6d6ff'], ['c-candy', '🍬', 'キャンディ', '#ffe0f4'], ['c-choco', '🍫', 'チョコレート', '#f3dccc'],
@@ -1456,17 +1456,54 @@ const CUTE_DESIGNS = [
   ['c-balloon', '🎈', 'ふうせん', '#ffe0e0'], ['c-party', '🎉', 'クラッカー', '#fff0cc'], ['c-note', '🎵', 'おんぷ', '#e6e8ff'],
   ['c-piano', '🎹', 'ピアノ', '#eeeef6'], ['c-palette', '🎨', 'えのぐ', '#fff0d8'], ['c-sparkles', '✨', 'キラキラ', '#fff6cc'],
   ['c-camera', '📷', 'カメラ', '#e6ecf4'], ['c-teapot', '🫖', 'ティーポット', '#e2f4ea'], ['c-skate', '🛼', 'ローラースケート', '#ffe0ec'],
-  ['c-chime', '🎐', 'ふうりん', '#dff4ff']
+  ['c-chime', '🎐', 'ふうりん', '#dff4ff'],
+  // ここから 100しゅるい ふやした（かわいい テーマも ぜんぶで 200しゅるい）
+  ['c-pie', '🥧', 'パイ', '#ffe8cc'], ['c-bubbletea', '🧋', 'タピオカ', '#f3e2d2'], ['c-matcha', '🍵', 'おちゃ', '#e2f2d4'],
+  ['c-milk', '🥛', 'ミルク', '#eef4ff'], ['c-tropical', '🍹', 'トロピカルジュース', '#ffe0ec'], ['c-juice', '🧃', 'ジュース', '#fff0c8'],
+  ['c-popcorn', '🍿', 'ポップコーン', '#fff0e0'], ['c-croissant', '🥐', 'クロワッサン', '#fbe4c0'], ['c-pretzel', '🥨', 'プレッツェル', '#f4dcc4'],
+  ['c-onigiri', '🍙', 'おにぎり', '#eef6e6'], ['c-sandwich', '🥪', 'サンドイッチ', '#fff2d8'], ['c-spaghetti', '🍝', 'スパゲッティ', '#ffe6d0'],
+  ['c-cheese', '🧀', 'チーズ', '#fff4c0'], ['c-chestnut', '🌰', 'くり', '#f2dcc8'], ['c-sushi', '🍣', 'おすし', '#ffe6dc'],
+  ['c-bento', '🍱', 'おべんとう', '#e8f2e0'], ['c-watermelon', '🍉', 'スイカ', '#dcf5d0'], ['c-melon', '🍈', 'メロン', '#e4f6d4'],
+  ['c-tangerine', '🍊', 'みかん', '#ffe4c0'], ['c-lemon', '🍋', 'レモン', '#fff8c0'], ['c-apple', '🍎', 'りんご', '#ffd8d8'],
+  ['c-greenapple', '🍏', 'あおりんご', '#e0f6d0'], ['c-pear', '🍐', 'ようなし', '#eef6d0'], ['c-banana', '🍌', 'バナナ', '#fff4b8'],
+  ['c-blueberry', '🫐', 'ブルーベリー', '#dde2ff'], ['c-mango', '🥭', 'マンゴー', '#ffe8c0'], ['c-hyacinth', '🪻', 'ヒヤシンス', '#e8dcff'],
+  ['c-sprout', '🌱', 'ふたば', '#e0f6d4'], ['c-potted', '🪴', 'はちうえ', '#dff0dc'], ['c-maple', '🍁', 'もみじ', '#ffdcc8'],
+  ['c-leaves', '🍂', 'おちば', '#f6e0c8'], ['c-tanabata', '🎋', 'たなばた', '#dcf2dc'], ['c-cactus', '🌵', 'サボテン', '#dff2d0'],
+  ['c-poodle', '🐩', 'プードル', '#f4e8f0'], ['c-hatching', '🐣', 'たまごの ひよこ', '#fff6c8'], ['c-parakeet', '🦜', 'インコ', '#d8f4d0'],
+  ['c-dove', '🕊️', 'はと', '#eef2f8'], ['c-owl', '🦉', 'フクロウ', '#f0e2cc'], ['c-turtle', '🐢', 'カメ', '#dcf4cc'],
+  ['c-frog', '🐸', 'カエル', '#d8f6c4'], ['c-pony', '🐴', 'ポニー', '#f4e2d0'], ['c-pig', '🐷', 'ブタ', '#ffdce8'],
+  ['c-cow', '🐮', 'ウシ', '#f0f0f6'], ['c-monkey', '🐵', 'サル', '#f4dcc4'], ['c-giraffe', '🦒', 'キリン', '#fff0c8'],
+  ['c-elephant', '🐘', 'ゾウ', '#e4e8f0'], ['c-jellyfish', '🪼', 'クラゲ', '#ece0ff'], ['c-peacock', '🦚', 'クジャク', '#d4f2e4'],
+  ['c-polarbear', '🐻‍❄️', 'シロクマ', '#e6f2ff'], ['c-heels', '👠', 'ハイヒール', '#ffdce4'], ['c-sandal', '👡', 'サンダル', '#fbe6d8'],
+  ['c-flats', '🥿', 'フラットシューズ', '#ece4ff'], ['c-sneaker', '👟', 'スニーカー', '#ffe0ea'], ['c-glasses', '👓', 'めがね', '#e8eef8'],
+  ['c-gloves', '🧤', 'てぶくろ', '#e6dcff'], ['c-socks', '🧦', 'くつした', '#ffe4e0'], ['c-pouch', '👝', 'ポーチ', '#f6e0ff'],
+  ['c-fan', '🪭', 'せんす', '#ffe6f0'], ['c-yarn', '🧶', 'けいと', '#ffdcec'], ['c-thread', '🧵', 'いと', '#e4ecff'],
+  ['c-tshirt', '👕', 'Tシャツ', '#dceeff'], ['c-randoseru', '🎒', 'ランドセル', '#ffe0d8'], ['c-nail', '💅', 'マニキュア', '#ffe0f0'],
+  ['c-redheart', '❤️', 'あかい ハート', '#ffdcdc'], ['c-orangeheart', '🧡', 'オレンジの ハート', '#ffe6d0'], ['c-yellowheart', '💛', 'きいろい ハート', '#fff4c4'],
+  ['c-greenheart', '💚', 'みどりの ハート', '#dcf4d8'], ['c-blueheart', '💙', 'あおい ハート', '#dce8ff'], ['c-purpleheart', '💜', 'むらさきの ハート', '#eadcff'],
+  ['c-pinkheart', '🩷', 'ピンクの ハート', '#ffe0ee'], ['c-twohearts', '💕', 'ふたつの ハート', '#ffe4f0'], ['c-spinhearts', '💞', 'くるくる ハート', '#fde0f0'],
+  ['c-hearthands', '🫶', 'ハートの て', '#ffe8dc'], ['c-shootingstar', '🌠', 'ながれぼし', '#dcdcff'], ['c-dizzy', '💫', 'くるくる ぼし', '#fff4cc'],
+  ['c-cloud', '☁️', 'くも', '#eef4fb'], ['c-crescent', '🌛', 'みかづき', '#fff6d0'], ['c-sparkler', '🎇', 'せんこうはなび', '#e2dcff'],
+  ['c-fireworks', '🎆', 'はなび', '#dcd8ff'], ['c-snowman', '☃️', 'ゆきだるま', '#e6f2ff'], ['c-saturn', '🪐', 'どせい', '#ece0ff'],
+  ['c-witch', '🧙‍♀️', 'まじょ', '#e8dcff'], ['c-angel', '👼', 'てんし', '#fff2e0'], ['c-elf', '🧝‍♀️', 'エルフ', '#dcf4e4'],
+  ['c-wings', '🪽', 'つばさ', '#eef2ff'], ['c-matryoshka', '🪆', 'マトリョーシカ', '#ffe0dc'], ['c-notes', '🎶', 'おんぷ', '#e8e6ff'],
+  ['c-mic', '🎤', 'マイク', '#ece6f4'], ['c-violin', '🎻', 'バイオリン', '#f6e2cc'], ['c-headphones', '🎧', 'ヘッドホン', '#e0ecff'],
+  ['c-maracas', '🪇', 'マラカス', '#ffe8d0'], ['c-mirrorball', '🪩', 'ミラーボール', '#e8e4ff'], ['c-ferriswheel', '🎡', 'かんらんしゃ', '#ffe6f2'],
+  ['c-ticket', '🎟️', 'チケット', '#ffe6e0'], ['c-pencil', '✏️', 'えんぴつ', '#fff2c8'], ['c-books', '📚', 'ほん', '#e4ecff'],
+  ['c-candle', '🕯️', 'キャンドル', '#fff2dc'], ['c-chapel', '💒', 'チャペル', '#ffe8f2'], ['c-hinadoll', '🎎', 'ひなにんぎょう', '#ffe0e8'],
+  ['c-basket', '🧺', 'バスケット', '#f6e6d0'],
 ].map(([id, e, name, bg]) => ({ id, e, name, bg }));
 const DMAP = Object.fromEntries([...DESIGNS, ...CUTE_DESIGNS].map(d => [d.id, d]));
-// いまの テーマで あつめる シール（サッカー・ノーマルは 200しゅるい、かわいい テーマだけ べつの 100しゅるい）
+// いまの テーマで あつめる シール（サッカー・ノーマルと、かわいい テーマは べつの 200しゅるい ずつ）
 const POOL = () => SK().cuteStk ? CUTE_DESIGNS : DESIGNS;
 // グレード：ノーマル・レア・スーパーレア（でやすさが ちがう）＋ キラキラ（どの シールでも SHINY_RATE で キラキラに なる）
 const GRADES = {
-  sr: { name: 'スーパーレア', short: 'SR', w: 0.12, ids: ['crown', 'gem', 'dragon', 'unicorn', 'ufo', 'castle', 'peacock', 'fairy', 'mermaid', 'shootingstar', 'fireworks', 'crystalball', 'c-unicorn', 'c-mermaid', 'c-crown', 'c-castle', 'c-wand', 'c-gem'] },
+  sr: { name: 'スーパーレア', short: 'SR', w: 0.12, ids: ['crown', 'gem', 'dragon', 'unicorn', 'ufo', 'castle', 'peacock', 'fairy', 'mermaid', 'shootingstar', 'fireworks', 'crystalball', 'c-unicorn', 'c-mermaid', 'c-crown', 'c-castle', 'c-wand', 'c-gem',
+    'c-angel', 'c-wings', 'c-shootingstar', 'c-peacock', 'c-mirrorball', 'c-chapel'] },
   r: { name: 'レア', short: 'R', w: 0.4, ids: ['trophy', 'saturn', 'medal', 'rocket', 'trex', 'shinkansen', 'whale', 'owl', 'flamingo', 'rainbow', 'earth', 'clover', 'wizard', 'comet', 'racecar', 'volcano',
     'otter', 'sloth', 'wolf', 'polarbear', 'jellyfish', 'satellite', 'fuji', 'galaxy', 'present', 'rollercoaster', 'ferriswheel', 'tokyotower', 'circus', 'telescope', 'magicwand', 'superhero',
-    'c-fairy', 'c-princess', 'c-crystal', 'c-carousel', 'c-teddy', 'c-birthday', 'c-ring', 'c-swan', 'c-lotus', 'c-bouquet', 'c-dress', 'c-rainbow', 'c-glowstar', 'c-piano', 'c-skate', 'c-dolphin'] },
+    'c-fairy', 'c-princess', 'c-crystal', 'c-carousel', 'c-teddy', 'c-birthday', 'c-ring', 'c-swan', 'c-lotus', 'c-bouquet', 'c-dress', 'c-rainbow', 'c-glowstar', 'c-piano', 'c-skate', 'c-dolphin',
+    'c-witch', 'c-elf', 'c-fireworks', 'c-sparkler', 'c-hyacinth', 'c-poodle', 'c-jellyfish', 'c-polarbear', 'c-bubbletea', 'c-heels', 'c-fan', 'c-violin', 'c-ferriswheel', 'c-hearthands', 'c-pinkheart', 'c-hinadoll'] },
   n: { name: 'ノーマル', short: 'N', w: 1, ids: [] },
 };
 const gradeOf = id => GRADES.sr.ids.includes(id) ? 'sr' : GRADES.r.ids.includes(id) ? 'r' : 'n';
